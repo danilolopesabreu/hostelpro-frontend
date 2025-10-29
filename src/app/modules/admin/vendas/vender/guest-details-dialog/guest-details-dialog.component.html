@@ -1,0 +1,380 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <div class="header-content">
+      <div class="dialog-title">
+        <mat-icon class="title-icon">hotel</mat-icon>
+        <div class="title-text">
+          <h2>{{ dialogTitle }}</h2>
+          <div class="room-status" [style.color]="getStatusColor()">
+            <mat-icon>{{ getStatusIcon() }}</mat-icon>
+            <span>{{ roomData.status || 'Unknown' }}</span>
+          </div>
+        </div>
+      </div>
+      @if (roomData.guestDetails?.vipStatus) {
+      <mat-chip class="vip-badge">VIP Guest</mat-chip>
+      }
+    </div>
+    <button mat-icon-button (click)="dialogRef.close()" class="close-button" matTooltip="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <div class="content-grid">
+      <!-- Guest Information Card -->
+      <mat-card class="booking-info-card guest-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>person</mat-icon>
+            Guest Information
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-grid">
+            <div class="info-item">
+              <mat-icon class="info-icon">badge</mat-icon>
+              <div class="info-content">
+                <h5>Full Name</h5>
+                <span class="guest-name">{{ roomData.guestDetails?.personalInfo?.name || 'N/A' }}</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon class="info-icon">location_on</mat-icon>
+              <div class="info-content">
+                <h5>Address</h5>
+                <span>{{ roomData.guestDetails?.personalInfo?.address || 'N/A' }}</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon class="info-icon">phone</mat-icon>
+              <div class="info-content">
+                <h5>Phone Number</h5>
+                <span>{{ roomData.guestDetails?.personalInfo?.phone || 'N/A' }}</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon class="info-icon">email</mat-icon>
+              <div class="info-content">
+                <h5>Email Address</h5>
+                <span>{{ roomData.guestDetails?.personalInfo?.email || 'N/A' }}</span>
+              </div>
+            </div>
+
+            @if (roomData.guestDetails?.personalInfo?.idNumber) {
+            <div class="info-item">
+              <mat-icon class="info-icon">credit_card</mat-icon>
+              <div class="info-content">
+                <h5>ID Number</h5>
+                <span>{{ roomData.guestDetails?.personalInfo?.idNumber }}</span>
+              </div>
+            </div>
+            }
+
+            @if (roomData.guestDetails?.personalInfo?.nationality) {
+            <div class="info-item">
+              <mat-icon class="info-icon">flag</mat-icon>
+              <div class="info-content">
+                <h5>Nationality</h5>
+                <span>{{ roomData.guestDetails?.personalInfo?.nationality }}</span>
+              </div>
+            </div>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Reservation Information Card -->
+      <mat-card class="booking-info-card reservation-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>event</mat-icon>
+            Reservation Details
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-grid">
+            <div class="info-item">
+              <mat-icon class="info-icon">login</mat-icon>
+              <div class="info-content">
+                <h5>Check-in Date</h5>
+                <span class="date-text">{{ roomData.guestDetails?.reservationInfo?.checkInDate | date:'fullDate'
+                  }}</span>
+                <small>{{ roomData.checkInTime || '15:00' }}</small>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon class="info-icon">logout</mat-icon>
+              <div class="info-content">
+                <h5>Check-out Date</h5>
+                <span class="date-text">{{ roomData.guestDetails?.reservationInfo?.checkOutDate | date:'fullDate'
+                  }}</span>
+                <small>{{ roomData.checkOutTime || '11:00' }}</small>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon class="info-icon">confirmation_number</mat-icon>
+              <div class="info-content">
+                <h5>Booking Reference</h5>
+                <span class="booking-ref">{{ roomData.guestDetails?.reservationInfo?.bookingReference || 'N/A'
+                  }}</span>
+              </div>
+            </div>
+
+            @if (roomData.guestDetails?.reservationInfo?.bookingSource) {
+            <div class="info-item">
+              <mat-icon class="info-icon">source</mat-icon>
+              <div class="info-content">
+                <h5>Booking Source</h5>
+                <span>{{ roomData.guestDetails?.reservationInfo?.bookingSource }}</span>
+              </div>
+            </div>
+            }
+
+            @if (roomData.guestDetails?.reservationInfo?.paymentStatus) {
+            <div class="info-item">
+              <mat-icon class="info-icon">payment</mat-icon>
+              <div class="info-content">
+                <h5>Payment Status</h5>
+                <mat-chip class="payment-chip"
+                  [ngClass]="'payment-' + (roomData.guestDetails?.reservationInfo?.paymentStatus || '').toLowerCase()">
+                  {{ roomData.guestDetails?.reservationInfo?.paymentStatus }}
+                </mat-chip>
+              </div>
+            </div>
+            }
+
+            @if (roomData.guestDetails?.reservationInfo?.totalAmount) {
+            <div class="info-item">
+              <mat-icon class="info-icon">attach_money</mat-icon>
+              <div class="info-content">
+                <h5>Total Amount</h5>
+                <span class="amount-text">${{ roomData.guestDetails?.reservationInfo?.totalAmount }}</span>
+              </div>
+            </div>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Room Information Card -->
+      <mat-card class="booking-info-card room-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>hotel</mat-icon>
+            Room Details
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-grid">
+            <div class="info-item">
+              <mat-icon class="info-icon">meeting_room</mat-icon>
+              <div class="info-content">
+                <h5>Room Type</h5>
+                <span>{{ roomData.type || 'N/A' }}</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon class="info-icon">single_bed</mat-icon>
+              <div class="info-content">
+                <h5>Bed Configuration</h5>
+                <span>{{ roomData.bed || 'N/A' }}</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon class="info-icon">people</mat-icon>
+              <div class="info-content">
+                <h5>Current Occupancy</h5>
+                <span>{{ roomData.occupants || 'N/A' }}</span>
+              </div>
+            </div>
+
+            @if (roomData.rate) {
+            <div class="info-item">
+              <mat-icon class="info-icon">monetization_on</mat-icon>
+              <div class="info-content">
+                <h5>Room Rate</h5>
+                <span class="rate-text">${{ roomData.rate }}/night</span>
+              </div>
+            </div>
+            }
+
+            @if (roomData.floor) {
+            <div class="info-item">
+              <mat-icon class="info-icon">layers</mat-icon>
+              <div class="info-content">
+                <h5>Floor</h5>
+                <span>{{ roomData.floor }}</span>
+              </div>
+            </div>
+            }
+
+            @if (roomData.housekeepingStatus) {
+            <div class="info-item">
+              <mat-icon class="info-icon">cleaning_services</mat-icon>
+              <div class="info-content">
+                <h5>Housekeeping Status</h5>
+                <mat-chip class="housekeeping-chip"
+                  [ngClass]="'housekeeping-' + (roomData.housekeepingStatus || '').toLowerCase()">
+                  {{ roomData.housekeepingStatus }}
+                </mat-chip>
+              </div>
+            </div>
+            }
+          </div>
+
+          <!-- Room Amenities -->
+          @if (roomData.amenities) {
+          <div class="amenities-section">
+            <h4 class="amenities-title">
+              <mat-icon>star</mat-icon>
+              Room Amenities
+            </h4>
+            <div class="amenities-grid">
+              @if (roomData.amenities.wifi) {
+              <div class="amenity-item">
+                <mat-icon>wifi</mat-icon>
+                <span>WiFi</span>
+              </div>
+              }
+              @if (roomData.amenities.airConditioner) {
+              <div class="amenity-item">
+                <mat-icon>ac_unit</mat-icon>
+                <span>Air Conditioning</span>
+              </div>
+              }
+              @if (roomData.amenities.minibar) {
+              <div class="amenity-item">
+                <mat-icon>local_bar</mat-icon>
+                <span>Minibar</span>
+              </div>
+              }
+              @if (roomData.amenities.balcony) {
+              <div class="amenity-item">
+                <mat-icon>balcony</mat-icon>
+                <span>Balcony</span>
+              </div>
+              }
+              @if (roomData.amenities.seaView) {
+              <div class="amenity-item">
+                <mat-icon>beach_access</mat-icon>
+                <span>Sea View</span>
+              </div>
+              }
+              @if (roomData.amenities.cityView) {
+              <div class="amenity-item">
+                <mat-icon>location_city</mat-icon>
+                <span>City View</span>
+              </div>
+              }
+              @if (roomData.amenities.kitchenette) {
+              <div class="amenity-item">
+                <mat-icon>kitchen</mat-icon>
+                <span>Kitchenette</span>
+              </div>
+              }
+              @if (roomData.amenities.spa) {
+              <div class="amenity-item">
+                <mat-icon>spa</mat-icon>
+                <span>Spa Access</span>
+              </div>
+              }
+            </div>
+          </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Special Requests & Notes -->
+      @if (roomData.guestDetails?.specialRequests || roomData.notes) {
+      <mat-card class="booking-info-card requests-card full-width">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>note</mat-icon>
+            Notes & Special Requests
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (roomData.guestDetails?.specialRequests) {
+          <div class="note-section">
+            <h5>Special Requests</h5>
+            <p class="note-text">{{ roomData.guestDetails?.specialRequests }}</p>
+          </div>
+          }
+
+          @if (roomData.notes) {
+          <div class="note-section">
+            <h5>Internal Notes</h5>
+            <p class="note-text">{{ roomData.notes }}</p>
+          </div>
+          }
+        </mat-card-content>
+      </mat-card>
+      }
+
+      <!-- Loyalty Information -->
+      @if (roomData.guestDetails?.loyaltyPoints || roomData.guestDetails?.vipStatus) {
+      <mat-card class="booking-info-card loyalty-card full-width">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>loyalty</mat-icon>
+            Loyalty Information
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="loyalty-grid">
+            @if (roomData.guestDetails?.vipStatus) {
+            <div class="loyalty-item">
+              <mat-icon class="loyalty-icon vip">verified</mat-icon>
+              <div class="loyalty-content">
+                <h5>VIP Status</h5>
+                <span class="vip-text">Premium Guest</span>
+              </div>
+            </div>
+            }
+
+            @if (roomData.guestDetails?.loyaltyPoints) {
+            <div class="loyalty-item">
+              <mat-icon class="loyalty-icon points">stars</mat-icon>
+              <div class="loyalty-content">
+                <h5>Loyalty Points</h5>
+                <span class="points-text">{{ roomData.guestDetails?.loyaltyPoints }} points</span>
+              </div>
+            </div>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+      }
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <div class="actions-left">
+      @if (roomData.maintenance?.lastCleaned) {
+      <div class="last-cleaned">
+        <mat-icon>schedule</mat-icon>
+        <span>Last cleaned: {{ roomData.maintenance?.lastCleaned | date:'short' }}</span>
+      </div>
+      }
+    </div>
+
+    <div class="actions-right">
+      <button mat-button (click)="editGuest()" class="edit-btn">
+        <mat-icon>edit</mat-icon>
+        Edit Guest Details
+      </button>
+      <button mat-flat-button color="primary" mat-dialog-close class="close-btn">
+        <mat-icon>close</mat-icon>
+        Close
+      </button>
+    </div>
+  </mat-dialog-actions>
+</div>

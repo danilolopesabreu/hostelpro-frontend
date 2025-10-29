@@ -1,0 +1,120 @@
+.mini-revenue-comparison {
+  .revenue-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    .revenue-info {
+      .revenue-title {
+        font-size: 14px;
+        font-weight: 500;
+        margin: 0 0 8px 0;
+      }
+
+      .revenue-amount {
+        font-size: 24px;
+        font-weight: 700;
+        color: #28a745;
+        margin: 0;
+      }
+    }
+
+    .revenue-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(40, 167, 69, 0.1);
+
+      .trend-icon {
+        width: 20px;
+        height: 20px;
+        color: #28a745;
+      }
+    }
+  }
+
+  .chart-container {
+    margin: 16px 0;
+  }
+
+  .comparison-stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+
+    .stat-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px;
+      border-radius: 6px;
+      background: #f8f9fa;
+
+      .stat-label {
+        font-size: 11px;
+        color: #6c757d;
+        margin-bottom: 4px;
+      }
+
+      .stat-value {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 600;
+
+        .change-icon {
+          width: 12px;
+          height: 12px;
+          margin-right: 2px;
+        }
+
+        &.positive {
+          color: #28a745;
+        }
+
+        &.negative {
+          color: #dc3545;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    .revenue-header {
+      .revenue-info .revenue-amount {
+        font-size: 20px;
+      }
+
+      .revenue-icon {
+        width: 36px;
+        height: 36px;
+
+        .trend-icon {
+          width: 18px;
+          height: 18px;
+        }
+      }
+    }
+
+    .comparison-stats {
+      flex-direction: column;
+      gap: 8px;
+
+      .stat-item {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+  }
+}
+::ng-deep .dark {
+  .mini-revenue-comparison {
+    .comparison-stats .stat-item {
+      background: rgba(0, 0, 0, 0.25) !important;
+    }
+  }
+}

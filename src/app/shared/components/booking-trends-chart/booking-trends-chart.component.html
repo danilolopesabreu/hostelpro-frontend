@@ -1,0 +1,45 @@
+<mat-card class="booking-trends-chart">
+  <mat-card-header class="header-with-actions">
+    <div class="header-content">
+      <mat-card-title>Booking Trends</mat-card-title>
+    </div>
+    <div class="header-actions">
+      <button mat-button [matMenuTriggerFor]="periodMenu" class="period-selector">
+        {{ selectedPeriod === '7days' ? 'Last 7 Days' : selectedPeriod === '30days' ? 'Last 30 Days' : 'This Year' }}
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </button>
+      <mat-menu #periodMenu="matMenu">
+        <button mat-menu-item (click)="changePeriod('7days')" [class.active]="selectedPeriod === '7days'">
+          Last 7 Days
+        </button>
+        <button mat-menu-item (click)="changePeriod('30days')" [class.active]="selectedPeriod === '30days'">
+          Last 30 Days
+        </button>
+        <button mat-menu-item (click)="changePeriod('yearly')" [class.active]="selectedPeriod === 'yearly'">
+          This Year
+        </button>
+      </mat-menu>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="booking-stats">
+      <div class="stat-item">
+        <div class="stat-value">{{ totalBookings }}</div>
+        <div class="stat-label">Total Bookings</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">{{ averageBookings | number:'1.0-0' }}</div>
+        <div class="stat-label">Daily Average</div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <apx-chart [series]="chartOptions.series!" [chart]="chartOptions.chart!" [xaxis]="chartOptions.xaxis!"
+        [yaxis]="chartOptions.yaxis!" [stroke]="chartOptions.stroke!" [dataLabels]="chartOptions.dataLabels!"
+        [markers]="chartOptions.markers!" [grid]="chartOptions.grid!" [tooltip]="chartOptions.tooltip!"
+        [legend]="chartOptions.legend!" [colors]="chartOptions.colors!">
+      </apx-chart>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,253 @@
+.average-stay-duration {
+  mat-card-header {
+    padding-bottom: 12px;
+
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 500;
+
+      .title-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+        color: #6f42c1;
+      }
+    }
+  }
+
+  .period-selector {
+    display: flex;
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 4px;
+    margin-bottom: 20px;
+
+    .period-btn {
+      flex: 1;
+      padding: 6px 8px;
+      border: none;
+      background: transparent;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #6c757d;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(111, 66, 193, 0.1);
+        color: #6f42c1;
+      }
+
+      &.active {
+        background: #6f42c1;
+        color: white;
+      }
+    }
+  }
+
+  .main-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .stat-primary {
+      .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: #6f42c1;
+        line-height: 1;
+        margin-bottom: 4px;
+      }
+
+      .stat-label {
+        font-size: 14px;
+        color: #6c757d;
+        font-weight: 500;
+      }
+    }
+
+    .stat-secondary {
+      text-align: right;
+
+      .change-indicator {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        margin-bottom: 4px;
+
+        .change-icon {
+          width: 16px;
+          height: 16px;
+          margin-right: 4px;
+        }
+
+        .change-value {
+          font-size: 14px;
+          font-weight: 600;
+        }
+
+        &.change-positive {
+          color: #28a745;
+        }
+
+        &.change-negative {
+          color: #dc3545;
+        }
+
+        &.change-neutral {
+          color: #6c757d;
+        }
+      }
+
+      .guest-count {
+        font-size: 12px;
+        color: #6c757d;
+      }
+    }
+  }
+
+  .breakdown-stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+
+    .breakdown-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+
+      .breakdown-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(111, 66, 193, 0.1);
+        margin-right: 12px;
+
+        .icon {
+          width: 18px;
+          height: 18px;
+          color: #6f42c1;
+        }
+      }
+
+      .breakdown-details {
+        .breakdown-value {
+          font-size: 16px;
+          font-weight: 600;
+          color: #495057;
+          margin-bottom: 2px;
+        }
+
+        .breakdown-label {
+          font-size: 11px;
+          color: #6c757d;
+          text-transform: uppercase;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  .room-breakdown {
+    .breakdown-header {
+      margin-bottom: 12px;
+
+      .breakdown-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #495057;
+      }
+    }
+
+    .room-list {
+      .room-item {
+        margin-bottom: 12px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .room-info {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 4px;
+
+          .room-type {
+            font-size: 12px;
+            font-weight: 500;
+            color: #495057;
+          }
+
+          .room-percentage {
+            font-size: 11px;
+            color: #6c757d;
+          }
+        }
+
+        .room-duration {
+          font-size: 11px;
+          font-weight: 600;
+          color: #6f42c1;
+          margin-bottom: 4px;
+        }
+
+        .room-bar {
+          height: 4px;
+          background: #e9ecef;
+          border-radius: 2px;
+          overflow: hidden;
+
+          .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6f42c1, #8a56d1);
+            transition: width 0.3s ease;
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    .main-stats {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+
+      .stat-secondary {
+        text-align: center;
+      }
+    }
+
+    .breakdown-stats {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .period-selector .period-btn {
+      font-size: 9px;
+      padding: 5px 6px;
+    }
+  }
+}
+::ng-deep .dark {
+  .average-stay-duration {
+    .period-selector {
+      background: rgba(0, 0, 0, 0.25) !important;
+    }
+    .breakdown-stats .breakdown-item {
+      background: rgba(0, 0, 0, 0.25) !important;
+    }
+  }
+}

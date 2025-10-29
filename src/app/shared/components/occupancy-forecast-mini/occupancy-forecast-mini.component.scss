@@ -1,0 +1,326 @@
+.occupancy-forecast-mini {
+  mat-card-header {
+    padding-bottom: 12px;
+
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 600;
+
+      .title-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+        color: #28a745;
+      }
+    }
+  }
+
+  .forecast-summary {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+
+    .summary-item {
+      text-align: center;
+
+      .summary-value {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .summary-label {
+        font-size: 10px;
+        color: #6c757d;
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+
+      &.average .summary-value {
+        color: #007bff;
+      }
+
+      &.peak .summary-value {
+        color: #28a745;
+      }
+
+      &.lowest .summary-value {
+        color: #ffc107;
+      }
+    }
+  }
+
+  .chart-container {
+    margin-bottom: 16px;
+  }
+
+  .daily-breakdown {
+    margin-bottom: 16px;
+
+    .breakdown-header {
+      margin-bottom: 12px;
+
+      .breakdown-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #495057;
+      }
+    }
+
+    .days-list {
+      .day-item {
+        padding: 12px;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        border-left: 3px solid;
+
+        &.occupancy-very-high {
+          border-left-color: #dc3545;
+          background: rgba(220, 53, 69, 0.02);
+        }
+
+        &.occupancy-high {
+          border-left-color: #28a745;
+          background: rgba(40, 167, 69, 0.02);
+        }
+
+        &.occupancy-moderate {
+          border-left-color: #007bff;
+          background: rgba(0, 123, 255, 0.02);
+        }
+
+        &.occupancy-low {
+          border-left-color: #ffc107;
+          background: rgba(255, 193, 7, 0.02);
+        }
+
+        &.occupancy-very-low {
+          border-left-color: #6c757d;
+          background: rgba(108, 117, 125, 0.02);
+        }
+
+        .day-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 5px;
+
+          .day-info {
+            .day-name {
+              font-size: 13px;
+              font-weight: 600;
+              color: #495057;
+              margin-right: 8px;
+            }
+
+            .day-of-week {
+              font-size: 11px;
+              color: #6c757d;
+            }
+          }
+
+          .occupancy-rate {
+            font-size: 14px;
+            font-weight: 700;
+            color: #28a745;
+          }
+        }
+
+        .room-stats {
+          display: flex;
+          gap: 12px;
+          margin-bottom: 8px;
+
+          .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+
+            .stat-icon {
+              width: 12px;
+              height: 12px;
+              color: #6c757d;
+            }
+
+            .stat-count {
+              font-weight: 600;
+              color: #495057;
+            }
+
+            .stat-label {
+              color: #6c757d;
+            }
+
+            &.occupied .stat-icon {
+              color: #dc3545;
+            }
+
+            &.available .stat-icon {
+              color: #28a745;
+            }
+
+            &.reserved .stat-icon {
+              color: #007bff;
+            }
+          }
+        }
+
+        .occupancy-bar {
+          height: 4px;
+          background: #e9ecef;
+          border-radius: 2px;
+          overflow: hidden;
+
+          .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            transition: width 0.3s ease;
+          }
+        }
+      }
+    }
+  }
+
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    background: #e8f5e8;
+    border-radius: 6px;
+    color: #28a745;
+
+    .status-icon {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+    }
+
+    .status-text {
+      font-size: 12px;
+      font-weight: 500;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .forecast-summary {
+      padding: 10px;
+
+      .summary-item .summary-value {
+        font-size: 16px;
+      }
+    }
+
+    .daily-breakdown .days-list .day-item {
+      padding: 10px;
+
+      .room-stats {
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    .forecast-summary {
+      flex-direction: column;
+      gap: 8px;
+
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+      }
+    }
+
+    .daily-breakdown .days-list .day-item .room-stats {
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+}
+::ng-deep .dark {
+  .occupancy-forecast-mini {
+    .forecast-summary {
+      background: rgba(0, 0, 0, 0.25) !important;
+    }
+
+    .daily-breakdown {
+      .breakdown-header .breakdown-title {
+        color: #9eacb9 !important;
+      }
+      .days-list .day-item {
+        &.occupancy-moderate,
+        &.occupancy-very-high,
+        &.occupancy-very-low,
+        &.occupancy-high,
+        &.occupancy-low {
+          background: rgba(0, 0, 0, 0.25) !important;
+          border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+          border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+        .day-name,
+        .day-of-week {
+          color: #9eacb9 !important;
+        }
+        .room-stats .stat-item {
+          .stat-count {
+            color: #9eacb9 !important;
+            font-weight: 500 !important;
+          }
+          .stat-label {
+            color: #9eacb9 !important;
+          }
+        }
+      }
+    }
+    .status-indicator {
+      background: rgba(0, 0, 0, 0.25) !important;
+    }
+  }
+}
+::ng-deep [dir="rtl"] .occupancy-forecast-mini {
+  .daily-breakdown {
+    .days-list {
+      .day-item {
+        // Reset left border and apply right border for RTL
+        border-left: 1px solid #e9ecef !important;
+        border-right: 3px solid #e9ecef !important;
+
+        &.occupancy-high {
+          border-left-color: #e9ecef !important;
+          border-right-color: #28a745 !important;
+        }
+
+        &.occupancy-very-high {
+          border-left-color: #e9ecef !important;
+          border-right-color: #dc3545 !important;
+        }
+
+        &.occupancy-moderate {
+          border-left-color: #e9ecef !important;
+          border-right-color: #007bff !important;
+        }
+
+        &.occupancy-low {
+          border-left-color: #e9ecef !important;
+          border-right-color: #ffc107 !important;
+        }
+
+        &.occupancy-very-low {
+          border-left-color: #e9ecef !important;
+          border-right-color: #6c757d !important;
+        }
+      }
+    }
+  }
+}

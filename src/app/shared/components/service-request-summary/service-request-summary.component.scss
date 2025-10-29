@@ -1,0 +1,308 @@
+.service-request-summary {
+  mat-card-header {
+    padding-bottom: 16px;
+
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 500;
+
+      .title-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+        color: #ff6b35;
+      }
+    }
+
+    mat-card-subtitle {
+      font-size: 12px;
+      color: #6c757d;
+      margin-top: 4px;
+    }
+  }
+
+  .summary-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+
+    .stat-item {
+      text-align: center;
+
+      .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .stat-label {
+        font-size: 11px;
+        color: #6c757d;
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+
+      &.pending .stat-value {
+        color: #ffc107;
+      }
+
+      &.progress .stat-value {
+        color: #007bff;
+      }
+
+      &.urgent .stat-value {
+        color: #dc3545;
+      }
+    }
+  }
+
+  .requests-section {
+    margin-bottom: 20px;
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+
+      .section-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #495057;
+      }
+
+      .view-all-btn {
+        font-size: 12px;
+        color: #007bff;
+        min-width: auto;
+        padding: 4px 8px;
+      }
+    }
+
+    .requests-list {
+      .request-item {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        border-left: 3px solid #e9ecef;
+
+        &.priority-high {
+          border-left-color: #dc3545;
+          background: rgba(220, 53, 69, 0.02);
+        }
+
+        &.priority-medium {
+          border-left-color: #ffc107;
+          background: rgba(255, 193, 7, 0.02);
+        }
+
+        &.priority-low {
+          border-left-color: #28a745;
+          background: rgba(40, 167, 69, 0.02);
+        }
+
+        .request-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: rgba(255, 107, 53, 0.1);
+          margin-right: 12px;
+
+          .service-icon {
+            width: 18px;
+            height: 18px;
+            color: #ff6b35;
+          }
+        }
+
+        .request-details {
+          flex: 1;
+
+          .request-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 4px;
+          }
+
+          .request-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+            color: #6c757d;
+
+            .room-number {
+              font-weight: 500;
+            }
+          }
+        }
+
+        .request-status {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 4px;
+
+          .status-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-weight: 500;
+
+            &.status-pending {
+              background: #fff3cd;
+              color: #856404;
+            }
+
+            &.status-progress {
+              background: #cce5ff;
+              color: #004085;
+            }
+
+            &.status-completed {
+              background: #d4edda;
+              color: #155724;
+            }
+          }
+
+          .estimated-time {
+            display: flex;
+            align-items: center;
+            font-size: 10px;
+            color: #6c757d;
+
+            .time-icon {
+              width: 10px;
+              height: 10px;
+              margin-right: 2px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .quick-actions {
+    display: flex;
+    gap: 12px;
+
+    .action-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+
+      &:hover {
+        background: #f8f9fa;
+        border-color: #007bff;
+      }
+
+      .btn-icon {
+        width: 14px;
+        height: 14px;
+        margin-right: 6px;
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    .summary-stats {
+      padding: 12px;
+
+      .stat-item .stat-value {
+        font-size: 20px;
+      }
+    }
+
+    .requests-list .request-item {
+      padding: 10px;
+
+      .request-icon {
+        width: 32px;
+        height: 32px;
+        margin-right: 10px;
+
+        .service-icon {
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+
+    .quick-actions {
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+}
+::ng-deep .dark {
+  .service-request-summary {
+    .summary-stats {
+      background: rgba(0, 0, 0, 0.25) !important;
+    }
+    .requests-section {
+      .section-header .section-title {
+        color: #9eacb9 !important;
+        font-weight: 500 !important;
+      }
+      .requests-list .request-item {
+        &.priority-medium,
+        &.priority-high,
+        &.priority-low {
+          background: rgba(0, 0, 0, 0.25) !important;
+          border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+          border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+        .request-details .request-title {
+          color: #9eacb9 !important;
+        }
+      }
+    }
+    .quick-actions .action-btn {
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+}
+// RTL Layout Styles - Multiple approaches for maximum compatibility
+::ng-deep [dir="rtl"] .service-request-summary {
+  .requests-section {
+    .requests-list {
+      .request-item {
+        // Reset left border and apply right border for RTL
+        border-left: 1px solid #e9ecef !important;
+        border-right: 3px solid #e9ecef !important;
+
+        &.priority-high {
+          border-left-color: #e9ecef !important;
+          border-right-color: #dc3545 !important;
+        }
+
+        &.priority-medium {
+          border-left-color: #e9ecef !important;
+          border-right-color: #ffc107 !important;
+        }
+
+        &.priority-low {
+          border-left-color: #e9ecef !important;
+          border-right-color: #28a745 !important;
+        }
+      }
+    }
+  }
+}

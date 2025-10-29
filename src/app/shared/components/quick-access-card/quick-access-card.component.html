@@ -1,0 +1,31 @@
+<mat-card class="quick-access-card">
+  <mat-card-header>
+    <mat-card-title>
+      <i-feather name="zap" class="title-icon"></i-feather>
+      Quick Access
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="access-grid">
+      @for (item of quickAccessItems; track trackByItemId($index, item)) {
+        <button
+          mat-button
+          class="access-item"
+          (click)="onQuickAccessClick(item)"
+          [matTooltip]="item.description"
+          matTooltipPosition="above">
+          <div class="item-icon" [style.background-color]="item.color + '15'">
+            <i-feather [name]="item.icon" class="icon" [style.color]="item.color"></i-feather>
+            @if (item.badge) {
+              <span class="badge" [style.background-color]="item.color">
+                {{ item.badge }}
+              </span>
+            }
+          </div>
+          <div class="item-title">{{ item.title }}</div>
+        </button>
+      }
+    </div>
+  </mat-card-content>
+</mat-card>

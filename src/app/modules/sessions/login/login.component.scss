@@ -1,0 +1,240 @@
+.login-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  align-items: stretch; /* Ensure children stretch to fill height */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Added box-shadow */
+  margin: 50px;
+  border-radius: 30px;
+
+  .color-icon {
+    color: #5e5e5e;
+  }
+
+  .login-image-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    /* Removed padding to eliminate space */
+    border-top-left-radius: 20px; /* Apply border-radius to image side */
+    border-bottom-left-radius: 20px; /* Apply border-radius to image side */
+    overflow: hidden; /* Ensure image respects border-radius */
+
+    .login-image {
+      max-width: 100%;
+      height: 100%; /* Make image fill the height of its container */
+      object-fit: cover; /* Ensure the image covers the area without distortion */
+      border-radius: 0; /* Remove individual image border-radius as it's on container */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .login-form-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    background-color: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    border-top-right-radius: 20px; /* Apply border-radius to form side */
+    border-bottom-right-radius: 20px; /* Apply border-radius to form side */
+    /* Removed margin to eliminate space */
+
+    .login-logo {
+      margin-bottom: 10px;
+
+      img {
+        max-width: 150px;
+        height: 80px;
+      }
+    }
+
+    .welcome-msg {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .login-type-toggle {
+      display: flex;
+      margin-bottom: 30px;
+      border-radius: 25px;
+      overflow: hidden;
+      background-color: #e0e0e0;
+
+      button {
+        flex: 1;
+        padding: 10px 20px;
+        border: none;
+        background-color: transparent;
+        cursor: pointer;
+        font-size: 16px;
+        color: #555;
+        transition: all 0.3s ease;
+
+        &.active {
+          background-color: #007bff;
+          color: #fff;
+          box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        &:hover:not(.active) {
+          background-color: #d0d0d0;
+        }
+      }
+    }
+
+    .login-title {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .login-form {
+      width: 100%;
+      max-width: 400px;
+
+      mat-form-field {
+        width: 100%;
+        margin-bottom: 15px;
+      }
+
+      .form-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+
+        mat-checkbox {
+          .mat-checkbox-layout {
+            white-space: normal;
+          }
+        }
+
+        .forget-pwd {
+          color: #007bff;
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+
+      .login-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 18px;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: #fff;
+        transition: background-color 0.3s ease;
+        height: 45px;
+
+        &:hover {
+          background-color: #0056b3;
+        }
+
+        &:disabled {
+          background-color: #cccccc;
+          cursor: not-allowed;
+        }
+
+        mat-spinner {
+          margin: 0 auto;
+        }
+      }
+    }
+
+    .social-login {
+      margin-top: 30px;
+      text-align: center;
+
+      p {
+        color: #777;
+        margin-bottom: 15px;
+      }
+
+      .social-icons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+
+        .social-icon {
+          background-color: #f0f2f5;
+          border: 1px solid #ddd;
+          border-radius: 50%;
+          width: 50px;
+          height: 50px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          transition: all 0.3s ease;
+
+          img {
+            width: 24px;
+            height: 24px;
+          }
+
+          &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+          }
+        }
+      }
+    }
+
+    .signup-link {
+      margin-top: 30px;
+      color: #777;
+
+      a {
+        color: #007bff;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .login-image-container {
+    display: none;
+  }
+
+  .login-form-section {
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 20px;
+  }
+}
+::ng-deep .dark {
+  .login-container {
+    .login-image-container {
+      background-color: #333 !important;
+    }
+    .login-form-section {
+      background-color: #333 !important;
+      .welcome-msg {
+        color: #cccccc !important;
+      }
+      .login-title {
+        color: #cccccc !important;
+      }
+    }
+  }
+}

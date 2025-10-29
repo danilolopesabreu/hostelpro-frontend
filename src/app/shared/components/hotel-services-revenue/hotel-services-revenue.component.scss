@@ -1,0 +1,258 @@
+.hotel-services-revenue-widget {
+  .revenue-overview {
+    .overview-stats {
+      display: flex;
+      justify-content: space-around;
+
+      .total-revenue,
+      .growth-indicator {
+        text-align: center;
+
+        .growth-value {
+          font-size: 1.5rem;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          line-height: 1;
+
+          &.positive {
+            color: #4caf50;
+          }
+
+          &.negative {
+            color: #f44336;
+          }
+
+          .trend-icon {
+            width: 20px;
+            height: 20px;
+          }
+        }
+
+        .revenue-label,
+        .growth-label {
+          font-size: 0.875rem;
+          color: #666;
+          margin-top: 4px;
+        }
+      }
+    }
+  }
+
+  .charts-section {
+    gap: 24px;
+    margin-bottom: 24px;
+
+    .chart-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #333;
+      text-align: center;
+    }
+
+    .pie-chart-container,
+    .growth-chart-container {
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+  }
+
+  .services-breakdown {
+    margin-bottom: 24px;
+
+    .breakdown-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #333;
+    }
+
+    .services-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      .service-item {
+        .service-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 12px;
+          background: #f8f9fa;
+          border-radius: 8px;
+          transition: all 0.3s ease;
+
+          &:hover {
+            background: #e9ecef;
+            transform: translateY(-1px);
+          }
+
+          .service-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            .service-icon {
+              width: 36px;
+              height: 36px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              .icon {
+                width: 18px;
+                height: 18px;
+                color: white;
+              }
+            }
+
+            .service-details {
+              display: flex;
+              flex-direction: column;
+
+              .service-name {
+                font-size: 0.875rem;
+                font-weight: 600;
+                color: #333;
+              }
+
+              .service-percentage {
+                font-size: 0.75rem;
+                color: #666;
+                margin-top: 2px;
+              }
+            }
+          }
+
+          .service-revenue {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+
+            .revenue-amount {
+              font-size: 1rem;
+              font-weight: 700;
+              color: #333;
+            }
+
+            .growth-rate {
+              font-size: 0.75rem;
+              font-weight: 600;
+
+              &.positive {
+                color: #4caf50;
+              }
+
+              &.negative {
+                color: #f44336;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .top-performer-highlight {
+    background: linear-gradient(135deg, #4caf50, #81c784);
+    border-radius: 8px;
+    padding: 16px;
+    color: white;
+
+    .highlight-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+
+      .highlight-icon {
+        width: 18px;
+        height: 18px;
+      }
+
+      .highlight-title {
+        font-size: 0.875rem;
+        font-weight: 500;
+        opacity: 0.9;
+      }
+    }
+
+    .highlight-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .service-name {
+        font-size: 1.125rem;
+        font-weight: 600;
+      }
+
+      .growth-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 1024px) {
+  .hotel-services-revenue-widget {
+    .charts-section {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .hotel-services-revenue-widget {
+    .revenue-overview .overview-stats {
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .services-breakdown .services-list .service-item .service-header {
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-start;
+
+      .service-revenue {
+        align-items: flex-start;
+        width: 100%;
+      }
+    }
+  }
+}
+::ng-deep .dark {
+  .hotel-services-revenue-widget {
+    .charts-section {
+      .growth-chart-container {
+        background: rgba(0, 0, 0, 0.25) !important;
+      }
+      .chart-title {
+        color: #9eacb9 !important;
+        font-weight: 500 !important;
+      }
+    }
+    .services-breakdown {
+      .breakdown-title {
+        color: #9eacb9 !important;
+      }
+      .services-list .service-item .service-header {
+        background: rgba(0, 0, 0, 0.25) !important;
+        .service-info .service-details .service-name {
+          color: #9eacb9 !important;
+        }
+        .service-revenue .revenue-amount {
+          color: #9eacb9 !important;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,72 @@
+<mat-card class="mini-weather-widget">
+  <mat-card-content>
+    <!-- Header -->
+    <div class="weather-header">
+      <div class="location-info">
+        <i-feather name="map-pin" class="location-icon"></i-feather>
+        <span class="location-text">{{ weatherData.location }}</span>
+      </div>
+      <button class="refresh-btn" (click)="refreshWeather()">
+        <i-feather name="refresh-cw" class="refresh-icon"></i-feather>
+      </button>
+    </div>
+
+    <!-- Current Weather -->
+    <div class="current-weather">
+      <div class="weather-main">
+        <div class="weather-icon">
+          <i-feather [name]="getWeatherIcon(weatherData.condition)" class="main-icon"></i-feather>
+        </div>
+        <div class="weather-details">
+          <div class="temperature" [ngClass]="getTemperatureClass()">
+            {{ weatherData.temperature }}°C
+          </div>
+          <div class="condition">{{ weatherData.condition }}</div>
+          <div class="feels-like">Feels like {{ weatherData.feelsLike }}°C</div>
+        </div>
+      </div>
+
+      <!-- Weather Stats -->
+      <div class="weather-stats">
+        <div class="stat-item">
+          <i-feather name="droplets" class="stat-icon"></i-feather>
+          <span class="stat-value">{{ weatherData.humidity }}%</span>
+          <span class="stat-label">Humidity</span>
+        </div>
+        <div class="stat-item">
+          <i-feather name="wind" class="stat-icon"></i-feather>
+          <span class="stat-value">{{ weatherData.windSpeed }} km/h</span>
+          <span class="stat-label">Wind</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Forecast -->
+    <div class="weather-forecast">
+      <div class="forecast-header">
+        <span class="forecast-title">3-Day Forecast</span>
+        <span class="current-time">{{ currentTime }}</span>
+      </div>
+
+      <div class="forecast-list">
+        @for (day of weatherData.forecast; track day) {
+          <div class="forecast-item">
+            <div class="forecast-day">{{ day.day }}</div>
+            <div class="forecast-icon">
+              <i-feather [name]="getWeatherIcon(day.condition)" class="day-icon"></i-feather>
+            </div>
+            <div class="forecast-temps">
+              <span class="high-temp">{{ day.high }}°</span>
+              <span class="low-temp">{{ day.low }}°</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="weather-footer">
+      <span class="last-updated">Updated {{ lastUpdated }}</span>
+    </div>
+  </mat-card-content>
+</mat-card>

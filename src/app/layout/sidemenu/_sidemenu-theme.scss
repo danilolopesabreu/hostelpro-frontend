@@ -1,0 +1,177 @@
+@use "sass:color";
+@use "sass:map";
+@use "@angular/material" as mat;
+
+@mixin theme($theme) {
+  $is-dark-theme: map.get($theme, theme-type);
+  $primary: mat.get-theme-color($theme, primary, 50);
+  $background: map.get($theme, background);
+  $foreground: map.get($theme, foreground);
+
+  .sidemenu {
+    > .menu-item {
+      > .menu-heading {
+        color: map.get($foreground, text);
+
+        &:hover,
+        &:focus {
+          background: rgba(mat.get-theme-color($theme, primary), 0.05);
+
+          .menu-icon-wrapper {
+            background: linear-gradient(
+              135deg,
+              rgba(mat.get-theme-color($theme, primary), 0.1) 0%,
+              rgba(mat.get-theme-color($theme, primary), 0.15) 100%
+            );
+            // transform: scale(1.05);
+
+            .menu-icon {
+              color: mat.get-theme-color($theme, primary);
+            }
+          }
+
+          .menu-name {
+            color: if(
+              $is-dark-theme,
+              color.adjust(map.get($foreground, text), $lightness: 10%),
+              color.adjust(map.get($foreground, text), $lightness: -10%)
+            );
+          }
+        }
+      }
+
+      &.active {
+        > .menu-heading {
+          background-color: rgba(
+            mat.get-theme-color($theme, primary),
+            0.08
+          ) !important;
+
+          .menu-icon-wrapper {
+            background: linear-gradient(
+              135deg,
+              mat.get-theme-color($theme, primary) 0%,
+              color.adjust(
+                  mat.get-theme-color($theme, primary),
+                  $lightness: -10%
+                )
+                100%
+            ) !important;
+            color: white !important;
+            box-shadow: 0 4px 12px
+              rgba(mat.get-theme-color($theme, primary), 0.3);
+
+            .menu-icon {
+              color: white !important;
+            }
+          }
+
+          .menu-name {
+            color: if(
+              $is-dark-theme,
+              color.adjust(
+                mat.get-theme-color($theme, primary),
+                $lightness: 25%
+              ),
+              mat.get-theme-color($theme, primary)
+            ) !important;
+            font-weight: 500 !important;
+          }
+
+          &:hover,
+          &:focus {
+            background: rgba(mat.get-theme-color($theme, primary), 0.12);
+          }
+        }
+      }
+
+      &.expanded {
+        > .menu-heading {
+          .menu-caret {
+            color: mat.get-theme-color($theme, primary);
+          }
+        }
+      }
+
+      .menu-badge {
+        &[class*="-red-500"] {
+          background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        &[class*="-blue-500"] {
+          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        &[class*="-green-500"] {
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        &[class*="-primary"] {
+          background: linear-gradient(
+            135deg,
+            mat.get-theme-color($theme, primary) 0%,
+            color.adjust(mat.get-theme-color($theme, primary), $lightness: -10%)
+              100%
+          );
+        }
+      }
+    }
+
+    &.submenu {
+      background: if(
+        $is-dark-theme,
+        rgba(map.get($background, card), 0.6),
+        rgba(map.get($background, background), 0.8)
+      );
+
+      > .menu-item {
+        &.active {
+          > .menu-heading {
+            background-color: rgba(
+              mat.get-theme-color($theme, primary),
+              0.1
+            ) !important;
+
+            .menu-dot {
+              background: mat.get-theme-color($theme, primary) !important;
+              box-shadow: 0 0 0 3px
+                rgba(mat.get-theme-color($theme, primary), 0.2);
+            }
+
+            .menu-name {
+              color: mat.get-theme-color($theme, primary) !important;
+              font-weight: 500 !important;
+            }
+
+            &:hover,
+            &:focus {
+              background: rgba(mat.get-theme-color($theme, primary), 0.15);
+            }
+          }
+        }
+
+        &.expanded {
+          background: transparent;
+        }
+      }
+    }
+
+    .menu-divider {
+      .menu-group-heading {
+        color: if(
+          $is-dark-theme,
+          rgba(map.get($foreground, text), 0.6),
+          rgba(map.get($foreground, text), 0.5)
+        );
+
+        &::before {
+          background: map.get($background, base);
+        }
+      }
+    }
+  }
+
+  .customizer-title h3 {
+    color: mat.get-theme-color($theme, primary);
+  }
+}

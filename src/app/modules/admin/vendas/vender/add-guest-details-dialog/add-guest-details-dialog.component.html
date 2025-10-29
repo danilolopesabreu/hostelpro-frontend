@@ -1,0 +1,244 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <div class="header-content">
+      <mat-icon class="header-icon">person_add</mat-icon>
+      <div class="header-text">
+        <h2>Add New Guest</h2>
+        @if (roomData) {
+        <p>Room {{ roomData.roomNo }} - {{ roomData.type }}</p>
+        }
+      </div>
+    </div>
+    <button mat-icon-button (click)="dialogRef.close()" class="close-button" matTooltip="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div mat-dialog-content class="dialog-content">
+    <form [formGroup]="guestForm" (ngSubmit)="onSubmit()" class="guest-form">
+      <mat-tab-group class="form-tabs" animationDuration="300ms">
+        <!-- Personal Information Tab -->
+        <mat-tab label="Personal Information">
+          <div class="tab-content">
+            <div class="form-section">
+              <h3 class="section-title">
+                <mat-icon>person</mat-icon>
+                Personal Details
+              </h3>
+              
+              <div class="form-grid">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Full Name</mat-label>
+                  <input matInput formControlName="name" placeholder="Enter guest's full name" required>
+                  <mat-icon matSuffix>badge</mat-icon>
+                  @if (guestForm.get('name')?.hasError('required')) {
+                    <mat-error>Full name is required</mat-error>
+                  }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Email Address</mat-label>
+                  <input matInput formControlName="email" type="email" placeholder="guest@example.com" required>
+                  <mat-icon matSuffix>email</mat-icon>
+                  @if (guestForm.get('email')?.hasError('required')) {
+                    <mat-error>Email is required</mat-error>
+                  }
+                  @if (guestForm.get('email')?.hasError('email')) {
+                    <mat-error>Please enter a valid email address</mat-error>
+                  }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Phone Number</mat-label>
+                  <input matInput formControlName="phone" type="tel" placeholder="+1-555-123-4567" required>
+                  <mat-icon matSuffix>phone</mat-icon>
+                  @if (guestForm.get('phone')?.hasError('required')) {
+                    <mat-error>Phone number is required</mat-error>
+                  }
+                  @if (guestForm.get('phone')?.hasError('pattern')) {
+                    <mat-error>Please enter a valid phone number</mat-error>
+                  }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>ID Number</mat-label>
+                  <input matInput formControlName="idNumber" placeholder="ID/Passport number">
+                  <mat-icon matSuffix>credit_card</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Address</mat-label>
+                  <textarea matInput formControlName="address" rows="3" placeholder="Enter full address" required></textarea>
+                  <mat-icon matSuffix>location_on</mat-icon>
+                  @if (guestForm.get('address')?.hasError('required')) {
+                    <mat-error>Address is required</mat-error>
+                  }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Nationality</mat-label>
+                  <mat-select formControlName="nationality">
+                    @for (nationality of nationalities; track nationality) {
+                      <mat-option [value]="nationality">{{ nationality }}</mat-option>
+                    }
+                  </mat-select>
+                  <mat-icon matSuffix>flag</mat-icon>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Reservation Information Tab -->
+        <mat-tab label="Reservation Details">
+          <div class="tab-content">
+            <div class="form-section">
+              <h3 class="section-title">
+                <mat-icon>event</mat-icon>
+                Booking Information
+              </h3>
+              
+              <div class="form-grid">
+                <mat-form-field appearance="outline">
+                  <mat-label>Check-in Date</mat-label>
+                  <input matInput formControlName="checkInDate" [matDatepicker]="checkinPicker" 
+                         (dateChange)="onDateChange()" required>
+                  <mat-datepicker-toggle matSuffix [for]="checkinPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #checkinPicker></mat-datepicker>
+                  @if (guestForm.get('checkInDate')?.hasError('required')) {
+                    <mat-error>Check-in date is required</mat-error>
+                  }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Check-out Date</mat-label>
+                  <input matInput formControlName="checkOutDate" [matDatepicker]="checkoutPicker" 
+                         (dateChange)="onDateChange()" required>
+                  <mat-datepicker-toggle matSuffix [for]="checkoutPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #checkoutPicker></mat-datepicker>
+                  @if (guestForm.get('checkOutDate')?.hasError('required')) {
+                    <mat-error>Check-out date is required</mat-error>
+                  }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Booking Reference</mat-label>
+                  <input matInput formControlName="bookingReference" placeholder="Auto-generated">
+                  <mat-icon matSuffix>confirmation_number</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Booking Source</mat-label>
+                  <mat-select formControlName="bookingSource">
+                    @for (source of bookingSources; track source) {
+                      <mat-option [value]="source">{{ source }}</mat-option>
+                    }
+                  </mat-select>
+                  <mat-icon matSuffix>source</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Payment Status</mat-label>
+                  <mat-select formControlName="paymentStatus">
+                    @for (status of paymentStatuses; track status) {
+                      <mat-option [value]="status">{{ status }}</mat-option>
+                    }
+                  </mat-select>
+                  <mat-icon matSuffix>payment</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Total Amount</mat-label>
+                  <input matInput formControlName="totalAmount" type="number" min="0" step="0.01">
+                  <span matPrefix>$</span>
+                  <mat-icon matSuffix>attach_money</mat-icon>
+                </mat-form-field>
+              </div>
+
+              @if (calculateNights() > 0) {
+              <div class="booking-summary">
+                <h4>Booking Summary</h4>
+                <div class="summary-item">
+                  <span>Number of nights:</span>
+                  <span class="summary-value">{{ calculateNights() }}</span>
+                </div>
+                @if (roomData?.rate) {
+                <div class="summary-item">
+                  <span>Rate per night:</span>
+                  <span class="summary-value">${{ roomData?.rate }}</span>
+                </div>
+                <div class="summary-item total">
+                  <span>Total Amount:</span>
+                  <span class="summary-value">${{ guestForm.get('totalAmount')?.value }}</span>
+                </div>
+                }
+              </div>
+              }
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Additional Information Tab -->
+        <mat-tab label="Additional Details">
+          <div class="tab-content">
+            <div class="form-section">
+              <h3 class="section-title">
+                <mat-icon>more_horiz</mat-icon>
+                Additional Information
+              </h3>
+              
+              <div class="form-grid">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Special Requests</mat-label>
+                  <textarea matInput formControlName="specialRequests" rows="4" 
+                            placeholder="Any special requests or notes..."></textarea>
+                  <mat-icon matSuffix>note</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Loyalty Points</mat-label>
+                  <input matInput formControlName="loyaltyPoints" type="number" min="0">
+                  <mat-icon matSuffix>stars</mat-icon>
+                </mat-form-field>
+              </div>
+
+              <div class="checkbox-section">
+                <mat-checkbox formControlName="vipStatus" class="vip-checkbox">
+                  <span class="checkbox-label">
+                    <mat-icon>verified</mat-icon>
+                    VIP Guest Status
+                  </span>
+                </mat-checkbox>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </form>
+  </div>
+
+  <mat-dialog-actions class="dialog-actions">
+    <div class="actions-left">
+      @if (roomData) {
+      <div class="room-info">
+        <mat-icon>hotel</mat-icon>
+        <span>{{ roomData.type }} - Room {{ roomData.roomNo }}</span>
+      </div>
+      }
+    </div>
+    
+    <div class="actions-right">
+      <button mat-button (click)="closeDialog()" class="cancel-btn">
+        <mat-icon>close</mat-icon>
+        Cancel
+      </button>
+      <button mat-flat-button color="primary" type="submit" 
+              [disabled]="!guestForm.valid" 
+              (click)="onSubmit()" 
+              class="save-btn">
+        <mat-icon>save</mat-icon>
+        Save Guest Details
+      </button>
+    </div>
+  </mat-dialog-actions>
+</div>

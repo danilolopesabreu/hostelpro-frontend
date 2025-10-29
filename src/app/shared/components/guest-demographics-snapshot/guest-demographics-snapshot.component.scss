@@ -1,0 +1,218 @@
+.guest-demographics-snapshot {
+  mat-card-header {
+    padding-bottom: 12px;
+
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 500;
+
+      .title-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+        color: #007bff;
+      }
+    }
+  }
+
+  .view-selector {
+    display: flex;
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 4px;
+    margin-bottom: 16px;
+    margin-top: 10px;
+
+    .view-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border: none;
+      background: transparent;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #6c757d;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      .btn-icon {
+        width: 15px;
+        height: 15px;
+        margin-right: 4px;
+      }
+
+      &:hover {
+        background: rgba(0, 123, 255, 0.1);
+        color: #007bff;
+      }
+
+      &.active {
+        background: #007bff;
+        color: white;
+      }
+    }
+  }
+
+  .chart-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  .custom-legend {
+    .legend-item {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid #f1f3f4;
+
+      .legend-indicator {
+        display: flex;
+        align-items: center;
+        margin-right: 12px;
+
+        .color-dot {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          margin-right: 8px;
+        }
+
+        .legend-icon {
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      .legend-details {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .legend-label {
+          font-size: 13px;
+          font-weight: 500;
+          color: #495057;
+        }
+
+        .legend-stats {
+          .guest-count {
+            font-size: 14px;
+            font-weight: 600;
+            color: #495057;
+          }
+
+          .percentage {
+            font-size: 11px;
+            color: #6c757d;
+            margin-left: 4px;
+          }
+        }
+      }
+    }
+  }
+
+  .summary-footer {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e9ecef;
+
+    .summary-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6c757d;
+
+      .summary-icon {
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+        color: #28a745;
+      }
+
+      .summary-text {
+        font-size: 15px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    .view-selector {
+      .view-btn {
+        padding: 6px 8px;
+        font-size: 10px;
+
+        .btn-icon {
+          width: 10px;
+          height: 10px;
+          margin-right: 2px;
+        }
+      }
+    }
+
+    .custom-legend {
+      .legend-item {
+        padding: 6px 0;
+
+        .legend-indicator {
+          margin-right: 8px;
+
+          .color-dot {
+            width: 10px;
+            height: 10px;
+            margin-right: 6px;
+          }
+
+          .legend-icon {
+            width: 14px;
+            height: 14px;
+          }
+        }
+
+        .legend-details {
+          .legend-label {
+            font-size: 12px;
+          }
+
+          .legend-stats {
+            .guest-count {
+              font-size: 12px;
+            }
+
+            .percentage {
+              font-size: 10px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+::ng-deep .dark {
+  .guest-demographics-snapshot {
+    .view-selector {
+      background: rgba(0, 0, 0, 0.25) !important;
+    }
+    .custom-legend .legend-item {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+      .legend-details {
+        .legend-label {
+          color: #9eacb9 !important;
+        }
+        .legend-stats .guest-count {
+          color: #9eacb9 !important;
+        }
+      }
+    }
+    .summary-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+}

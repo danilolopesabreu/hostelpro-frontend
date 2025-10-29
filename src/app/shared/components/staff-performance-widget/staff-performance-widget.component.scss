@@ -1,0 +1,247 @@
+.staff-performance-widget {
+  height: 100%;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  
+  .mat-card-header {
+    padding-bottom: 16px;
+  }
+
+  .performance-overview {
+    margin-bottom: 20px;
+    
+    .overview-stats {
+      display: flex;
+      justify-content: space-around;
+      
+      .stat-item {
+        text-align: center;
+        
+        .stat-value {
+          font-size: 2rem;
+          font-weight: 700;
+          color: #2196F3;
+          line-height: 1;
+        }
+        
+        .stat-label {
+          font-size: 0.875rem;
+          color: #666;
+          margin-top: 4px;
+        }
+      }
+    }
+  }
+
+  .performance-tabs {
+    .mat-tab-body-content {
+      padding: 20px 0;
+    }
+  }
+
+  .top-performers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+    
+    .performer-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: #e9ecef;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      
+      .performer-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        
+        .performer-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          overflow: hidden;
+          
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+        
+        .performer-details {
+          .performer-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #333;
+          }
+          
+          .performer-department {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 2px;
+          }
+        }
+      }
+      
+      .performer-metrics {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 120px;
+        
+        .metric-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          
+          .metric-label {
+            font-size: 0.75rem;
+            color: #666;
+            min-width: 70px;
+          }
+          
+          .metric-progress {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            
+            mat-progress-bar {
+              width: 60px;
+              height: 6px;
+            }
+            
+            .metric-value {
+              font-size: 0.75rem;
+              font-weight: 600;
+              color: #333;
+              min-width: 35px;
+            }
+          }
+          
+          .metric-text {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #333;
+          }
+          
+          .rating-display {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            
+            .rating-star {
+              width: 12px;
+              height: 12px;
+              color: #FFD700;
+              fill: #FFD700;
+            }
+            
+            .rating-value {
+              font-size: 0.75rem;
+              font-weight: 600;
+              color: #333;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .department-performance {
+    .chart-container {
+      margin-bottom: 24px;
+    }
+    
+    .department-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+      
+      .department-item {
+        padding: 12px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        
+        .department-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 8px;
+          
+          .department-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #333;
+          }
+          
+          .staff-count {
+            font-size: 0.75rem;
+            color: #666;
+            background: #e9ecef;
+            padding: 2px 8px;
+            border-radius: 12px;
+          }
+        }
+        
+        .department-metrics {
+          display: flex;
+          gap: 16px;
+          
+          .metric {
+            display: flex;
+            gap: 4px;
+            
+            .metric-label {
+              font-size: 0.75rem;
+              color: #666;
+            }
+            
+            .metric-value {
+              font-size: 0.75rem;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .staff-performance-widget {
+    .top-performers-list .performer-item {
+      flex-direction: column;
+      gap: 12px;
+      
+      .performer-metrics {
+        width: 100%;
+        
+        .metric-item .metric-progress mat-progress-bar {
+          width: 80px;
+        }
+      }
+    }
+    
+    .department-performance .department-stats .department-item {
+      .department-metrics {
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+  }
+}

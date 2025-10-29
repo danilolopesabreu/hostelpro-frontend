@@ -1,0 +1,102 @@
+.booking-trends-chart {
+  .header-with-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    
+    .header-content {
+      flex: 1;
+    }
+    
+    .header-actions {
+      .period-selector {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: #6c757d;
+        font-size: 0.9rem;
+        
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+    }
+  }
+
+  .booking-stats {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 20px;
+    padding: 16px 0;
+    border-bottom: 1px solid #e9ecef;
+    
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      
+      .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #4E73DF;
+        line-height: 1;
+      }
+      
+      .stat-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-top: 4px;
+      }
+    }
+  }
+  
+  .chart-container {
+    margin-top: 16px;
+    
+    ::ng-deep {
+      .apexcharts-canvas {
+        margin: 0 auto;
+      }
+      
+      .apexcharts-tooltip {
+        background: rgba(0, 0, 0, 0.8) !important;
+        border: none !important;
+        border-radius: 8px !important;
+      }
+      
+      .apexcharts-toolbar {
+        top: 0 !important;
+        right: 0 !important;
+      }
+    }
+  }
+}
+
+::ng-deep {
+  .mat-mdc-menu-panel {
+    .mat-mdc-menu-item {
+      &.active {
+        background-color: rgba(78, 115, 223, 0.1);
+        color: #4E73DF;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .booking-trends-chart {
+    .header-with-actions {
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    
+    .booking-stats {
+      flex-direction: column;
+      gap: 16px;
+    }
+  }
+}

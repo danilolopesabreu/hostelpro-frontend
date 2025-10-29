@@ -1,0 +1,45 @@
+<mat-card class="geographic-source">
+  <mat-card-header>
+    <mat-card-title>Guest Origins</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+
+    <div class="countries-breakdown">
+      <ng-scrollbar style="height: 460px" visibility="hover">
+        <div class="countries-list">
+          @for (country of geographicData; track country; let i = $index) {
+            <div class="country-item">
+              <div class="country-info">
+                <div class="country-flag">{{ country.flag }}</div>
+                <div class="country-details">
+                  <div class="country-name">{{ country.country }}</div>
+                  <div class="country-stats">
+                    <span class="bookings">{{ country.bookings }} bookings</span>
+                    <span class="revenue">{{ formatCurrency(country.revenue) }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="country-metrics">
+                <div class="metrics-header">
+                  <div class="percentage">{{ country.percentage }}%</div>
+                  <div class="growth" [ngClass]="getGrowthClass(country.growth)">
+                    <i-feather [name]="getGrowthIcon(country.growth)" class="growth-icon">
+                    </i-feather>
+                    <span>{{ country.growth > 0 ? '+' : '' }}{{ country.growth | number:'1.1-1' }}%</span>
+                  </div>
+                </div>
+                <div class="progress-container">
+                  <mat-progress-bar mode="determinate" [value]="country.percentage" [color]="'primary'"
+                    [ngStyle]="{'--progress-color': getProgressBarColor(i)}">
+                  </mat-progress-bar>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </ng-scrollbar>
+    </div>
+
+  </mat-card-content>
+</mat-card>

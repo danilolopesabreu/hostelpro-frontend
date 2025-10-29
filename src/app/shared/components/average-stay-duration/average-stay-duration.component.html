@@ -1,0 +1,85 @@
+<mat-card class="average-stay-duration">
+  <mat-card-header>
+    <mat-card-title>
+      <i-feather name="calendar" class="title-icon"></i-feather>
+      Average Stay Duration
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <!-- Period Selector -->
+    <div class="period-selector">
+      @for (data of stayData; track data) {
+        <button
+          class="period-btn"
+          [class.active]="selectedPeriod === data.period"
+          (click)="changePeriod(data.period)">
+          {{ data.period }}
+        </button>
+      }
+    </div>
+
+    <!-- Main Stats -->
+    <div class="main-stats">
+      <div class="stat-primary">
+        <div class="stat-value">{{ formatDuration(currentStayData.averageDays) }}</div>
+        <div class="stat-label">Average Stay</div>
+      </div>
+
+      <div class="stat-secondary">
+        <div class="change-indicator" [ngClass]="getChangeClass()">
+          <i-feather [name]="getChangeIcon()" class="change-icon"></i-feather>
+          <span class="change-value">{{ getAbsoluteChange() }}%</span>
+        </div>
+        <div class="guest-count">
+          {{ currentStayData.guestCount }} guests
+        </div>
+      </div>
+    </div>
+
+    <!-- Breakdown Stats -->
+    <div class="breakdown-stats">
+      <div class="breakdown-item">
+        <div class="breakdown-icon">
+          <i-feather name="sun" class="icon"></i-feather>
+        </div>
+        <div class="breakdown-details">
+          <div class="breakdown-value">{{ formatDuration(currentStayData.averageDays) }}</div>
+          <div class="breakdown-label">Days</div>
+        </div>
+      </div>
+
+      <div class="breakdown-item">
+        <div class="breakdown-icon">
+          <i-feather name="moon" class="icon"></i-feather>
+        </div>
+        <div class="breakdown-details">
+          <div class="breakdown-value">{{ formatDuration(currentStayData.averageNights) }}</div>
+          <div class="breakdown-label">Nights</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Room Type Breakdown -->
+    <div class="room-breakdown">
+      <div class="breakdown-header">
+        <span class="breakdown-title">By Room Type</span>
+      </div>
+
+      <div class="room-list">
+        @for (room of roomTypeData; track room) {
+          <div class="room-item">
+            <div class="room-info">
+              <span class="room-type">{{ room.type }}</span>
+              <span class="room-percentage">{{ room.percentage }}%</span>
+            </div>
+            <div class="room-duration">{{ formatDuration(room.avgDays) }}</div>
+            <div class="room-bar">
+              <div class="bar-fill" [style.width.%]="room.percentage"></div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

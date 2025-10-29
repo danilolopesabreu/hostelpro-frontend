@@ -1,0 +1,112 @@
+.guest-satisfaction-widget {
+  .mat-card-header {
+    padding-bottom: 16px;
+  }
+
+  .satisfaction-overview {
+    .satisfaction-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+
+      .main-rating {
+        text-align: center;
+
+        .rating-value {
+          font-size: 2.5rem;
+          font-weight: 700;
+          color: #4caf50;
+          line-height: 1;
+        }
+
+        .rating-stars {
+          display: flex;
+          justify-content: center;
+          gap: 4px;
+          margin: 8px 0;
+
+          .star-icon {
+            width: 18px;
+            height: 18px;
+
+            &.filled {
+              color: #ffd700;
+              fill: #ffd700;
+            }
+
+            &.half-filled {
+              color: #ffd700;
+              fill: url(#half-fill);
+            }
+          }
+        }
+
+        .rating-subtitle {
+          font-size: 0.875rem;
+          color: #666;
+          margin-top: 4px;
+        }
+      }
+
+      .rating-metrics {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        .metric-item {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+
+          .metric-label {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 4px;
+          }
+
+          .metric-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+
+            &.positive {
+              color: #4caf50;
+            }
+
+            &.negative {
+              color: #f44336;
+            }
+
+            .trend-icon {
+              width: 16px;
+              height: 16px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .guest-satisfaction-widget {
+    .satisfaction-overview .satisfaction-stats {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+
+      .rating-metrics {
+        align-items: center;
+
+        .metric-item {
+          align-items: center;
+        }
+      }
+    }
+  }
+}

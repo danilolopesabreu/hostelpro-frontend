@@ -1,0 +1,68 @@
+<mat-card class="hotel-services-revenue-widget">
+  <mat-card-header>
+    <mat-card-title>Hotel Services Revenue</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="revenue-overview">
+      <div class="overview-stats">
+        <div class="growth-indicator">
+          <div class="growth-value" [ngClass]="{'positive': monthlyGrowth > 0, 'negative': monthlyGrowth < 0}">
+            <i-feather [name]="monthlyGrowth > 0 ? 'trending-up' : 'trending-down'" class="trend-icon"></i-feather>
+            {{ monthlyGrowth > 0 ? '+' : '' }}{{ monthlyGrowth }}%
+          </div>
+          <div class="growth-label">Monthly Growth</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-section">
+
+      <div class="growth-chart-container">
+        <h4 class="chart-title">Growth Rates</h4>
+        <apx-chart [series]="barChartOptions.series!" [chart]="barChartOptions.chart!" [xaxis]="barChartOptions.xaxis!"
+          [yaxis]="barChartOptions.yaxis!" [stroke]="barChartOptions.stroke!" [dataLabels]="barChartOptions.dataLabels!"
+          [grid]="barChartOptions.grid!" [tooltip]="barChartOptions.tooltip!"
+          [plotOptions]="barChartOptions.plotOptions!">
+        </apx-chart>
+      </div>
+    </div>
+
+    <div class="services-breakdown">
+      <h4 class="breakdown-title">Service Performance</h4>
+      <div class="services-list">
+        @for (service of servicesRevenue; track service.service) {
+        <div class="service-item">
+          <div class="service-header">
+            <div class="service-info">
+              <div class="service-icon" [style.background-color]="service.color">
+                <i-feather [name]="service.icon" class="icon"></i-feather>
+              </div>
+              <div class="service-details">
+                <span class="service-name">{{ service.service }}</span>
+                <span class="service-percentage">{{ service.percentage }}% of total</span>
+              </div>
+            </div>
+            <div class="service-revenue">
+              <span class="revenue-amount">${{ (service.revenue / 1000) | number:'1.0-0' }}K</span>
+              <span class="growth-rate" [ngClass]="{'positive': service.growth > 0, 'negative': service.growth < 0}">
+                {{ service.growth > 0 ? '+' : '' }}{{ service.growth }}%
+              </span>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="top-performer-highlight">
+      <div class="highlight-header">
+        <i-feather name="trending-up" class="highlight-icon"></i-feather>
+        <span class="highlight-title">Top Growth Service</span>
+      </div>
+      <div class="highlight-content">
+        <span class="service-name">{{ topGrowthService.service }}</span>
+        <span class="growth-value">+{{ topGrowthService.growth }}%</span>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

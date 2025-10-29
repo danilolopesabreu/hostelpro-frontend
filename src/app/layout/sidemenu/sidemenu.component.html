@@ -1,0 +1,88 @@
+<div class="sidemenu-wrapper">
+  <ng-container [ngTemplateOutlet]="menuListTpl"
+    [ngTemplateOutletContext]="{menuList: menu$ | async, parentRoute: [], level: 0}">
+  </ng-container>
+</div>
+
+<ng-template #menuListTpl let-menuList="menuList" let-parentRoute="parentRoute" let-level="level">
+  <ul navAccordion class="sidemenu level-{{level}}" [class.submenu]="level>0">
+    @for (menuItem of menuList; track menuItem) {
+    @if (menuItem.type==='devider') {
+    <ng-container [ngTemplateOutlet]="deviderTpl" [ngTemplateOutletContext]="{item: menuItem, level: level}">
+    </ng-container>
+    }
+    <ng-template [ngxPermissionsOnly]="menuItem.permissions?.only"
+      [ngxPermissionsExcept]="menuItem.permissions?.except">
+      <li navAccordionItem class="menu-item" routerLinkActive="active" [route]="menuItem.route" [type]="menuItem.type">
+        @if (menuItem.type==='link') {
+        <a class="menu-heading" [routerLink]="buildRoute(parentRoute.concat([menuItem.route]))" matRipple
+          [matRippleDisabled]="!ripple">
+          <ng-container [ngTemplateOutlet]="linkTypeTpl" [ngTemplateOutletContext]="{item: menuItem, level: level}">
+          </ng-container>
+        </a>
+        }
+        @if (menuItem.type==='extLink') {
+        <a class="menu-heading" [href]="menuItem.route" matRipple [matRippleDisabled]="!ripple">
+          <ng-container [ngTemplateOutlet]="linkTypeTpl" [ngTemplateOutletContext]="{item: menuItem, level: level}">
+          </ng-container>
+        </a>
+        }
+        @if (menuItem.type==='extTabLink') {
+        <a class="menu-heading" [href]="menuItem.route" target="_blank" matRipple [matRippleDisabled]="!ripple">
+          <ng-container [ngTemplateOutlet]="linkTypeTpl" [ngTemplateOutletContext]="{item: menuItem, level: level}">
+          </ng-container>
+        </a>
+        }
+        @if (menuItem.type==='sub') {
+        <button navAccordionToggle class="menu-heading menu-toggle" matRipple [matRippleDisabled]="!ripple">
+          <ng-container [ngTemplateOutlet]="linkTypeTpl" [ngTemplateOutletContext]="{item: menuItem, level: level}">
+          </ng-container>
+        </button>
+        }
+        <ng-container [ngTemplateOutlet]="menuListTpl" [ngTemplateOutletContext]="{
+            menuList: menuItem.children,
+            parentRoute: parentRoute.concat([menuItem.route]),
+            level: level + 1
+            }">
+        </ng-container>
+      </li>
+    </ng-template>
+    }
+  </ul>
+</ng-template>
+
+<ng-template #linkTypeTpl let-item="item" let-level="level">
+  <div class="menu-icon-container">
+    @if (level===0) {
+    <div class="menu-icon-wrapper">
+      <mat-icon class="menu-icon">{{item.icon}}</mat-icon>
+    </div>
+    } @else {
+    <div class="menu-dot"></div>
+    }
+  </div>
+  
+  <div class="menu-content">
+    <span class="menu-name">{{item.name | translate}}</span>
+    @if (item.label) {
+    <span class="menu-label menu-label-{{item.label.color}}">{{item.label.value}}</span>
+    }
+    @if (item.badge) {
+    <span class="menu-badge menu-badge-{{item.badge.color}}">{{item.badge.value}}</span>
+    }
+  </div>
+  
+  @if (item.type!=='link') {
+  <div class="menu-arrow">
+    <mat-icon class="menu-caret">
+      {{item.type==='sub' ? 'keyboard_arrow_right' : 'launch'}}
+    </mat-icon>
+  </div>
+  }
+</ng-template>
+
+<ng-template #deviderTpl let-item="item" let-level="level">
+  <div class="menu-divider">
+    <span class="menu-group-heading">{{item.name | translate}}</span>
+  </div>
+</ng-template>

@@ -1,0 +1,48 @@
+<mat-card class="guest-satisfaction-widget">
+  <mat-card-header>
+    <mat-card-title>Guest Satisfaction</mat-card-title>
+    <mat-card-subtitle>Monthly satisfaction trends</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="satisfaction-overview">
+      <div class="satisfaction-stats">
+        <div class="main-rating">
+          <div class="rating-value">{{ averageRating }}</div>
+          <div class="rating-stars">
+            <i-feather name="star" class="star-icon filled"></i-feather>
+            <i-feather name="star" class="star-icon filled"></i-feather>
+            <i-feather name="star" class="star-icon filled"></i-feather>
+            <i-feather name="star" class="star-icon filled"></i-feather>
+            <i-feather name="star" class="star-icon half-filled"></i-feather>
+          </div>
+          <div class="rating-subtitle">Average Rating</div>
+        </div>
+
+        <div class="rating-metrics">
+          <div class="metric-item">
+            <span class="metric-label">Total Reviews</span>
+            <span class="metric-value">{{ totalReviews }}</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Monthly Growth</span>
+            <span class="metric-value"
+              [ngClass]="{'positive': trendDirection === 'up', 'negative': trendDirection === 'down'}">
+              <i-feather [name]="trendDirection === 'up' ? 'trending-up' : 'trending-down'"
+                class="trend-icon"></i-feather>
+              {{ monthlyGrowth > 0 ? '+' : '' }}{{ monthlyGrowth }}%
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <apx-chart [series]="chartOptions.series!" [chart]="chartOptions.chart!" [xaxis]="chartOptions.xaxis!"
+        [yaxis]="chartOptions.yaxis!" [stroke]="chartOptions.stroke!" [dataLabels]="chartOptions.dataLabels!"
+        [grid]="chartOptions.grid!" [tooltip]="chartOptions.tooltip!" [fill]="chartOptions.fill!"
+        [colors]="chartOptions.colors!">
+      </apx-chart>
+    </div>
+
+  </mat-card-content>
+</mat-card>

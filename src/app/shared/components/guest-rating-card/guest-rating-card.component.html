@@ -1,0 +1,25 @@
+<mat-card class="guest-satisfaction-widget">
+    <mat-card-header>
+        <mat-card-title>Guest Satisfaction</mat-card-title>
+        <mat-card-subtitle>Monthly satisfaction trends</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="satisfaction-breakdown">
+            <h4 class="breakdown-title">Category Breakdown</h4>
+            <div class="category-list">
+                @for (metric of satisfactionMetrics; track metric.category) {
+                <div class="category-item">
+                    <div class="category-info">
+                        <span class="category-name">{{ metric.category }}</span>
+                        <span class="category-reviews">({{ metric.reviews }} reviews)</span>
+                    </div>
+                    <div class="category-rating">
+                        <span class="rating-number">{{ metric.rating }}</span>
+                        <i-feather name="star" class="category-star"></i-feather>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

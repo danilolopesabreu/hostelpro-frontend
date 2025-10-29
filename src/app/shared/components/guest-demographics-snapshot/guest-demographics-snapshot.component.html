@@ -1,0 +1,79 @@
+<mat-card class="guest-demographics-snapshot">
+  <mat-card-header>
+    <mat-card-title>
+      <i-feather name="pie-chart" class="title-icon"></i-feather>
+      {{ getViewTitle() }}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <!-- View Selector -->
+    <div class="view-selector">
+      <button
+        class="view-btn"
+        [class.active]="selectedView === 'purpose'"
+        (click)="changeView('purpose')">
+        <i-feather name="briefcase" class="btn-icon"></i-feather>
+        Purpose
+      </button>
+      <button
+        class="view-btn"
+        [class.active]="selectedView === 'origin'"
+        (click)="changeView('origin')">
+        <i-feather name="map-pin" class="btn-icon"></i-feather>
+        Origin
+      </button>
+      <button
+        class="view-btn"
+        [class.active]="selectedView === 'age'"
+        (click)="changeView('age')">
+        <i-feather name="users" class="btn-icon"></i-feather>
+        Age
+      </button>
+    </div>
+
+    <!-- Chart -->
+    <div class="chart-container">
+      <apx-chart
+        [series]="chartOptions.series!"
+        [chart]="chartOptions.chart!"
+        [labels]="chartOptions.labels!"
+        [colors]="chartOptions.colors!"
+        [dataLabels]="chartOptions.dataLabels!"
+        [legend]="chartOptions.legend!"
+        [plotOptions]="chartOptions.plotOptions!"
+        [tooltip]="chartOptions.tooltip!"
+        [fill]="chartOptions.fill!">
+      </apx-chart>
+    </div>
+
+    <!-- Legend -->
+    <div class="custom-legend">
+      @for (item of currentData; track trackByCategory($index, item)) {
+        <div
+          class="legend-item"
+          >
+          <div class="legend-indicator">
+            <div class="color-dot" [style.background-color]="item.color"></div>
+            <i-feather [name]="item.icon" class="legend-icon" [style.color]="item.color"></i-feather>
+          </div>
+          <div class="legend-details">
+            <div class="legend-label">{{ item.category }}</div>
+            <div class="legend-stats">
+              <span class="guest-count">{{ item.value }}</span>
+              <span class="percentage">({{ item.percentage }}%)</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-footer">
+      <div class="summary-item">
+        <i-feather name="trending-up" class="summary-icon"></i-feather>
+        <span class="summary-text">{{ totalGuests }} total active guests</span>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

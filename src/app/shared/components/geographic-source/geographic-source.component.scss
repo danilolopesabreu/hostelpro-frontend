@@ -1,0 +1,185 @@
+.geographic-source {
+  .countries-breakdown {
+    .breakdown-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 16px;
+      margin-top: 0;
+    }
+
+    .countries-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      .country-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        background-color: #f8f9fa;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background-color: #e9ecef;
+          transform: translateY(-1px);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .country-info {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          flex: 1;
+
+          .country-flag {
+            font-size: 1.2rem;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+
+          .country-details {
+            .country-name {
+              font-weight: 500;
+              color: #2c3e50;
+              margin-bottom: 4px;
+              font-size: 16px;
+            }
+
+            .country-stats {
+              display: flex;
+              gap: 12px;
+
+              .bookings {
+                font-size: 0.85rem;
+                color: #6c757d;
+              }
+
+              .revenue {
+                font-size: 0.85rem;
+                color: #28a745;
+                font-weight: 500;
+              }
+            }
+          }
+        }
+
+        .country-metrics {
+          min-width: 150px;
+          text-align: right;
+
+          .metrics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+
+            .percentage {
+              font-weight: 600;
+              color: #495057;
+            }
+
+            .growth {
+              display: flex;
+              align-items: center;
+              gap: 4px;
+              font-size: 0.8rem;
+              font-weight: 500;
+
+              &.positive {
+                color: #28a745;
+              }
+
+              &.negative {
+                color: #dc3545;
+              }
+
+              &.neutral {
+                color: #6c757d;
+              }
+
+              .growth-icon {
+                width: 14px;
+                height: 14px;
+              }
+            }
+          }
+
+          .progress-container {
+            ::ng-deep {
+              .mat-mdc-progress-bar {
+                height: 6px;
+                border-radius: 3px;
+                overflow: hidden;
+
+                .mdc-linear-progress__bar-inner {
+                  border-color: var(--progress-color) !important;
+                }
+
+                .mdc-linear-progress__buffer-bar {
+                  background-color: #e9ecef !important;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .geographic-source {
+    .geographic-overview {
+      .overview-stats {
+        flex-direction: column;
+        gap: 16px;
+        align-items: center;
+        text-align: center;
+      }
+    }
+
+    .countries-breakdown {
+      .countries-list {
+        .country-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+
+          .country-info {
+            width: 100%;
+          }
+
+          .country-metrics {
+            width: 100%;
+            text-align: left;
+
+            .metrics-header {
+              justify-content: flex-start;
+              gap: 16px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+::ng-deep .dark {
+  .geographic-source {
+    .countries-breakdown .countries-list .country-item {
+      background-color: rgba(0, 0, 0, 0.3) !important;
+      .country-info .country-flag {
+        background-color: rgba(0, 0, 0, 0.5) !important;
+      }
+    }
+  }
+}

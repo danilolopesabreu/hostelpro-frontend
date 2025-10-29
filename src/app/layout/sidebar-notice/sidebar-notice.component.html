@@ -1,0 +1,252 @@
+<mat-tab-group class="modern-tabs">
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="tab-icon">event</mat-icon>
+      <span class="tab-label">Events</span>
+    </ng-template>
+    <div class="events-container">
+      <div class="events-header">
+        <h3 class="events-title">Upcoming Events</h3>
+        <button mat-icon-button class="refresh-btn" (click)="refreshEvents()" matTooltip="Refresh events">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+
+      <div class="events-list">
+        @for (event of events; track event; let i = $index) {
+          <div class="event-card" [class.unread]="!event.isRead"
+            [class.priority]="event.priority === 'high'" [class.expanded]="event.expanded"
+            (click)="toggleEventExpansion(i)">
+            <!-- Status indicator -->
+            <div class="status-indicator" [class.unread-indicator]="!event.isRead"
+              [class.priority-indicator]="event.priority === 'high'">
+            </div>
+            <div class="event-content">
+              <!-- Time section -->
+              <div class="time-section">
+                <div class="date-badge" [class]="'badge-' + event.colorScheme">
+                  <span class="date-text">{{ event.date }}</span>
+                  <span class="time-text">{{ event.time }}</span>
+                </div>
+              </div>
+              <!-- Main content -->
+              <div class="main-content">
+                <div class="event-header">
+                  <h4 class="event-title">{{ event.title }}</h4>
+                  <div class="event-meta">
+                    @if (event.priority === 'high') {
+                      <mat-icon class="priority-icon">priority_high</mat-icon>
+                    }
+                    @if (event.hasAttachment) {
+                      <mat-icon class="attachment-icon">attach_file</mat-icon>
+                    }
+                  </div>
+                </div>
+                <p class="event-description" [class.expanded]="event.expanded">
+                  {{ event.description }}
+                </p>
+                <!-- Expandable details -->
+                @if (event.expanded) {
+                  <div class="event-details">
+                    @if (event.location) {
+                      <div class="detail-item">
+                        <mat-icon class="material-icons-outlined">location_on</mat-icon>
+                        <span>{{ event.location }}</span>
+                      </div>
+                    }
+                    @if (event.organizer) {
+                      <div class="detail-item">
+                        <mat-icon class="material-icons-outlined">person</mat-icon>
+                        <span>{{ event.organizer }}</span>
+                      </div>
+                    }
+                    @if (event.attachments && event.attachments.length) {
+                      <div class="attachments">
+                        <h5>Attachments:</h5>
+                        <div class="attachment-list">
+                          @for (attachment of event.attachments; track attachment) {
+                            <div class="attachment-item">
+                              <mat-icon>description</mat-icon>
+                              <span>{{ attachment.name }}</span>
+                              <button mat-icon-button (click)="downloadAttachment(attachment); $event.stopPropagation()">
+                                <mat-icon>download</mat-icon>
+                              </button>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+              <!-- Action icons -->
+              <div class="action-icons">
+                <mat-icon class="action-icon mark-read material-icons-outlined"
+                  (click)="toggleReadStatus(i); $event.stopPropagation()"
+                  [matTooltip]="event.isRead ? 'Mark as unread' : 'Mark as read'">
+                  {{ event.isRead ? 'mark_email_unread' : 'mark_email_read' }}
+                </mat-icon>
+                <mat-icon class="action-icon delete material-icons-outlined"
+                  (click)="deleteEvent(i); $event.stopPropagation()" matTooltip="Delete event">
+                  delete
+                </mat-icon>
+                <mat-icon class="action-icon expand material-icons-outlined" (click)="$event.stopPropagation()"
+                  [matTooltip]="event.expanded ? 'Collapse' : 'Expand'">
+                  {{ event.expanded ? 'expand_less' : 'expand_more' }}
+                </mat-icon>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Empty state -->
+        @if (events.length === 0) {
+          <div class="empty-state">
+            <mat-icon class="empty-icon">event_busy</mat-icon>
+            <h4>No events scheduled</h4>
+            <p>Your upcoming events will appear here</p>
+          </div>
+        }
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="tab-icon">settings</mat-icon>
+      <span class="tab-label">Settings</span>
+    </ng-template>
+    <div class="settings-container">
+      <div class="settings-header">
+        <h3 class="settings-title">Notification Preferences</h3>
+      </div>
+
+      <!-- Security Settings Section -->
+      <div class="settings-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">security</mat-icon>
+          <h4 class="section-title">Security Settings</h4>
+        </div>
+
+        <div class="settings-list">
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">Two-Factor Authentication</div>
+              <div class="setting-description">Add an extra layer of security to your account</div>
+            </div>
+            <div class="setting-control">
+              <mat-slide-toggle [(ngModel)]="securitySettings.twoFactorAuth" color="primary"
+                (change)="onSettingChange('twoFactorAuth', $event.checked)">
+              </mat-slide-toggle>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">Password Rotation</div>
+              <div class="setting-description">Require password change every 3 months</div>
+            </div>
+            <div class="setting-control">
+              <mat-slide-toggle [(ngModel)]="securitySettings.passwordRotation" color="primary"
+                (change)="onSettingChange('passwordRotation', $event.checked)">
+              </mat-slide-toggle>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">Auto Logout</div>
+              <div class="setting-description">Automatically logout after inactivity</div>
+            </div>
+            <div class="setting-control">
+              <mat-slide-toggle [(ngModel)]="securitySettings.autoLogout" color="primary"
+                (change)="onSettingChange('autoLogout', $event.checked)">
+              </mat-slide-toggle>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">Mobile OTP Login</div>
+              <div class="setting-description">Use mobile OTP for secure login</div>
+            </div>
+            <div class="setting-control">
+              <mat-slide-toggle [(ngModel)]="securitySettings.mobileOtp" color="primary"
+                (change)="onSettingChange('mobileOtp', $event.checked)">
+              </mat-slide-toggle>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notification Settings Section -->
+      <div class="settings-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">notifications</mat-icon>
+          <h4 class="section-title">Notification Settings</h4>
+        </div>
+
+        <div class="settings-list">
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">Message Notifications</div>
+              <div class="setting-description">Receive alerts for new messages</div>
+            </div>
+            <div class="setting-control">
+              <mat-slide-toggle [(ngModel)]="notificationSettings.messages" color="primary"
+                (change)="onSettingChange('messageNotifications', $event.checked)">
+              </mat-slide-toggle>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">Security Alerts</div>
+              <div class="setting-description">Get notified about security events</div>
+            </div>
+            <div class="setting-control">
+              <mat-slide-toggle [(ngModel)]="notificationSettings.security" color="primary"
+                (change)="onSettingChange('securityNotifications', $event.checked)">
+              </mat-slide-toggle>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">Email Notifications</div>
+              <div class="setting-description">Receive notifications via email</div>
+            </div>
+            <div class="setting-control">
+              <mat-slide-toggle [(ngModel)]="notificationSettings.email" color="primary"
+                (change)="onSettingChange('emailNotifications', $event.checked)">
+              </mat-slide-toggle>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">Event Reminders</div>
+              <div class="setting-description">Get reminded about upcoming events</div>
+            </div>
+            <div class="setting-control">
+              <mat-slide-toggle [(ngModel)]="notificationSettings.events" color="primary"
+                (change)="onSettingChange('eventReminders', $event.checked)">
+              </mat-slide-toggle>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="settings-actions">
+        <button mat-stroked-button color="primary" (click)="saveSettings()">
+          <mat-icon>save</mat-icon>
+          Save Changes
+        </button>
+        <button mat-stroked-button (click)="resetSettings()">
+          <mat-icon>restore</mat-icon>
+          Reset to Default
+        </button>
+      </div>
+    </div>
+  </mat-tab>
+</mat-tab-group>

@@ -1,0 +1,138 @@
+{
+  "menu": [
+    {
+      "type": "devider",
+      "name": "devider-dashboards"
+    },
+    {
+      "route": "vendas",
+      "name": "vendas",
+      "type": "sub",
+      "icon": "space_dashboard",
+      "children": [
+        {
+          "route": "vender",
+          "name": "vender",
+          "type": "link"
+        },
+        {
+          "route": "realizadas",
+          "name": "realizadas",
+          "type": "link"
+        }
+      ],
+      "permissions": {
+        "only": "ADMIN"
+      }
+    },
+    {
+      "route": "emp_dashboard",
+      "name": "emp_dashboard",
+      "type": "link",
+      "icon": "airplay",
+      "permissions": {
+        "only": [
+          "EMPLOYEE"
+        ]
+      }
+    },
+    {
+      "route": "",
+      "name": "sessions",
+      "type": "sub",
+      "icon": "error_outline",
+      "children": [
+        {
+          "route": "403",
+          "name": "403",
+          "type": "link"
+        },
+        {
+          "route": "404",
+          "name": "404",
+          "type": "link"
+        },
+        {
+          "route": "500",
+          "name": "500",
+          "type": "link"
+        }
+      ],
+      "permissions": {
+        "only": "ADMIN"
+      }
+    },
+    {
+     "route": "utilities",
+      "name": "utilities",
+      "type": "sub",
+      "icon": "tune",
+      "label": {
+        "color": "indigo-500",
+        "value": "new"
+      },
+      "permissions": {
+        "only": "ADMIN"
+      },
+      "children": [
+        {
+          "route": "css-grid",
+          "name": "css-grid",
+          "type": "link"
+        },
+        {
+          "route": "css-helpers",
+          "name": "css-helpers",
+          "type": "link"
+        }
+      ]
+    },
+    {
+      "route": "menu-level",
+      "name": "menu-level",
+      "type": "sub",
+      "icon": "unfold_more",
+      "children": [
+        {
+          "route": "level-1-1",
+          "name": "level-1-1",
+          "type": "sub",
+          "children": [
+            {
+              "route": "level-2-1",
+              "name": "level-2-1",
+              "type": "sub",
+              "children": [
+                {
+                  "route": "level-3-1",
+                  "name": "level-3-1",
+                  "type": "sub",
+                  "children": [
+                    {
+                      "route": "level-4-1",
+                      "name": "level-4-1",
+                      "type": "link"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "route": "level-2-2",
+              "name": "level-2-2",
+              "type": "link"
+            }
+          ]
+        },
+        {
+          "route": "level-1-2",
+          "name": "level-1-2",
+          "type": "link"
+        }
+      ],
+      "permissions": {
+        "only": "ADMIN"
+      }
+    }
+  ]
+}

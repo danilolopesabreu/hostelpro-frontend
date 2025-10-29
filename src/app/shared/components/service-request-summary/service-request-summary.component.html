@@ -1,0 +1,80 @@
+<mat-card class="service-request-summary">
+  <mat-card-header>
+    <mat-card-title>
+      <i-feather name="bell" class="title-icon"></i-feather>
+      Service Requests
+    </mat-card-title>
+    <mat-card-subtitle>
+      Active requests requiring attention
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <!-- Summary Stats -->
+    <div class="summary-stats">
+      <div class="stat-item pending">
+        <div class="stat-value">{{ pendingRequests.length }}</div>
+        <div class="stat-label">Pending</div>
+      </div>
+      <div class="stat-item progress">
+        <div class="stat-value">{{ inProgressRequests.length }}</div>
+        <div class="stat-label">In Progress</div>
+      </div>
+      <div class="stat-item urgent">
+        <div class="stat-value">{{ highPriorityRequests.length }}</div>
+        <div class="stat-label">High Priority</div>
+      </div>
+    </div>
+
+    <!-- Recent Requests -->
+    <div class="requests-section">
+      <div class="section-header">
+        <span class="section-title">Recent Requests</span>
+        <button mat-button class="view-all-btn">View All</button>
+      </div>
+
+      <ng-scrollbar style="height: 200px" visibility="hover">
+        <div class="requests-list">
+          @for (request of serviceRequests.slice(0, 4); track trackByRequestId($index, request)) {
+            <div class="request-item"
+              [ngClass]="getPriorityClass(request.priority)">
+              <div class="request-icon">
+                <i-feather [name]="getServiceIcon(request.type)" class="service-icon"></i-feather>
+              </div>
+              <div class="request-details">
+                <div class="request-title">{{ request.title }}</div>
+                <div class="request-meta">
+                  <span class="room-number">Room {{ request.roomNumber }}</span>
+                  <span class="time-ago">{{ formatTimeAgo(request.timestamp) }}</span>
+                </div>
+              </div>
+              <div class="request-status">
+                <span class="status-badge" [ngClass]="getStatusClass(request.status)">
+                  {{ request.status | titlecase }}
+                </span>
+                @if (request.estimatedTime) {
+                  <div class="estimated-time">
+                    <i-feather name="clock" class="time-icon"></i-feather>
+                    {{ request.estimatedTime }}m
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </ng-scrollbar>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <button mat-button class="action-btn" matBadge="{{ pendingRequests.length }}" matBadgeColor="warn">
+        <i-feather name="clock" class="btn-icon"></i-feather>
+        Handle Pending
+      </button>
+      <button mat-button class="action-btn" matBadge="{{ highPriorityRequests.length }}" matBadgeColor="accent">
+        <i-feather name="alert-triangle" class="btn-icon"></i-feather>
+        Urgent Only
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>

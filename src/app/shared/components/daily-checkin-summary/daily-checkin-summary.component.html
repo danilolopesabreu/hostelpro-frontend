@@ -1,0 +1,46 @@
+<mat-card class="daily-checkin-summary">
+  <mat-card-header>
+    <mat-card-title>Today's Activity</mat-card-title>
+    <mat-card-subtitle>{{ currentDate }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="summary-grid">
+      <!-- Check-ins -->
+      <div class="summary-item checkins">
+        <div class="icon-container">
+          <i-feather name="log-in" class="summary-icon"></i-feather>
+        </div>
+        <div class="summary-details">
+          <div class="count">{{ todayCheckIns }}</div>
+          <div class="label">Check-ins</div>
+          <div class="change"
+            [ngClass]="{'positive': checkInChange > 0, 'negative': checkInChange < 0, 'neutral': checkInChange === 0}">
+            <i-feather [name]="checkInChange > 0 ? 'arrow-up' : checkInChange < 0 ? 'arrow-down' : 'minus'"
+              class="change-icon">
+            </i-feather>
+            <span>{{ checkInChange > 0 ? '+' : '' }}{{ checkInChange }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Check-outs -->
+      <div class="summary-item checkouts">
+        <div class="icon-container">
+          <i-feather name="log-out" class="summary-icon"></i-feather>
+        </div>
+        <div class="summary-details">
+          <div class="count">{{ todayCheckOuts }}</div>
+          <div class="label">Check-outs</div>
+          <div class="change"
+            [ngClass]="{'positive': checkOutChange > 0, 'negative': checkOutChange < 0, 'neutral': checkOutChange === 0}">
+            <i-feather [name]="checkOutChange > 0 ? 'arrow-up' : checkOutChange < 0 ? 'arrow-down' : 'minus'"
+              class="change-icon">
+            </i-feather>
+            <span>{{ checkOutChange > 0 ? '+' : '' }}{{ checkOutChange }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,67 @@
+<mat-card class="room-status-widget">
+  <mat-card-header>
+    <mat-card-title>Room Status Overview</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="status-overview">
+      <div class="overall-stats">
+        <div class="occupancy-rate">
+          <div class="rate-value">{{ occupancyRate }}%</div>
+          <div class="rate-label">Occupancy Rate</div>
+        </div>
+        <div class="total-rooms">
+          <div class="total-value">{{ totalRooms }}</div>
+          <div class="total-label">Total Rooms</div>
+        </div>
+      </div>
+
+      <div class="chart-section">
+        <apx-chart [series]="chartOptions.series!" [chart]="chartOptions.chart!" [labels]="chartOptions.labels!"
+          [colors]="chartOptions.colors!" [legend]="chartOptions.legend!" [plotOptions]="chartOptions.plotOptions!"
+          [dataLabels]="chartOptions.dataLabels!" [tooltip]="chartOptions.tooltip!">
+        </apx-chart>
+      </div>
+    </div>
+
+    <div class="status-breakdown">
+      <div class="status-list">
+        @for (status of roomStatuses; track status.status) {
+        <div class="status-item">
+          <div class="status-info">
+            <div class="status-icon" [style.background-color]="status.color">
+              <i-feather [name]="status.icon" class="icon"></i-feather>
+            </div>
+            <div class="status-details">
+              <span class="status-name">{{ status.status }}</span>
+              <span class="status-count">{{ status.count }} rooms</span>
+            </div>
+          </div>
+          <div class="status-percentage">
+            {{ status.percentage }}%
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="room-types-section">
+      <h4 class="section-title">Room Type Occupancy</h4>
+      <div class="room-types-list">
+        @for (room of roomTypes; track room.type) {
+        <div class="room-type-item">
+          <div class="room-type-header">
+            <span class="room-type-name">{{ room.type }}</span>
+            <span class="room-type-ratio">{{ room.occupied }}/{{ room.total }}</span>
+          </div>
+          <div class="room-type-progress">
+            <mat-progress-bar mode="determinate" [value]="room.rate"
+              [color]="room.rate > 70 ? 'primary' : room.rate > 40 ? 'accent' : 'warn'">
+            </mat-progress-bar>
+            <span class="progress-percentage">{{ room.rate }}%</span>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

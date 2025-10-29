@@ -1,0 +1,193 @@
+.revenue-summary-card {
+  .total-revenue-section {
+    padding: 16px 0;
+
+    .total-amount {
+      text-align: center;
+
+      .amount {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 8px;
+      }
+
+      .change {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-bottom: 4px;
+        font-weight: 600;
+
+        &.positive {
+          color: #28a745;
+        }
+
+        &.negative {
+          color: #dc3545;
+        }
+
+        .trend-icon {
+          width: 18px;
+          height: 18px;
+        }
+
+        .percentage {
+          font-size: 0.9rem;
+          opacity: 0.8;
+        }
+      }
+
+      .period-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+      }
+    }
+  }
+
+  .section-divider {
+    margin: 20px 0;
+  }
+
+  .revenue-breakdown {
+    .breakdown-header {
+      margin-bottom: 16px;
+
+      h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+    }
+
+    .category-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      .category-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .category-info {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+
+          .category-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .icon {
+              width: 20px;
+              height: 20px;
+              color: white;
+            }
+          }
+
+          .category-details {
+            .category-name {
+              font-size: 0.95rem;
+              font-weight: 500;
+              color: #495057;
+              margin-bottom: 2px;
+            }
+
+            .category-amount {
+              font-size: 1.1rem;
+              font-weight: 500;
+            }
+          }
+        }
+
+        .category-metrics {
+          text-align: right;
+
+          .percentage {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 4px;
+          }
+
+          .change {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+
+            &.positive {
+              color: #28a745;
+            }
+
+            &.negative {
+              color: #dc3545;
+            }
+
+            &.neutral {
+              color: #6c757d;
+            }
+
+            .change-icon {
+              width: 14px;
+              height: 14px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .revenue-summary-card {
+    .total-revenue-section {
+      .total-amount {
+        .amount {
+          font-size: 2rem;
+        }
+
+        .change {
+          font-size: 0.9rem;
+        }
+      }
+    }
+
+    .revenue-breakdown {
+      .category-list {
+        .category-item {
+          .category-info {
+            .category-icon {
+              width: 36px;
+              height: 36px;
+
+              .icon {
+                width: 18px;
+                height: 18px;
+              }
+            }
+
+            .category-details {
+              .category-name {
+                font-size: 0.9rem;
+              }
+
+              .category-amount {
+                font-size: 1rem;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

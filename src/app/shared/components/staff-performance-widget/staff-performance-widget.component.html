@@ -1,0 +1,110 @@
+<mat-card class="staff-performance-widget">
+  <mat-card-header>
+    <mat-card-title>Staff Performance</mat-card-title>
+    <mat-card-subtitle>Team productivity and efficiency metrics</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="performance-overview">
+      <div class="overview-stats">
+        <div class="stat-item">
+          <div class="stat-value">{{ averagePerformance }}%</div>
+          <div class="stat-label">Avg Performance</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ totalStaff }}</div>
+          <div class="stat-label">Total Staff</div>
+        </div>
+      </div>
+    </div>
+
+    <mat-tab-group mat-align-tabs="center" class="performance-tabs">
+      <mat-tab label="Top Performers">
+        <div class="top-performers-list">
+          @for (staff of topPerformers; track staff.id) {
+            <div class="performer-item">
+              <div class="performer-info">
+                <div class="performer-avatar">
+                  <img [src]="staff.avatar" [alt]="staff.name" />
+                </div>
+                <div class="performer-details">
+                  <div class="performer-name">{{ staff.name }}</div>
+                  <div class="performer-department">{{ staff.department }}</div>
+                </div>
+              </div>
+              
+              <div class="performer-metrics">
+                <div class="metric-item">
+                  <span class="metric-label">Performance</span>
+                  <div class="metric-progress">
+                    <mat-progress-bar 
+                      mode="determinate" 
+                      [value]="staff.performance"
+                      [color]="staff.performance >= 90 ? 'primary' : 'accent'">
+                    </mat-progress-bar>
+                    <span class="metric-value">{{ staff.performance }}%</span>
+                  </div>
+                </div>
+                
+                <div class="metric-item">
+                  <span class="metric-label">Tasks</span>
+                  <span class="metric-text">{{ staff.completedTasks }}/{{ staff.tasks }}</span>
+                </div>
+                
+                <div class="metric-item">
+                  <span class="metric-label">Rating</span>
+                  <div class="rating-display">
+                    <i-feather name="star" class="rating-star"></i-feather>
+                    <span class="rating-value">{{ staff.rating }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </mat-tab>
+      
+      <mat-tab label="Departments">
+        <div class="department-performance">
+          <div class="chart-container">
+            <apx-chart 
+              [series]="chartOptions.series!" 
+              [chart]="chartOptions.chart!"
+              [xaxis]="chartOptions.xaxis!"
+              [yaxis]="chartOptions.yaxis!"
+              [stroke]="chartOptions.stroke!"
+              [dataLabels]="chartOptions.dataLabels!"
+              [grid]="chartOptions.grid!"
+              [tooltip]="chartOptions.tooltip!"
+              [fill]="chartOptions.fill!"
+              [plotOptions]="chartOptions.plotOptions!"
+              [colors]="chartOptions.colors!">
+            </apx-chart>
+          </div>
+          
+          <div class="department-stats">
+            @for (dept of departmentStats; track dept.department) {
+              <div class="department-item">
+                <div class="department-header">
+                  <span class="department-name">{{ dept.department }}</span>
+                  <span class="staff-count">{{ dept.staffCount }} staff</span>
+                </div>
+                <div class="department-metrics">
+                  <div class="metric">
+                    <span class="metric-label">Performance:</span>
+                    <span class="metric-value" [style.color]="getPerformanceColor(dept.avgPerformance)">
+                      {{ dept.avgPerformance }}%
+                    </span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-label">Completion Rate:</span>
+                    <span class="metric-value">{{ dept.completionRate }}%</span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

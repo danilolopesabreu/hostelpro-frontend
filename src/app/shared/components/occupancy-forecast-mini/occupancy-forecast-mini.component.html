@@ -1,0 +1,94 @@
+<mat-card class="occupancy-forecast-mini">
+  <mat-card-header>
+    <mat-card-title>
+      <i-feather name="trending-up" class="title-icon"></i-feather>
+      7-Day Occupancy Forecast
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <!-- Summary Stats -->
+    <div class="forecast-summary">
+      <div class="summary-item average">
+        <div class="summary-value">{{ averageOccupancy }}%</div>
+        <div class="summary-label">Avg Occupancy</div>
+      </div>
+      <div class="summary-item peak">
+        <div class="summary-value">{{ peakDay.occupancyRate }}%</div>
+        <div class="summary-label">Peak ({{ peakDay.date }})</div>
+      </div>
+      <div class="summary-item lowest">
+        <div class="summary-value">{{ lowestDay.occupancyRate }}%</div>
+        <div class="summary-label">Lowest ({{ lowestDay.date }})</div>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="chart-container">
+      <apx-chart
+        [series]="chartOptions.series!"
+        [chart]="chartOptions.chart!"
+        [xaxis]="chartOptions.xaxis!"
+        [yaxis]="chartOptions.yaxis!"
+        [stroke]="chartOptions.stroke!"
+        [dataLabels]="chartOptions.dataLabels!"
+        [grid]="chartOptions.grid!"
+        [tooltip]="chartOptions.tooltip!"
+        [fill]="chartOptions.fill!"
+        [markers]="chartOptions.markers!"
+        [colors]="chartOptions.colors!">
+      </apx-chart>
+    </div>
+
+    <!-- Daily Breakdown -->
+    <div class="daily-breakdown">
+      <div class="breakdown-header">
+        <span class="breakdown-title">Daily Breakdown</span>
+      </div>
+
+      <div class="days-list">
+        @for (day of forecastData; track trackByDate($index, day)) {
+          <div
+            class="day-item"
+            [ngClass]="getOccupancyClass(day.occupancyRate)">
+            <div class="day-header">
+              <div class="day-info">
+                <span class="day-name">{{ day.date }}</span>
+                <span class="day-of-week">{{ day.dayOfWeek }}</span>
+              </div>
+              <div class="occupancy-rate">{{ day.occupancyRate }}%</div>
+            </div>
+            <div class="room-stats">
+              <div class="stat-item occupied">
+                <i-feather name="users" class="stat-icon"></i-feather>
+                <span class="stat-count">{{ day.occupiedRooms }}</span>
+                <span class="stat-label">Occupied</span>
+              </div>
+              <div class="stat-item available">
+                <i-feather name="home" class="stat-icon"></i-feather>
+                <span class="stat-count">{{ day.availableRooms }}</span>
+                <span class="stat-label">Available</span>
+              </div>
+              <div class="stat-item reserved">
+                <i-feather name="bookmark" class="stat-icon"></i-feather>
+                <span class="stat-count">{{ day.reservedRooms }}</span>
+                <span class="stat-label">Reserved</span>
+              </div>
+            </div>
+            <div class="occupancy-bar">
+              <div class="bar-fill" [style.width.%]="day.occupancyRate"></div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Status Indicator -->
+    <div class="status-indicator">
+      <i-feather name="activity" class="status-icon"></i-feather>
+      <span class="status-text">
+        Current trend: {{ getOccupancyStatus(averageOccupancy) }} occupancy expected
+      </span>
+    </div>
+  </mat-card-content>
+</mat-card>

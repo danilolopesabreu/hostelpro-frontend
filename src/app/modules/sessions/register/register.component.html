@@ -1,0 +1,83 @@
+<div class="register-container">
+  <div class="register-image-container">
+    <img src="assets/images/pages/bg-02.png" alt="Register Image" class="register-image">
+  </div>
+  <div class="register-form-section">
+    <div class="register-logo">
+      <img src="assets/images/logo.png" alt="Logo">
+    </div>
+    <h2 class="welcome-msg">Create Your Account!</h2>
+    <h2 class="register-title">Sign Up</h2>
+    <form class="register-form" [formGroup]="registerForm">
+      <mat-form-field appearance="outline">
+        <mat-label>Username</mat-label>
+        <input matInput placeholder="Enter your username" formControlName="username" required>
+        <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>face</mat-icon>
+        @if (registerForm.get('username')?.invalid && (registerForm.get('username')?.dirty || registerForm.get('username')?.touched)) {
+          <mat-error>
+            <span>Username is required.</span>
+          </mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput placeholder="Enter your password" [type]="hide ? 'password' : 'text'" formControlName="password" required>
+        <a href="#" onClick="return false;" matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+          <mat-icon class="material-icons-outlined color-icon m-12" matSuffix>
+          {{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </a>
+        @if (registerForm.get('password')?.invalid && (registerForm.get('password')?.dirty || registerForm.get('password')?.touched)) {
+          <mat-error>
+            <span>Password is required.</span>
+          </mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Confirm Password</mat-label>
+        <input matInput placeholder="Confirm your password" [type]="chide ? 'password' : 'text'" formControlName="confirmPassword" required>
+        <a href="#" onClick="return false;" matSuffix (click)="chide = !chide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="chide">
+          <mat-icon class="material-icons-outlined color-icon m-12" matSuffix>
+          {{chide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </a>
+        @if (registerForm.get('confirmPassword')?.hasError('required')) {
+          <mat-error>
+            <span>Confirm password is required.</span>
+          </mat-error>
+        }
+        @if (registerForm.get('confirmPassword')?.hasError('mismatch')) {
+          <mat-error>
+            <span>Passwords do not match.</span>
+          </mat-error>
+        }
+      </mat-form-field>
+      <div class="form-options">
+        <mat-checkbox formControlName="agreeTerms">I agree to the Terms & Conditions</mat-checkbox>
+      </div>
+      <button class="register-btn" mat-flat-button color="primary" [disabled]="registerForm.invalid || isSubmitting" (click)="register()">
+        @if (!isSubmitting) {
+          <span>Sign Up</span>
+        }
+        @if (isSubmitting) {
+          <mat-spinner [diameter]="20"></mat-spinner>
+        }
+      </button>
+    </form>
+    <div class="social-login">
+      <p>Or sign up with</p>
+      <div class="social-icons">
+        <button class="social-icon google">
+          <img src="assets/images/social/google.png" alt="Google">
+        </button>
+        <button class="social-icon apple">
+          <img src="assets/images/social/apple.png" alt="Apple">
+        </button>
+        <button class="social-icon facebook">
+          <img src="assets/images/social/facebook.png" alt="Facebook">
+        </button>
+      </div>
+    </div>
+    <div class="login-link">
+      <p>Already have an account? <a routerLink="/auth/login">Sign In</a></p>
+    </div>
+  </div>
+</div>

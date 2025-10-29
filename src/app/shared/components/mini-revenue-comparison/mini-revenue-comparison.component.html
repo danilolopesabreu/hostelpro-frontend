@@ -1,0 +1,50 @@
+<mat-card class="mini-revenue-comparison">
+  <mat-card-content>
+    <div class="revenue-header">
+      <div class="revenue-info">
+        <h3 class="revenue-title">Today's Revenue</h3>
+        <div class="revenue-amount">${{ todayRevenue.toLocaleString() }}</div>
+      </div>
+      <div class="revenue-icon">
+        <i-feather name="trending-up" class="trend-icon"></i-feather>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <apx-chart 
+        [series]="chartOptions.series!" 
+        [chart]="chartOptions.chart!"
+        [xaxis]="chartOptions.xaxis!"
+        [yaxis]="chartOptions.yaxis!"
+        [stroke]="chartOptions.stroke!"
+        [dataLabels]="chartOptions.dataLabels!"
+        [grid]="chartOptions.grid!"
+        [tooltip]="chartOptions.tooltip!"
+        [colors]="chartOptions.colors!">
+      </apx-chart>
+    </div>
+
+    <div class="comparison-stats">
+      <div class="stat-item">
+        <span class="stat-label">vs. Last Week</span>
+        <span class="stat-value" [ngClass]="{'positive': weeklyChange > 0, 'negative': weeklyChange < 0}">
+          <i-feather 
+            [name]="weeklyChange > 0 ? 'arrow-up' : 'arrow-down'" 
+            class="change-icon">
+          </i-feather>
+          {{ weeklyChange > 0 ? '+' : '' }}{{ weeklyChange.toFixed(1) }}%
+        </span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">vs. Last Year</span>
+        <span class="stat-value" [ngClass]="{'positive': yearlyChange > 0, 'negative': yearlyChange < 0}">
+          <i-feather 
+            [name]="yearlyChange > 0 ? 'arrow-up' : 'arrow-down'" 
+            class="change-icon">
+          </i-feather>
+          {{ yearlyChange > 0 ? '+' : '' }}{{ yearlyChange.toFixed(1) }}%
+        </span>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

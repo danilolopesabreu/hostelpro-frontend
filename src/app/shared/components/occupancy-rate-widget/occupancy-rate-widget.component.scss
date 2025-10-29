@@ -1,0 +1,116 @@
+.occupancy-rate-widget {
+  .occupancy-metrics {
+    margin-bottom: 20px;
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+
+      .current-rate {
+        .rate-value {
+          font-size: 2.5rem;
+          font-weight: 700;
+          color: #ff6b6b;
+          line-height: 1;
+        }
+
+        .rate-label {
+          font-size: 0.9rem;
+          color: #6c757d;
+          margin-top: 4px;
+        }
+      }
+
+      .rate-change {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+
+        &.positive {
+          background-color: rgba(40, 167, 69, 0.1);
+          color: #28a745;
+
+          .trend-icon {
+            color: #28a745;
+          }
+        }
+
+        &.negative {
+          background-color: rgba(220, 53, 69, 0.1);
+          color: #dc3545;
+
+          .trend-icon {
+            color: #dc3545;
+          }
+        }
+
+        .trend-icon {
+          width: 18px;
+          height: 18px;
+        }
+      }
+    }
+
+    .additional-metrics {
+      display: flex;
+      gap: 24px;
+
+      .metric-item {
+        display: flex;
+        flex-direction: column;
+
+        .metric-label {
+          font-size: 0.8rem;
+          color: #6c757d;
+          margin-bottom: 4px;
+        }
+
+        .metric-value {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #6c757d;
+        }
+      }
+    }
+  }
+
+  .chart-container {
+    margin-top: 16px;
+
+    ::ng-deep {
+      .apexcharts-canvas {
+        margin: 0 auto;
+      }
+
+      .apexcharts-tooltip {
+        background: rgba(0, 0, 0, 0.8) !important;
+        border: none !important;
+        border-radius: 8px !important;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .occupancy-rate-widget {
+    .occupancy-metrics {
+      .metric-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .additional-metrics {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+  }
+}
