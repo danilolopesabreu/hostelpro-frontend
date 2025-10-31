@@ -59,7 +59,7 @@ const MONITOR_MEDIAQUERY = 'screen and (min-width: 960px)';
     RouterOutlet,
     FooterComponent,
     MatTooltipModule,
-    CdkDrag,
+   // CdkDrag,
     MatButtonModule,
     MatIconModule,
     FeatherModule,

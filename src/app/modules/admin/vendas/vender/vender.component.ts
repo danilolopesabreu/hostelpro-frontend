@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener, ViewChild, TemplateRef } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { OccupancyService } from './occupancy.service';
 import { Occupancy, RoomStatus } from './occupancy.model';
 import { CommonModule } from '@angular/common';
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -19,6 +20,12 @@ import { GuestDetailsDialogComponent } from './guest-details-dialog/guest-detail
 import { MatDialog } from '@angular/material/dialog';
 import { AddGuestDetailsDialogComponent } from './add-guest-details-dialog/add-guest-details-dialog.component';
 import { debounceTime, Subject } from 'rxjs';
+import { MatDivider } from '@angular/material/divider';
+import { MatList, MatListItem } from '@angular/material/list';
+import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { ProdutoService } from '@shared/components/produto/produto.service';
+import { Produto } from '@shared/components/produto/produto.model';
 
 @Component({
   selector: 'app-vender',
@@ -43,412 +50,160 @@ import { debounceTime, Subject } from 'rxjs';
   styleUrl: './vender.component.scss',
 })
 export class VenderComponent {
-  occupancy: Occupancy[] = [];
-  filteredRooms: Occupancy[] = [];
-  roomTypes: string[] = [];
-  bedSizes: string[] = [];
-  floors: number[] = [];
-  statuses: RoomStatus[] = [
-    'Available',
-    'Booked',
-    'Occupied',
-    'Cleaning',
-    'Maintenance',
-    'Out of Order',
-    'Reserved',
-  ];
-  housekeepingStatuses: string[] = [
-    'Clean',
-    'Dirty',
-    'Inspected',
-    'Out of Order',
-  ];
-
-  // Filter properties
-  selectedStatus: RoomStatus | '' = '';
-  selectedType = '';
-  selectedBed = '';
-  selectedFloor: number | '' = '';
-  selectedHousekeeping = '';
+  @ViewChild('painelResumoConfirmacaoPedido') painelResumoConfirmacaoPedido!: TemplateRef<any>;
   searchText = '';
-  checkInDate: Date | null = null;
-  checkOutDate: Date | null = null;
+  clienteNome = '';
+  numeroQuarto: string | null = null;
+  produtos: Produto[] = [];
+  products = [
+    { id: 1, name: 'Água Mineral 500ml', price: 3.9, description: 'Água leve e pura', image: 'assets/images/avatars/agua-mineral.jpg', newPrice: 0, editing: false },
+    { id: 2, name: 'Coca-Cola Lata Descr Muito Longa', price: 5.5, description: '350ml gelada', image: 'assets/images/avatars/coca.jpg', newPrice: 0, editing: false },
+    { id: 3, name: 'Água Mineral 1L', price: 7.9, description: 'Água leve e pura', image: 'assets/images/avatars/agua-mineral.jpg', newPrice: 0, editing: false },
+    { id: 4, name: 'Coca-Cola Lata 200ml', price: 5.5, description: '350ml gelada', image: 'assets/images/avatars/coca.jpg', newPrice: 0, editing: false },
+    { id: 5, name: 'Coca-Cola Lata 350ml', price: 5.5, description: '350ml gelada', image: 'assets/images/avatars/coca.jpg', newPrice: 0, editing: false },
+    // outros produtos...
+  ];
 
-  // Search debouncing
-  private searchSubject = new Subject<string>();
-
-  // Statistics
-  totalRooms = 0;
-  availableRooms = 0;
-  occupiedRooms = 0;
-  maintenanceRooms = 0;
-  occupancyRate = 0;
-
-  // Current date for display
-  currentDate = new Date();
+  cartItems: any[] = [];
+  cartItemsConfirmado: any[] = [];
+  pedidoFinalizado: boolean = false;
+  isLargeScreen = true;
 
   constructor(
-    private occupancyService: OccupancyService,
-    private dialog: MatDialog
-  ) {
-    // Setup search debouncing
-    this.searchSubject.pipe(debounceTime(300)).subscribe(() => {
-      this.filterRooms();
-    });
+    private dialog: MatDialog, 
+    private breakpointObserver: BreakpointObserver,
+    private produtoService: ProdutoService) { 
+
   }
 
-  // Auto-refresh functionality
-  private autoRefreshInterval?: any;
-  autoRefreshEnabled = false;
-  private readonly AUTO_REFRESH_INTERVAL = 30000; // 30 seconds
 
   ngOnInit(): void {
-    this.loadOccupancyData();
-    this.setupAutoRefresh();
+    this.checkScreenSize();
+    this.carregarProdutos();
   }
 
-  ngOnDestroy(): void {
-    if (this.autoRefreshInterval) {
-      clearInterval(this.autoRefreshInterval);
-    }
-  }
-
-  private loadOccupancyData(): void {
-    this.occupancyService.getOccupancy().subscribe((data) => {
-      // Add animation for data loading
-      this.animateDataLoad(() => {
-        this.occupancy = data;
-        this.filteredRooms = data;
-        this.calculateStatistics();
-
-        // Extract unique values for filter dropdowns
-        this.roomTypes = [...new Set(this.occupancy.map((room) => room.type))];
-        this.bedSizes = [...new Set(this.occupancy.map((room) => room.bed))];
-        this.floors = [
-          ...new Set(this.occupancy.map((room) => room.floor)),
-        ].sort((a, b) => a - b);
-      });
+  carregarProdutos(): void {
+    this.produtoService.listarProdutosPorEstabelecimento(1).subscribe({
+      next: (dados) => {this.produtos = dados; console.log(dados)},
+      error: (err) => console.error('Erro ao buscar produtos:', err)
     });
   }
 
-  private animateDataLoad(callback: () => void): void {
-    const container = document.querySelector('.rooms-grid');
-    if (container) {
-      container.classList.add('loading');
-      setTimeout(() => {
-        callback();
-        container.classList.remove('loading');
-        container.classList.add('loaded');
-        setTimeout(() => container.classList.remove('loaded'), 1000);
-      }, 300);
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScreenSize();
+    this.breakpointObserver.observe([Breakpoints.Handset, Breakpoints.Tablet])
+      .subscribe(result => this.isLargeScreen = !result.matches);
+  }
+
+  abrirDialogResumo(): void {
+    this.dialog.open(this.painelResumoConfirmacaoPedido, {
+      width: '95vw',
+      maxWidth: '600px',
+      panelClass: 'dialog-resumo-pedido',
+      disableClose: true
+    });
+  }
+
+  checkScreenSize() {
+    this.isLargeScreen = window.innerWidth >= 992; // breakpoint "lg" do Bootstrap
+  }
+
+  finalizarPedido() {
+    if (!this.clienteNome || !this.numeroQuarto) {
+      alert('Informe o nome do cliente e número do quarto!');
+      return;
+    }
+
+    // Aqui você poderia enviar os dados para o backend...
+    this.pedidoFinalizado = true;
+  }
+
+  fecharPedido() {
+    // Limpa carrinho e volta para modo vendas
+    this.cartItems = [];
+    this.clienteNome = '';
+    this.numeroQuarto = '';
+    this.pedidoFinalizado = false;
+    this.dialog.closeAll();
+  }
+
+  fecharModalResumo() {
+    this.dialog.closeAll()
+  }
+
+  // Adiciona produto ao carrinho (ou incrementa quantidade se já existe)
+  addToCart(product: any) {
+    // procura se o produto já existe no carrinho
+    const existing = this.cartItems.find(item => item.id === product.id);
+
+    if (existing) {
+      existing.quantity++;
     } else {
-      callback();
+      // importante: usar o mesmo objeto para que alterações reflitam no carrinho
+      this.cartItems.push({ ...product, quantity: 1, _ref: product });
     }
   }
 
-  private setupAutoRefresh(): void {
-    // Auto-refresh can be enabled/disabled by users
-    if (this.autoRefreshEnabled) {
-      this.autoRefreshInterval = setInterval(() => {
-        this.refreshData();
-      }, this.AUTO_REFRESH_INTERVAL);
+
+  // Incrementa a quantidade do item
+  incrementItem(item: any) {
+    item.quantity++;
+  }
+
+  // Decrementa a quantidade do item (removendo se for 0)
+  decrementItem(item: any) {
+    item.quantity--;
+    if (item.quantity <= 0) {
+      this.removeItem(item);
     }
   }
 
-  refreshData(): void {
-    this.currentDate = new Date();
-    this.loadOccupancyData();
+  // Remove item do carrinho
+  removeItem(item: any) {
+    this.cartItems = this.cartItems.filter(i => i.nome !== item.nome);
+    this.fecharModalQtdItemProdutoZerado();
   }
 
-  toggleAutoRefresh(): void {
-    this.autoRefreshEnabled = !this.autoRefreshEnabled;
+  fecharModalQtdItemProdutoZerado() {
+    if (this.cartItems.length == 0) {
+      this.dialog.closeAll();
+    }
+  }
 
-    if (this.autoRefreshEnabled) {
-      this.setupAutoRefresh();
-      this.showUpdateMessage('Auto-refresh enabled (30s intervals)');
-    } else {
-      if (this.autoRefreshInterval) {
-        clearInterval(this.autoRefreshInterval);
-        this.autoRefreshInterval = undefined;
+  // Calcula o total do pedido
+  getTotal(): number {
+    return this.cartItems.reduce((total, item) => total + (item.preco * item.quantity), 0);
+  }
+
+  getTotalConfirmado(): number {
+    return this.cartItemsConfirmado.reduce((total, item) => total + (item.preco * item.quantity), 0);
+  }
+
+  getTotalQuantity(): number {
+    return this.cartItems.reduce((total, item) => total + item.quantity, 0);
+  }
+  editPrice(product: any, event: Event) {
+    event.preventDefault(); // evita rolagem da página por causa do link
+    product.editando = true;
+    product.novoPreco = product.preco;
+  }
+
+  confirmEdit(product: any) {
+    if (product.novoPreco > 0) {
+      product.preco = product.novoPreco;
+
+      // atualiza também no carrinho
+      const cartItem = this.cartItems.find(item => item.id === product.id);
+      if (cartItem) {
+        cartItem.preco = product.novoPreco;
       }
-      this.showUpdateMessage('Auto-refresh disabled');
     }
+    product.editando = false;
   }
 
-  calculateStatistics(): void {
-    this.totalRooms = this.occupancy.length;
-    this.availableRooms = this.occupancy.filter(
-      (room) => room.status === 'Available'
-    ).length;
-    this.occupiedRooms = this.occupancy.filter(
-      (room) => room.status === 'Occupied' || room.status === 'Booked'
-    ).length;
-    this.maintenanceRooms = this.occupancy.filter(
-      (room) => room.status === 'Maintenance' || room.status === 'Out of Order'
-    ).length;
-    this.occupancyRate = Math.round(
-      (this.occupiedRooms / this.totalRooms) * 100
-    );
+  cancelEdit(product: any) {
+    product.editando = false;
   }
 
-  onSearchChange(): void {
-    this.searchSubject.next(this.searchText);
-  }
-
-  filterRooms(): void {
-    this.filteredRooms = this.occupancy.filter((room) => {
-      const statusMatch = this.selectedStatus
-        ? room.status === this.selectedStatus
-        : true;
-      const typeMatch = this.selectedType
-        ? room.type === this.selectedType
-        : true;
-      const bedMatch = this.selectedBed ? room.bed === this.selectedBed : true;
-      const floorMatch = this.selectedFloor
-        ? room.floor === this.selectedFloor
-        : true;
-      const housekeepingMatch = this.selectedHousekeeping
-        ? room.housekeepingStatus === this.selectedHousekeeping
-        : true;
-
-      // Text search in room number, guest name, or booking reference
-      const textMatch = this.searchText
-        ? room.roomNo.toString().includes(this.searchText.toLowerCase()) ||
-          (room.guestDetails?.personalInfo?.name
-            ?.toLowerCase()
-            .includes(this.searchText.toLowerCase()) ??
-            false) ||
-          (room.guestDetails?.reservationInfo?.bookingReference
-            ?.toLowerCase()
-            .includes(this.searchText.toLowerCase()) ??
-            false)
-        : true;
-
-      // Date range filter
-      const dateMatch =
-        this.checkInDate || this.checkOutDate ? this.isDateInRange(room) : true;
-
-      return (
-        statusMatch &&
-        typeMatch &&
-        bedMatch &&
-        floorMatch &&
-        housekeepingMatch &&
-        textMatch &&
-        dateMatch
-      );
-    });
-  }
-
-  private isDateInRange(room: Occupancy): boolean {
-    if (!room.guestDetails?.reservationInfo) return true;
-
-    const roomCheckIn = new Date(room.guestDetails.reservationInfo.checkInDate);
-    const roomCheckOut = new Date(
-      room.guestDetails.reservationInfo.checkOutDate
-    );
-
-    if (this.checkInDate && this.checkOutDate) {
-      return (
-        roomCheckIn >= this.checkInDate && roomCheckOut <= this.checkOutDate
-      );
-    } else if (this.checkInDate) {
-      return roomCheckIn >= this.checkInDate;
-    } else if (this.checkOutDate) {
-      return roomCheckOut <= this.checkOutDate;
-    }
-
-    return true;
-  }
-
-  clearFilters(): void {
-    this.selectedStatus = '';
-    this.selectedType = '';
-    this.selectedBed = '';
-    this.selectedFloor = '';
-    this.selectedHousekeeping = '';
-    this.searchText = '';
-    this.checkInDate = null;
-    this.checkOutDate = null;
-    this.filterRooms();
-  }
-
-  getStatusColor(status: RoomStatus): string {
-    const statusColors: { [key in RoomStatus]: string } = {
-      Available: '#4caf50',
-      Booked: '#ff9800',
-      Occupied: '#f44336',
-      Cleaning: '#2196f3',
-      Maintenance: '#9c27b0',
-      'Out of Order': '#607d8b',
-      Reserved: '#ff5722',
-    };
-    return statusColors[status] || '#757575';
-  }
-
-  getStatusIcon(status: RoomStatus): string {
-    const statusIcons: { [key in RoomStatus]: string } = {
-      Available: 'check-circle',
-      Booked: 'event',
-      Occupied: 'person',
-      Cleaning: 'cleaning_services',
-      Maintenance: 'build',
-      'Out of Order': 'warning',
-      Reserved: 'event-available',
-    };
-    return statusIcons[status] || 'help';
-  }
-
-  getRoomPriorityColor(priority?: string): string {
-    switch (priority) {
-      case 'High':
-        return '#f44336';
-      case 'Medium':
-        return '#ff9800';
-      case 'Low':
-        return '#4caf50';
-      default:
-        return '#757575';
-    }
-  }
-
-  openGuestDetailsDialog(room: Occupancy): void {
-    const dialogRef = this.dialog.open(GuestDetailsDialogComponent, {
-      width: '80vw',
-      maxWidth: '1200px',
-      maxHeight: '90vh',
-      data: { room },
-      autoFocus: false,
-      panelClass: 'custom-dialog-container',
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result?.action === 'edit') {
-        // Open edit dialog
-        this.openAddGuestDetailsDialog(result.room, true);
-      }
-    });
-  }
-
-  openAddGuestDetailsDialog(room: Occupancy, isEdit: boolean = false): void {
-    const dialogRef = this.dialog.open(AddGuestDetailsDialogComponent, {
-      width: '70vw',
-      maxWidth: '900px',
-      maxHeight: '90vh',
-      data: { room, isEdit },
-      autoFocus: false,
-      panelClass: 'custom-dialog-container',
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        console.log('Guest Details Submitted:', result);
-
-        // Animate the room card update
-        this.updateRoomWithAnimation(room, result);
-      }
-    });
-  }
-
-  private updateRoomWithAnimation(room: Occupancy, guestData: any): void {
-    // Find the room element for animation
-    const roomElement = document.querySelector(`[data-room-id="${room.id}"]`);
-
-    if (roomElement) {
-      // Add loading animation
-      roomElement.classList.add('updating');
-
-      // Simulate processing delay for better UX
-      setTimeout(() => {
-        // Update room data
-        room.status = 'Booked' as any;
-        room.guestDetails = {
-          personalInfo: guestData.personalInfo,
-          reservationInfo: guestData.reservationInfo,
-          specialRequests: guestData.specialRequests || '',
-          vipStatus: guestData.vipStatus,
-          loyaltyPoints: guestData.loyaltyPoints,
-        };
-
-        // Update statistics and filters
-        this.calculateStatistics();
-        this.filterRooms();
-
-        // Remove loading animation and add success animation
-        roomElement.classList.remove('updating');
-        roomElement.classList.add('updated');
-
-        // Remove success animation after delay
-        setTimeout(() => {
-          roomElement.classList.remove('updated');
-        }, 2000);
-
-        // Show success message
-        this.showUpdateMessage('Guest details saved successfully!');
-      }, 800);
-    } else {
-      // Fallback update without animation
-      room.status = 'Booked' as any;
-      room.guestDetails = {
-        personalInfo: guestData.personalInfo,
-        reservationInfo: guestData.reservationInfo,
-        specialRequests: guestData.specialRequests || '',
-        vipStatus: guestData.vipStatus,
-        loyaltyPoints: guestData.loyaltyPoints,
-      };
-      this.calculateStatistics();
-      this.filterRooms();
-    }
-  }
-
-  private showUpdateMessage(message: string): void {
-    // Create and show a temporary success message
-    const messageElement = document.createElement('div');
-    messageElement.className = 'update-message';
-    messageElement.textContent = message;
-    messageElement.innerHTML = `
-      <span>${message}</span>
-    `;
-
-    document.body.appendChild(messageElement);
-
-    // Animate in
-    setTimeout(() => messageElement.classList.add('show'), 100);
-
-    // Remove after delay
-    setTimeout(() => {
-      messageElement.classList.remove('show');
-      setTimeout(() => document.body.removeChild(messageElement), 300);
-    }, 3000);
-  }
-
-  private generateBookingReference(): string {
-    return 'BK' + Math.random().toString(36).substr(2, 9).toUpperCase();
-  }
-
-  canAddGuest(room: Occupancy): boolean {
-    return room.status === 'Available' || room.status === 'Cleaning';
-  }
-
-  canViewGuest(room: Occupancy): boolean {
-    return (
-      room.status === 'Booked' ||
-      room.status === 'Occupied' ||
-      room.status === 'Reserved'
-    );
-  }
-
-  getActionText(room: Occupancy): string {
-    if (this.canViewGuest(room)) return 'Guest Details';
-    if (this.canAddGuest(room)) return 'Add Guest';
-    return 'Unavailable';
-  }
-
-  handleRoomAction(room: Occupancy): void {
-    if (this.canViewGuest(room)) {
-      this.openGuestDetailsDialog(room);
-    } else if (this.canAddGuest(room)) {
-      this.openAddGuestDetailsDialog(room);
-    }
-  }
 }

@@ -23,7 +23,7 @@ export const defaults: AppSettings = {
   showFooter: true,
   footerPos: 'static',
   showUserPanel: false,
-  sidenavOpened: true,
+  sidenavOpened: false,
   sidenavCollapsed: false,
   language: 'pt-BR',
 };

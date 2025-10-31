@@ -1,175 +1,174 @@
-<div class="filterBody form-field-full">
-    <div class="filter-header">
-      <h3 class="filter-title">Consultar Produtos</h3>
-    </div>
+<div class="container-fluid">
+  <div class="row">
 
-    <div class="row">
-      <div class="col-md-12 m-b-16">
-        <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
-          <mat-label>Procurar</mat-label>
-          <input matInput [(ngModel)]="searchText" (ngModelChange)="onSearchChange()"
-            placeholder="Agua, coca, cerveja...">
-          <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
+    <!-- Coluna principal -->
+    <div [ngClass]="cartItems.length > 0 && isLargeScreen ? 'col-md-9' : 'col-md-12'">
+      <div class="filterBody form-field-full">
+        <div class="filter-header">
+          <h3 class="filter-title">Consultar Produtos</h3>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12 m-b-16">
+            <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+              <mat-label>Procurar</mat-label>
+              <input matInput [(ngModel)]="searchText" placeholder="Água, coca, cerveja..." />
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- Produtos -->
+      <div class="row">
+        <div class="col-sm-4" *ngFor="let produto of produtos">
+          <mat-card>
+            <mat-card-content>
+              <div class="d-flex justify-center info-box3">
+                <div class="p-4 w-full">
+                  <div class="d-flex justify-between">
+                    <img style="height: 100px;" [src]="produto.imagem" />
+                    <div class="m-l-16 m-r-16 w-full">
+                      <div class="p-0">
+                        <h3 class="userName">{{ produto.nome }}</h3>
+                        <p>{{ produto.descricao }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex justify-content-center items-center m-t-1 m-b-1">
+                    <div class="form-actions">
+                      <button mat-raised-button color="primary" (click)="addToCart(produto)">
+                        <mat-icon>exposure_plus_1</mat-icon> Adicionar
+                      </button>
+
+                      <!-- Preço ou campo de edição -->
+                      <ng-container *ngIf="!produto.editando">
+                        <a href="#" style="font-weight: bold; text-decoration: none; color: inherit;"
+                           (click)="editPrice(produto, $event)">
+                          R$ {{ produto.preco | number:'1.2-2' }}
+                        </a>
+                      </ng-container>
+
+                      <ng-container *ngIf="produto.editando">
+                        <mat-form-field appearance="outline"
+                          style="width:90px; min-width:90px; margin:0; display:inline-flex; vertical-align:middle; padding-left: 5px;">
+                          <input matInput type="number" step="0.01" min="0" [(ngModel)]="produto.novoPreco"
+                            placeholder="R$" style="text-align:right;">
+                        </mat-form-field>
+
+                        <button mat-icon-button color="primary" (click)="confirmEdit(produto)">
+                          <mat-icon>check</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" (click)="cancelEdit(produto)">
+                          <mat-icon>close</mat-icon>
+                        </button>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
       </div>
     </div>
+
+    <!-- Painel lateral (somente telas grandes) -->
+    <div class="col-md-3" *ngIf="(cartItems.length > 0 || pedidoFinalizado) && isLargeScreen">
+      <ng-container *ngTemplateOutlet="painelResumoConfirmacaoPedido"></ng-container>
+    </div>
+
+  </div>
 </div>
 
-<div class="row">
 
-    <div class="col-sm-4">
-        <mat-card>
-            <mat-card-content>
-                <div class="d-flex justify-center info-box3">
-                    <div class="p-4 w-full">
-                        <div class="d-flex justify-between">
-                            <img style="height: 100px;" src="assets/images/avatars/agua-mineral.jpg" >
+<!-- Template reutilizável -->
+<ng-template #painelResumoConfirmacaoPedido>
+  <div class="filterBody form-field-full cart-panel">
+    <ng-container *ngIf="!pedidoFinalizado">
+      <div class="cart-header mb-3">
+        <h3 class="cart-title">Resumo do Pedido</h3>
+      </div>
 
-                            <div class="m-l-16 m-r-16 w-full">
-                                <div class="p-0">
-                                    <h3 class="userName">Agua Mineral Cristal 500ml</h3>
-                                    <p>Agua Mineral Cristal Agua Mineral Cristal Agua Mineral Cristal Agua Mineral Cristal </p>
-                                </div>
-                            </div>
-                            
-                        </div>
-                        <div class="d-flex justify-content-center items-center m-t-1 m-b-1">
-                            <div class="form-actions">
-                                <button mat-raised-button color="primary" type="submit">
-                                <mat-icon>exposure_plus_1</mat-icon>
-                                    Adicionar 
-                                </button>
-                                <a href="#" style="padding-left: 10px; font-weight: bold;"> R$ 3,90 </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
-    </div>
-      
-    <div class="col-sm-4">
-        <mat-card>
-            <mat-card-content>
-                <div class="d-flex justify-center info-box3">
-                    <div class="p-4 w-full">
-                        <div class="d-flex justify-between">
-                            <img style="height: 100px;" src="assets/images/avatars/agua-mineral.jpg" >
+      <div class="mb-3">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Nome do Cliente</mat-label>
+          <input matInput [(ngModel)]="clienteNome" placeholder="Digite o nome" />
+        </mat-form-field>
 
-                            <div class="m-l-16 m-r-16 w-full">
-                                <div class="p-0">
-                                    <h3 class="userName">Agua Mineral Cristal 500ml</h3>
-                                    <p>Agua Mineral Cristal </p>
-                                </div>
-                            </div>
-                            
-                        </div>
-                        <div class="d-flex justify-content-center items-center m-t-1 m-b-1">
-                            <div class="form-actions">
-                                <button mat-raised-button color="primary" type="submit">
-                                <mat-icon>exposure_plus_1</mat-icon>
-                                    Adicionar 
-                                </button>
-                                <a href="#" style="padding-left: 10px; font-weight: bold;"> R$ 3,90 </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
-    </div>
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Número do Quarto</mat-label>
+          <input matInput [(ngModel)]="numeroQuarto" placeholder="Ex: 101" />
+        </mat-form-field>
+      </div>
 
-    <div class="col-sm-4">
-        <mat-card>
-            <mat-card-content>
-                <div class="d-flex justify-center info-box3">
-                    <div class="p-4 w-full">
-                        <div class="d-flex justify-between">
-                            <img style="height: 100px;" src="assets/images/avatars/agua-mineral.jpg" >
+      <ul class="list-group mb-3" style="padding-inline-start:5px">
+        <li style="padding-bottom: 5px; border-bottom: 1px solid #ddd; margin-bottom: 5px;"
+            class="list-group-item d-flex justify-content-between align-items-center"
+            *ngFor="let item of cartItems">
+          <div> 
+            <label style="font-size: 1rem">{{ item.nome }}</label><br>
+            <b>R$ {{ item.preco | number:'1.2-2' }} x {{ item.quantity }}</b>
+          </div>
+          <div class="d-flex align-items-center">
+            <button mat-icon-button (click)="incrementItem(item)" matTooltip="Adicionar">
+              <mat-icon>add_circle_outline</mat-icon>
+            </button>
+            <button mat-icon-button (click)="decrementItem(item)" matTooltip="Reduzir">
+              <mat-icon>do_not_disturb_on</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="removeItem(item)" matTooltip="Remover">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </li>
+      </ul>
 
-                            <div class="m-l-16 m-r-16 w-full">
-                                <div class="p-0">
-                                    <h3 class="userName">Agua Mineral Cristal 500ml</h3>
-                                    <p></p>
-                                </div>
-                            </div>
-                            
-                        </div>
-                        <div class="d-flex justify-content-center items-center m-t-1 m-b-1">
-                            <div class="form-actions">
-                                <button mat-raised-button color="primary" type="submit">
-                                <mat-icon>exposure_plus_1</mat-icon>
-                                    Adicionar 
-                                </button>
-                                <a href="#" style="padding-left: 10px; font-weight: bold;"> R$ 3,90 </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
-    </div>
-    
-    <div class="col-sm-4">
-        <mat-card>
-            <mat-card-content>
-                <div class="d-flex justify-center info-box3">
-                    <div class="p-4 w-full">
-                        <div class="d-flex justify-between">
-                            <img style="height: 100px;" src="assets/images/avatars/agua-mineral.jpg" >
+      <div class="mt-3" style="padding-inline-start:5px">
+        <h3>Total: R$ {{ getTotal() | number:'1.2-2' }}</h3>
+        <button mat-raised-button color="primary" class="w-100 mt-2" (click)="finalizarPedido()">
+          Finalizar Pedido
+        </button>
+        <button mat-raised-button color="primary" style="margin-left: 20px;" class="w-100 mt-3" (click)="fecharModalResumo()">
+          Fechar
+        </button>
+      </div>
+    </ng-container>
 
-                            <div class="m-l-16 m-r-16 w-full">
-                                <div class="p-0">
-                                    <h3 class="userName">Agua Mineral Cristal 500ml</h3>
-                                    <p>Agua Mineral Cristal Agua Mineral Cristal Agua Mineral Cristal Agua Mineral Cristal </p>
-                                </div>
-                            </div>
-                            
-                        </div>
-                        <div class="d-flex justify-content-center items-center m-t-1 m-b-1">
-                            <div class="form-actions">
-                                <button mat-raised-button color="primary" type="submit">
-                                <mat-icon>exposure_plus_1</mat-icon>
-                                    Adicionar 
-                                </button>
-                                <a href="#" style="padding-left: 10px; font-weight: bold;"> R$ 3,90 </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
-    </div>
-    
-    <div class="col-sm-4">
-        <mat-card>
-            <mat-card-content>
-                <div class="d-flex justify-center info-box3">
-                    <div class="p-4 w-full">
-                        <div class="d-flex justify-between">
-                            <img style="height: 100px;" src="assets/images/avatars/agua-mineral.jpg" >
+    <ng-container *ngIf="pedidoFinalizado">
+      <div class="cart-header mb-3">
+        <h3 class="cart-title">Pedido Confirmado</h3>
+      </div>
+      <div class="mb-3" style="padding-inline-start:5px;">
+        <p><b>Cliente:</b> {{ clienteNome }}</p>
+        <p><b>Quarto:</b> {{ numeroQuarto }}</p>
+        <p><b>Total:</b> R$ {{ getTotal() | number:'1.2-2' }}</p>
 
-                            <div class="m-l-16 m-r-16 w-full">
-                                <div class="p-0">
-                                    <h3 class="userName">Agua Mineral Cristal 500ml</h3>
-                                    <p>Agua Mineral Cristal Agua Mineral Cristal Agua Mineral Cristal Agua Mineral Cristal </p>
-                                </div>
-                            </div>
-                            
-                        </div>
-                        <div class="d-flex justify-content-center items-center m-t-1 m-b-1">
-                            <div class="form-actions">
-                                <button mat-raised-button color="primary" type="submit">
-                                <mat-icon>exposure_plus_1</mat-icon>
-                                    Adicionar 
-                                </button>
-                                <a href="#" style="padding-left: 10px; font-weight: bold;"> R$ 3,90 </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
-    </div>  
-      
-</div>
+        <ul class="list-group" style="padding-left: 0;">
+          <li class="list-group-item d-flex justify-content-between align-items-center"
+              *ngFor="let item of cartItems">
+            <span>{{ item.nome }} (x{{ item.quantity }})</span>
+            <span>R$ {{ (item.preco * item.quantity) | number:'1.2-2' }}</span>
+          </li>
+        </ul>
+
+        <button mat-raised-button color="primary" class="w-100 mt-3" (click)="fecharPedido()">
+          Fechar
+        </button>
+      </div>
+    </ng-container>
+  </div>
+</ng-template>
+
+<!-- 🛒 Botão flutuante - visível apenas em telas pequenas -->
+<button *ngIf="!isLargeScreen && cartItems.length > 0"
+        mat-fab color="accent"
+        class="floating-cart-btn"
+        (click)="abrirDialogResumo()"
+        [matBadge]="getTotalQuantity()"
+        matBadgeColor="warn"
+        matBadgeOverlap="false"
+        matBadgePosition="above after">
+  <mat-icon>shopping_cart</mat-icon>
+</button>
