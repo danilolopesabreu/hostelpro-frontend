@@ -120,7 +120,7 @@
             *ngFor="let item of cartItems">
           <div> 
             <label style="font-size: 1rem">{{ item.nome }}</label><br>
-            <b>R$ {{ item.preco | number:'1.2-2' }} x {{ item.quantity }}</b>
+            <b>R$ {{ item.preco | number:'1.2-2' }} x {{ item.quantidadeVendida }}</b>
           </div>
           <div class="d-flex align-items-center">
             <button mat-icon-button (click)="incrementItem(item)" matTooltip="Adicionar">
@@ -159,8 +159,8 @@
         <ul class="list-group" style="padding-left: 0;">
           <li class="list-group-item d-flex justify-content-between align-items-center"
               *ngFor="let item of cartItems">
-            <span>{{ item.nome }} (x{{ item.quantity }})</span>
-            <span>R$ {{ (item.preco * item.quantity) | number:'1.2-2' }}</span>
+            <span>{{ item.nome }} (x{{ item.quantidadeVendida }})</span>
+            <span>R$ {{ (item.preco * item.quantidadeVendida) | number:'1.2-2' }}</span>
           </li>
         </ul>
 
@@ -177,7 +177,7 @@
         mat-fab color="accent"
         class="floating-cart-btn"
         (click)="abrirDialogResumo()"
-        [matBadge]="getTotalQuantity()"
+        [matBadge]="getTotalQuantidadeVendida()"
         matBadgeColor="warn"
         matBadgeOverlap="false"
         matBadgePosition="above after">

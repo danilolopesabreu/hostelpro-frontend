@@ -22,4 +22,5 @@ export class Pedido {
   constructor(init?: Partial<Pedido>) {
     Object.assign(this, init);
   }
+
 }

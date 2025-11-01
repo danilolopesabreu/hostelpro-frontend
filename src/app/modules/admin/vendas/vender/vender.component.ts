@@ -29,6 +29,9 @@ import { QuartoService } from '@shared/components/quarto/quarto.service';
 import { Produto } from '@shared/components/produto/produto.model';
 import { Quarto } from '@shared/components/quarto/quarto.model';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { Pedido } from '@shared/components/pedido/pedido.model';
+import { ItemPedido } from '@shared/components/pedido/itemPedido.model';
+import { PedidoService } from '@shared/components/pedido/pedido.service';
 
 @Component({
   selector: 'app-vender',
@@ -65,16 +68,19 @@ export class VenderComponent {
   quartoSelecionado?: Quarto;
   buscaChanged = new Subject<string>();
 
-  cartItems: any[] = [];
-  cartItemsConfirmado: any[] = [];
+  cartItems: Produto[] = [];
+  cartItemsConfirmado: Produto[] = [];
   pedidoFinalizado: boolean = false;
   isLargeScreen = true;
+
+  pedido?: Pedido;
 
   constructor(
     private dialog: MatDialog,
     private breakpointObserver: BreakpointObserver,
     private produtoService: ProdutoService,
-    private quartoService: QuartoService) {
+    private quartoService: QuartoService,
+    private pedidoService:PedidoService ) {
 
   }
 
@@ -177,6 +183,28 @@ export class VenderComponent {
       }
     }
 
+    let itensPedido = this.cartItems.map(produto =>
+      new ItemPedido({
+        produtoId: produto.id,
+        quantidade: produto.quantidadeVendida ?? 1,
+        precoUnitario: produto.preco,
+        precoTotal: (produto.preco ?? 0) * (produto.quantidadeVendida ?? 1),
+        produto: produto
+      })
+    );
+
+    this.pedido = new Pedido({
+      estabelecimentoId: 1,
+      usuarioId: 3,
+      quartoId: this.quartoSelecionado.id,
+      itens: itensPedido
+    });
+
+    this.pedidoService.criarPedido(this.pedido).subscribe({
+      next: (dados) => { console.log(dados) },
+      error: (err) => console.error('Erro ao criar pedido:', err)
+    });
+
     // Aqui você poderia enviar os dados para o backend...
     this.pedidoFinalizado = true;
     this.quartosFiltrados = this.quartos;
@@ -201,23 +229,23 @@ export class VenderComponent {
     const existing = this.cartItems.find(item => item.id === product.id);
 
     if (existing) {
-      existing.quantity++;
+      existing.quantidadeVendida++;
     } else {
       // importante: usar o mesmo objeto para que alterações reflitam no carrinho
-      this.cartItems.push({ ...product, quantity: 1, _ref: product });
+      this.cartItems.push({ ...product, quantidadeVendida: 1, _ref: product });
     }
   }
 
 
   // Incrementa a quantidade do item
   incrementItem(item: any) {
-    item.quantity++;
+    item.quantidadeVendida++;
   }
 
   // Decrementa a quantidade do item (removendo se for 0)
   decrementItem(item: any) {
-    item.quantity--;
-    if (item.quantity <= 0) {
+    item.quantidadeVendida--;
+    if (item.quantidadeVendida <= 0) {
       this.removeItem(item);
     }
   }
@@ -236,15 +264,15 @@ export class VenderComponent {
 
   // Calcula o total do pedido
   getTotal(): number {
-    return this.cartItems.reduce((total, item) => total + (item.preco * item.quantity), 0);
+    return this.cartItems.reduce((total, item) => total + (item.preco * item.quantidadeVendida), 0);
   }
 
   getTotalConfirmado(): number {
-    return this.cartItemsConfirmado.reduce((total, item) => total + (item.preco * item.quantity), 0);
+    return this.cartItemsConfirmado.reduce((total, item) => total + (item.preco * item.quantidadeVendida), 0);
   }
 
-  getTotalQuantity(): number {
-    return this.cartItems.reduce((total, item) => total + item.quantity, 0);
+  getTotalQuantidadeVendida(): number {
+    return this.cartItems.reduce((total, item) => total + item.quantidadeVendida, 0);
   }
   editPrice(product: any, event: Event) {
     event.preventDefault(); // evita rolagem da página por causa do link
