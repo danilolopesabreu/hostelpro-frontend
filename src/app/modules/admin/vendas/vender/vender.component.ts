@@ -25,7 +25,10 @@ import { MatList, MatListItem } from '@angular/material/list';
 import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { ProdutoService } from '@shared/components/produto/produto.service';
+import { QuartoService } from '@shared/components/quarto/quarto.service';
 import { Produto } from '@shared/components/produto/produto.model';
+import { Quarto } from '@shared/components/quarto/quarto.model';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-vender',
@@ -45,6 +48,7 @@ import { Produto } from '@shared/components/produto/produto.model';
     FormsModule,
     MatButtonModule,
     ReactiveFormsModule,
+    MatAutocompleteModule
   ],
   templateUrl: './vender.component.html',
   styleUrl: './vender.component.scss',
@@ -55,14 +59,11 @@ export class VenderComponent {
   clienteNome = '';
   numeroQuarto: string | null = null;
   produtos: Produto[] = [];
-  products = [
-    { id: 1, name: 'Água Mineral 500ml', price: 3.9, description: 'Água leve e pura', image: 'assets/images/avatars/agua-mineral.jpg', newPrice: 0, editing: false },
-    { id: 2, name: 'Coca-Cola Lata Descr Muito Longa', price: 5.5, description: '350ml gelada', image: 'assets/images/avatars/coca.jpg', newPrice: 0, editing: false },
-    { id: 3, name: 'Água Mineral 1L', price: 7.9, description: 'Água leve e pura', image: 'assets/images/avatars/agua-mineral.jpg', newPrice: 0, editing: false },
-    { id: 4, name: 'Coca-Cola Lata 200ml', price: 5.5, description: '350ml gelada', image: 'assets/images/avatars/coca.jpg', newPrice: 0, editing: false },
-    { id: 5, name: 'Coca-Cola Lata 350ml', price: 5.5, description: '350ml gelada', image: 'assets/images/avatars/coca.jpg', newPrice: 0, editing: false },
-    // outros produtos...
-  ];
+  produtosFiltrados: Produto[] = [];
+  quartos: Quarto[] = [];
+  quartosFiltrados: Quarto[] = [];
+  quartoSelecionado?: Quarto;
+  buscaChanged = new Subject<string>();
 
   cartItems: any[] = [];
   cartItemsConfirmado: any[] = [];
@@ -70,9 +71,10 @@ export class VenderComponent {
   isLargeScreen = true;
 
   constructor(
-    private dialog: MatDialog, 
+    private dialog: MatDialog,
     private breakpointObserver: BreakpointObserver,
-    private produtoService: ProdutoService) { 
+    private produtoService: ProdutoService,
+    private quartoService: QuartoService) {
 
   }
 
@@ -80,13 +82,60 @@ export class VenderComponent {
   ngOnInit(): void {
     this.checkScreenSize();
     this.carregarProdutos();
+    this.carregarQuartos();
+    this.buscaChanged.pipe(debounceTime(300)).subscribe(() => {
+      this.filtrarProdutos();
+    });
   }
 
   carregarProdutos(): void {
     this.produtoService.listarProdutosPorEstabelecimento(1).subscribe({
-      next: (dados) => {this.produtos = dados; console.log(dados)},
+      next: (dados) => { this.produtos = dados; this.produtosFiltrados = [...this.produtos]; },
       error: (err) => console.error('Erro ao buscar produtos:', err)
     });
+  }
+
+  carregarQuartos(): void {
+    this.quartoService.listarPorEstabelecimento(1).subscribe({
+      next: (dados) => { this.quartos = dados; this.quartosFiltrados = dados; },
+      error: (err) => console.error('Erro ao buscar quartos:', err)
+    });
+  }
+
+  filtrarProdutos() {
+    const termo = this.removerAcentos(this.searchText.trim().toLowerCase());
+    if (!termo) {
+      this.produtosFiltrados = [...this.produtos];
+    } else {
+      this.produtosFiltrados = this.produtos.filter(p => {
+        const nome = this.removerAcentos(p.nome.toLowerCase());
+        const descricao = this.removerAcentos(p.descricao.toLowerCase());
+        return nome.includes(termo) || descricao.includes(termo);
+      });
+    }
+  }
+
+  filtrarQuartos(valor: string): void {
+    const filtro = valor?.toLowerCase() || '';
+    this.quartosFiltrados = this.quartos.filter(q =>
+      q.numero.toLowerCase().includes(filtro)
+    );
+  }
+
+  selecionarQuarto(numeroSelecionado: string): void {
+    //this.numeroQuarto = numero;
+    console.log(numeroSelecionado);
+    this.quartoSelecionado = this.quartos.find(q => q.numero === numeroSelecionado);
+    console.log('Quarto selecionado:', this.quartoSelecionado);
+  }
+
+  // função utilitária para remover acentos e diacríticos
+  removerAcentos(texto: string): string {
+    return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  onInputChange() {
+    this.buscaChanged.next(this.searchText);
   }
 
   @HostListener('window:resize')
@@ -115,8 +164,22 @@ export class VenderComponent {
       return;
     }
 
+    if(!this.quartoSelecionado){
+      alert('Selecione um quarto!');
+      return;
+    }
+
+    if(this.numeroQuarto !== this.quartoSelecionado.numero){
+      this.quartoSelecionado = this.quartos.find(q => q.numero === this.numeroQuarto);
+      if(!this.quartoSelecionado){
+        alert('Numero do quarto informado não existe!');
+        return;
+      }
+    }
+
     // Aqui você poderia enviar os dados para o backend...
     this.pedidoFinalizado = true;
+    this.quartosFiltrados = this.quartos;
   }
 
   fecharPedido() {

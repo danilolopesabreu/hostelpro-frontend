@@ -1357,3 +1357,29 @@ button[mat-icon-button] {
     display: none;
   }
 }
+
+.produto-card {
+  display: flex;
+  flex-direction: column;
+  height: 200px;
+}
+
+.produto-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.info-box3 {
+  flex: 1;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 1px;
+}
+

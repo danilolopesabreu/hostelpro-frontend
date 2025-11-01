@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from 'environments/environment';
+import { environment } from '@env/environment';
 import { Produto } from './produto.model';
 
 @Injectable({
@@ -21,7 +21,7 @@ export class ProdutoService {
   }
 
   listarProdutosPorEstabelecimento(id: number): Observable<Produto[]> {
-    return this.http.get<Produto[]>(`${this.baseUrl}/estabelecimento/${id}`);
+    return this.http.get<Produto[]>(`${this.baseUrl}/estabelecimento/${id}/maisvendidos`);
   }
 
   /**

@@ -12,7 +12,7 @@
           <div class="col-md-12 m-b-16">
             <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
               <mat-label>Procurar</mat-label>
-              <input matInput [(ngModel)]="searchText" placeholder="Água, coca, cerveja..." />
+              <input matInput [(ngModel)]="searchText" (input)="onInputChange()"  placeholder="Água, coca, cerveja..." />
               <mat-icon matSuffix>search</mat-icon>
             </mat-form-field>
           </div>
@@ -21,55 +21,51 @@
 
       <!-- Produtos -->
       <div class="row">
-        <div class="col-sm-4" *ngFor="let produto of produtos">
-          <mat-card>
-            <mat-card-content>
-              <div class="d-flex justify-center info-box3">
-                <div class="p-4 w-full">
-                  <div class="d-flex justify-between">
-                    <img style="height: 100px;" [src]="produto.imagem" />
-                    <div class="m-l-16 m-r-16 w-full">
-                      <div class="p-0">
+        <div class="col-sm-4" *ngFor="let produto of produtosFiltrados">
+          <mat-card class="produto-card">
+            <mat-card-content class="produto-content">
+                <div class="info-box3">
+                    <div class="d-flex">
+                        <img style="height: 100px;" [src]="produto.imagem" />
+                        <div class="m-l-16 m-r-16 w-full">
                         <h3 class="userName">{{ produto.nome }}</h3>
                         <p>{{ produto.descricao }}</p>
-                      </div>
+                        </div>
                     </div>
-                  </div>
-
-                  <div class="d-flex justify-content-center items-center m-t-1 m-b-1">
-                    <div class="form-actions">
-                      <button mat-raised-button color="primary" (click)="addToCart(produto)">
-                        <mat-icon>exposure_plus_1</mat-icon> Adicionar
-                      </button>
-
-                      <!-- Preço ou campo de edição -->
-                      <ng-container *ngIf="!produto.editando">
-                        <a href="#" style="font-weight: bold; text-decoration: none; color: inherit;"
-                           (click)="editPrice(produto, $event)">
-                          R$ {{ produto.preco | number:'1.2-2' }}
-                        </a>
-                      </ng-container>
-
-                      <ng-container *ngIf="produto.editando">
-                        <mat-form-field appearance="outline"
-                          style="width:90px; min-width:90px; margin:0; display:inline-flex; vertical-align:middle; padding-left: 5px;">
-                          <input matInput type="number" step="0.01" min="0" [(ngModel)]="produto.novoPreco"
-                            placeholder="R$" style="text-align:right;">
-                        </mat-form-field>
-
-                        <button mat-icon-button color="primary" (click)="confirmEdit(produto)">
-                          <mat-icon>check</mat-icon>
-                        </button>
-                        <button mat-icon-button color="warn" (click)="cancelEdit(produto)">
-                          <mat-icon>close</mat-icon>
-                        </button>
-                      </ng-container>
-                    </div>
-                  </div>
                 </div>
-              </div>
+
+                <!-- Botões no rodapé -->
+                <div class="card-footer">
+                <button mat-raised-button color="primary" (click)="addToCart(produto)">
+                    <mat-icon>add_shopping_cart</mat-icon> Adicionar
+                </button>
+
+                <!-- Preço ou campo de edição -->
+                <ng-container *ngIf="!produto.editando">
+                    <a href="#" style="font-weight: bold; text-decoration: none; color: inherit;"
+                    (click)="editPrice(produto, $event)">
+                    R$ {{ produto.preco | number:'1.2-2' }}
+                    </a>
+                </ng-container>
+
+                <ng-container *ngIf="produto.editando">
+                    <mat-form-field appearance="outline"
+                    style="width:90px; min-width:90px; margin:0; display:inline-flex; vertical-align:middle; padding-left: 5px;">
+                    <input matInput type="number" step="0.01" min="0" [(ngModel)]="produto.novoPreco"
+                        placeholder="R$" style="text-align:right;">
+                    </mat-form-field>
+
+                    <button mat-icon-button color="primary" (click)="confirmEdit(produto)">
+                    <mat-icon>check</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" (click)="cancelEdit(produto)">
+                    <mat-icon>close</mat-icon>
+                    </button>
+                </ng-container>
+                </div>
             </mat-card-content>
-          </mat-card>
+            </mat-card>
+
         </div>
       </div>
     </div>
@@ -99,8 +95,23 @@
 
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Número do Quarto</mat-label>
-          <input matInput [(ngModel)]="numeroQuarto" placeholder="Ex: 101" />
+
+          <input
+            type="text"
+            matInput
+            [matAutocomplete]="auto"
+            [(ngModel)]="numeroQuarto"
+            (ngModelChange)="filtrarQuartos($event)"
+            placeholder="Ex: 101"
+          />
+
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selecionarQuarto($event.option.value)">
+            <mat-option *ngFor="let quarto of quartosFiltrados" [value]="quarto.numero">
+              {{ quarto.numero }} 
+            </mat-option>
+          </mat-autocomplete>
         </mat-form-field>
+
       </div>
 
       <ul class="list-group mb-3" style="padding-inline-start:5px">
