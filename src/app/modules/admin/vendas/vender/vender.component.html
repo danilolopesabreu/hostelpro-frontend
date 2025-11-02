@@ -141,7 +141,8 @@
         <button mat-raised-button color="primary" class="w-100 mt-2" (click)="finalizarPedido()">
           Finalizar Pedido
         </button>
-        <button mat-raised-button color="primary" style="margin-left: 20px;" class="w-100 mt-3" (click)="fecharModalResumo()">
+        <button mat-raised-button color="primary" style="margin-left: 20px;" 
+          class="w-100 mt-3" (click)="fecharModalResumo()" *ngIf="!isLargeScreen">
           Fechar
         </button>
       </div>

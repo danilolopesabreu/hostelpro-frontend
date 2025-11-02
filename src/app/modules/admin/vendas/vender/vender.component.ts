@@ -197,6 +197,8 @@ export class VenderComponent {
       estabelecimentoId: 1,
       usuarioId: 3,
       quartoId: this.quartoSelecionado.id,
+      nomeCliente: this.clienteNome,
+      status: 'aberto',
       itens: itensPedido
     });
 
@@ -274,13 +276,13 @@ export class VenderComponent {
   getTotalQuantidadeVendida(): number {
     return this.cartItems.reduce((total, item) => total + item.quantidadeVendida, 0);
   }
-  editPrice(product: any, event: Event) {
+  editPrice(product: Produto, event: Event) {
     event.preventDefault(); // evita rolagem da página por causa do link
     product.editando = true;
     product.novoPreco = product.preco;
   }
 
-  confirmEdit(product: any) {
+  confirmEdit(product: Produto) {
     if (product.novoPreco > 0) {
       product.preco = product.novoPreco;
 
@@ -289,6 +291,12 @@ export class VenderComponent {
       if (cartItem) {
         cartItem.preco = product.novoPreco;
       }
+
+      this.produtoService.atualizar(product.id, product).subscribe({
+        next: (dados) => { console.log(dados) },
+        error: (err) => console.error('Erro ao alterar o preco:', err)
+      });
+
     }
     product.editando = false;
   }
