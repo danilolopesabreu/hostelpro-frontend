@@ -5,7 +5,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '@core';
+import { AuthServiceLocal } from '@core';
 import { User } from '@core/models/interface';
 import { SettingsService } from '@core/services/settings.service';
 import { debounceTime, tap } from 'rxjs/operators';
@@ -79,7 +79,7 @@ export class UserComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private auth: AuthService,
+    private auth: AuthServiceLocal,
     private cdr: ChangeDetectorRef,
     private settings: SettingsService
   ) {}

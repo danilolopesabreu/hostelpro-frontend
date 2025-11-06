@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   Validators,
@@ -6,7 +6,7 @@ import {
   FormsModule,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '@core/services/auth.service';
+import { AuthService } from '@auth0/auth0-angular';
 import { TokenService } from '@core';
 import { NgxRolesService } from 'ngx-permissions';
 import { TranslateModule } from '@ngx-translate/core';
@@ -19,6 +19,7 @@ import { LocalStorageService } from '@shared';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SettingsService } from '@core/services/settings.service';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
@@ -37,10 +38,11 @@ import { SettingsService } from '@core/services/settings.service';
     RouterLink,
     ReactiveFormsModule,
     MatProgressSpinnerModule,
-    TranslateModule
-],
+    TranslateModule,
+    CommonModule
+  ],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   isSubmitting = false;
   error = '';
   hide = true;
@@ -54,16 +56,33 @@ export class LoginComponent {
     rememberMe: [false],
   });
 
+  private auth = inject(AuthService);
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private auth: AuthService,
+    //private auth: AuthService,
     private tokenService: TokenService,
     private rolesService: NgxRolesService,
     private store: LocalStorageService,
     private settings: SettingsService
   ) {
     this.themeStyle = this.options.theme;
+  }
+
+  ngOnInit(): void {
+    this.auth.isAuthenticated$.subscribe({
+      next: (isAutenticado) => {
+        console.log(isAutenticado)
+        if(!isAutenticado){
+          this.auth.loginWithRedirect();
+        } else {
+          //redirecionar
+          this.router.navigate(['/estabelecimento/cadastro']);
+        }
+      },
+      error: (err) => console.error('Erro', err)
+    });
   }
 
   get username() {
@@ -90,10 +109,10 @@ export class LoginComponent {
   }
   login() {
     this.isSubmitting = true;
-    this.auth.login(
+    /*this.auth.login(
       this.username.value,
       this.password.value,
       this.rememberMe.value
-    );
+    );*/
   }
 }

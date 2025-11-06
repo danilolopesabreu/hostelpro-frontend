@@ -7,15 +7,15 @@ import {
   UrlTree,
 } from '@angular/router';
 
-import { AuthService } from '@core/services/auth.service';
+import { AuthServiceLocal } from '@core/services/auth.service';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthGuard {
+export class AuthGuardLocal {
   constructor(
-    private authService: AuthService,
+    private authService: AuthServiceLocal,
     private router: Router,
     private store: LocalStorageService
   ) {}
@@ -33,12 +33,15 @@ export class AuthGuard {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean | Observable<boolean> | Promise<boolean> {
+
+    console.log('auth guard ativado')
+
     const roleArray = this.store.get('roleNames') || [''];
     const roles: string = route.data['role'];
 
     let inroll;
     let rolesArray: string[];
-    if (roles) {
+    /*if (roles) {
       if (String(roles).split(',').length > 1) {
         rolesArray = String(roles).split(',');
       } else {
@@ -59,7 +62,7 @@ export class AuthGuard {
           return false;
         }
       }
-    }
+    }*/
     return true;
   }
 }

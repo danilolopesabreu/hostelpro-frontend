@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { switchMap, tap } from 'rxjs/operators';
 import { Menu, MenuService } from './menu.service';
-import { AuthService } from './auth.service';
+import { AuthServiceLocal } from './auth.service';
 import { User } from '@core/models/interface';
 import { NgxRolesService, NgxPermissionsService } from 'ngx-permissions';
 
@@ -10,7 +10,7 @@ import { NgxRolesService, NgxPermissionsService } from 'ngx-permissions';
 })
 export class StartupService {
   constructor(
-    private authService: AuthService,
+    private authServiceLocal: AuthServiceLocal,
     private rolesService: NgxRolesService,
     private permissonsService: NgxPermissionsService,
     private menuService: MenuService
@@ -21,14 +21,14 @@ export class StartupService {
    * such as permissions and roles.
    */
   load() {
-    return this.authService
+    return this.authServiceLocal
       .change()
       .pipe(
         tap((user) => {
           return this.setPermissions(user);
         }),
         switchMap(() => {
-          return this.authService.menu();
+          return this.authServiceLocal.menu();
         }),
         tap((menu) => {
           this.setMenu(menu);

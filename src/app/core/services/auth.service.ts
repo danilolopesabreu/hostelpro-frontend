@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, iif, merge, of } from 'rxjs';
 import { share, switchMap } from 'rxjs/operators';
 import { TokenService } from './token.service';
@@ -7,11 +7,12 @@ import { User } from '@core/models/interface';
 import { Router } from '@angular/router';
 import { LocalStorageService } from '@shared';
 import { Role } from '@core/models/role';
+import { AuthService } from '@auth0/auth0-angular';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
+export class AuthServiceLocal {
   user$ = new BehaviorSubject<User>({});
 
   private change$ = merge(
@@ -23,6 +24,8 @@ export class AuthService {
     }),
     share()
   );
+
+  private auth = inject(AuthService);
 
   constructor(
     private loginService: LoginService,
@@ -98,11 +101,11 @@ export class AuthService {
   }
 
   logout() {
-    return this.loginService.logout().subscribe((res) => {
-      if (!res.success) {
-        this.tokenService.clear();
-        this.router.navigateByUrl('/auth/login');
-      }
+    console.log('logoff')
+    this.auth.logout({ 
+      logoutParams: { 
+        returnTo: window.location.origin 
+      } 
     });
   }
 

@@ -14,7 +14,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^20.2.4",
-    "@angular/cdk": "^20.2.2",
+    "@angular/cdk": "^20.2.11",
     "@angular/common": "^20.2.4",
     "@angular/compiler": "^20.2.4",
     "@angular/core": "^20.2.4",
@@ -24,6 +24,7 @@
     "@angular/platform-browser": "^20.2.4",
     "@angular/platform-browser-dynamic": "^20.2.4",
     "@angular/router": "^20.2.4",
+    "@auth0/auth0-angular": "^2.3.0",
     "@ckeditor/ckeditor5-angular": "^10.0.0",
     "@ckeditor/ckeditor5-build-classic": "^44.3.0",
     "@fullcalendar/angular": "^6.1.19",

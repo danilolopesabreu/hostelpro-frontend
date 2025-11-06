@@ -1,7 +1,7 @@
 import { Route } from '@angular/router';
 import { AdminLayoutComponent } from '@layout/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from '@layout/auth-layout/auth-layout.component';
-import { AuthGuard } from '@core/guard/auth.guard';
+import { AuthGuardLocal } from '@core/guard/auth.guard';
 import { Page403Component } from './sessions/page403/page403.component';
 import { Page404Component } from './sessions/page404/page404.component';
 import { Page500Component } from './sessions/page500/page500.component';
@@ -11,14 +11,25 @@ export const APP_ROUTE: Route[] = [
   {
     path: '',
     component: AdminLayoutComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuardLocal],
     children: [
       { path: '', redirectTo: '/auth/login', pathMatch: 'full' },
       {
         path: 'vendas',
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuardLocal],
         loadChildren: () =>
           import('../modules/admin/vendas/vendas.routes').then(
+            (m) => m.DASHBOARD_ROUTE
+          ),
+        data: {
+          role: [Role.Admin],
+        },
+      },
+      {
+        path: 'estabelecimento',
+        canActivate: [AuthGuardLocal],
+        loadChildren: () =>
+          import('../modules/admin/estabelecimento/estabelecimento.routes').then(
             (m) => m.DASHBOARD_ROUTE
           ),
         data: {
@@ -28,7 +39,7 @@ export const APP_ROUTE: Route[] = [
       // Admin menu start
       {
         path: 'dashboard',
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuardLocal],
         loadChildren: () =>
           import('../modules/admin/dashboard/dashboard.routes').then(
             (m) => m.DASHBOARD_ROUTE
@@ -41,7 +52,7 @@ export const APP_ROUTE: Route[] = [
       // employee menu start
       {
         path: 'emp_dashboard',
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuardLocal],
         loadChildren: () =>
           import('../modules/employee/dashboard/dashboard.routes').then(
             (m) => m.DASHBOARD_ROUTE

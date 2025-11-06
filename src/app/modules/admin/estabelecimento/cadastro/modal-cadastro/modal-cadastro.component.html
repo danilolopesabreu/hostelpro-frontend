@@ -1,0 +1,62 @@
+<!-- Container do overlay -->
+<div class="overlay-background" (click)="onBackgroundClick($event)">
+  <div class="overlay-content">
+    <div class="header">
+      <h2>Selecione o Estabelecimento</h2>
+      <button mat-icon-button color="warn" (click)="onFechar()" matTooltip="Fechar">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="form-container">
+      <!-- Nome do estabelecimento -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Nome do Estabelecimento</mat-label>
+        <input
+          matInput
+          [(ngModel)]="estabelecimentoNome"
+          placeholder="Ex: Pousada Sol e Mar"
+        />
+      </mat-form-field>
+
+      <!-- Tipo do estabelecimento -->
+      <mat-form-field appearance="outline" class="w-100" style="margin-top: 12px;">
+        <mat-label>Tipo de Estabelecimento</mat-label>
+        <mat-select [(ngModel)]="tipoSelecionado">
+          <mat-option *ngFor="let tipo of tiposEstabelecimento" [value]="tipo">
+            {{ tipo.nome }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <label class="label-produtos">O que você quer vender?</label>
+    </div>
+
+    <div class="categorias-scroll">
+      <div class="categorias-container">
+        <div class="categoria-card"
+            *ngFor="let cat of categorias; let isLast = last"
+            [class.selected]="isCategoriaSelecionada(cat)"
+            [ngStyle]="{'margin-bottom': isLast ? '50px' : '0'}"
+            (click)="toggleCategoria(cat)"
+            >
+            <img [src]="cat.imagem" [alt]="cat.nome" style="height: 120px" />
+            <div class="categoria-descricao">{{ cat.nome }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botão flutuante -->
+    <button
+      mat-fab
+      color="primary"
+      class="btn-flutuante"
+      [disabled]="!isFormularioValido()"
+      (click)="confirmarCadastro()"
+      matTooltip="Confirmar cadastro"
+    >
+      <mat-icon>check</mat-icon>
+      CONFIRMAR
+    </button>
+  </div>
+</div>

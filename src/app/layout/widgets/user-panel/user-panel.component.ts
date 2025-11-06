@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '@core';
+import { AuthService } from '@auth0/auth0-angular';
 import { User } from '@core/models/interface';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,17 +23,32 @@ import { FeatherModule } from 'angular-feather';
     ]
 })
 export class UserPanelComponent implements OnInit {
-  user!: User;
+  user!: any;
   url: any;
 
-  constructor(private router: Router, private auth: AuthService) {}
+  private auth = inject(AuthService);
+
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
-    this.auth.user().subscribe((user) => (this.user = user));
+    //this.auth.user().subscribe((user) => (this.user = user));
+    console.log('ngOnInit')
+    this.auth.user$.subscribe({
+      next: (user) => {
+        this.user = user;
+        console.log(user);
+      },
+      error: (err) => console.error('Erro', err)
+    });
+
   }
 
   logout() {
-    this.auth.logout();
+    this.auth.logout({ 
+      logoutParams: { 
+        returnTo: window.location.origin 
+      } 
+    });
   }
   public onSelectFile(event: any) {
     if (event.target.files && event.target.files[0]) {
