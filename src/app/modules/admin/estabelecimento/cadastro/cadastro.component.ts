@@ -39,7 +39,7 @@ export class CadastroComponent implements OnInit {
     componentRef.instance.fechar.subscribe(() => this.fecharTela());
 
     // Fecha ao clicar fora (opcional)
-    this.overlayRef.backdropClick().subscribe(() => this.fecharTela());
+    //this.overlayRef.backdropClick().subscribe(() => this.fecharTela());
   }
 
   fecharTela() {
