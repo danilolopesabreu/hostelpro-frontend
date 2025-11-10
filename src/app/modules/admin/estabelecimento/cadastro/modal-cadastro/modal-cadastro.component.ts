@@ -181,9 +181,9 @@ export class ModalCadastroComponent {
         console.log(dados);
 
         //nagegar p vendas
-        this.router.navigate(['/vendas']);
+        this.router.navigate(['/itens-agrupados']);
 
-        this.fechar.emit();
+        //this.fechar.emit();
 
       },
       error: (err) => console.error('Erro', err)
