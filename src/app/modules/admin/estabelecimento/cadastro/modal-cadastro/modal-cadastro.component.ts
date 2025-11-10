@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -14,6 +14,19 @@ import { MatFormField, MatInput, MatInputModule, MatLabel } from '@angular/mater
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Estabelecimento } from '../../estabelecimento.model';
+import { id } from '@swimlane/ngx-charts';
+import { Usuario } from 'app/modules/admin/usuario/usuario.model';
+import { AuthService } from '@auth0/auth0-angular';
+import { Auth0User } from '@core/models/user.auth0.model';
+import { Role } from '@core/models/role';
+import { CategoriaProdutoService } from '@shared/components/categoria-produto/categoria-produto.service';
+import { CategoriaProduto } from '@shared/components/categoria-produto/categoria-produto.model';
+import { EstabelecimentoService } from '../../estabelecimento.service';
+import { TipoEstabelecimentoService } from '../../tipo-estabelecimento.service';
+import { TipoEstabelecimento } from '../../tipo-estabelecimento.model';
+import { PAPEL_ADMINISTRADOR } from '@shared/modelos/papel-permissao';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-modal-cadastro',
@@ -39,44 +52,65 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrl: './modal-cadastro.component.scss',
 })
 export class ModalCadastroComponent {
+
   @Output() fechar = new EventEmitter<void>();
+
   estabelecimentoNome: string = '';
-  categorias: any[] = [
-    { id: 1, nome: 'Bebidas', imagem: 'https://amaretti.com.br/wp-content/uploads/2021/08/BEBIDAS.png' },
-    { id: 2, nome: 'Lanches', imagem: 'assets/images/categorias/lanches.jpg' },
-    { id: 3, nome: 'Sobremesas', imagem: 'assets/images/categorias/sobremesas.jpg' },
-    { id: 4, nome: 'Petiscos', imagem: 'assets/images/categorias/petiscos.jpg' },
-    { id: 15, nome: 'Petiscos', imagem: 'assets/images/categorias/petiscos.jpg' },
-    { id: 5, nome: 'Petiscos', imagem: 'assets/images/categorias/petiscos.jpg' },
-    { id: 6, nome: 'Petiscos', imagem: 'assets/images/categorias/petiscos.jpg' },
-    { id: 7, nome: 'Bebidas', imagem: 'assets/images/categorias/bebidas.jpg' },
-    { id: 8, nome: 'Lanches', imagem: 'assets/images/categorias/lanches.jpg' },
-    { id: 9, nome: 'Sobremesas', imagem: 'assets/images/categorias/sobremesas.jpg' },
-    { id: 10, nome: 'Petiscos', imagem: 'assets/images/categorias/petiscos.jpg' },
-    { id: 11, nome: 'Petiscos', imagem: 'assets/images/categorias/petiscos.jpg' },
-    { id: 12, nome: 'Petiscos', imagem: 'assets/images/categorias/petiscos.jpg' },
-    { id: 13, nome: 'Petiscos', imagem: 'assets/images/categorias/petiscos.jpg' },
-    { id: 14, nome: 'Refeições', imagem: 'assets/images/categorias/refeicoes.jpg' }
-  ];
+
+  categorias: CategoriaProduto[] = [];
 
   // Tipos de estabelecimento
-  tiposEstabelecimento = [
-    { id: 1, nome: 'Hospedagem', imagem: 'assets/images/hospedagem.png' },
-    { id: 2, nome: 'Restaurante/Lanchonete', imagem: 'assets/images/restaurante.png' },
-    { id: 3, nome: 'Delivery / E-commerce de comida', imagem: 'assets/images/restaurante.png' }
-  ];
-  tipoSelecionado: any = null;
+  tiposEstabelecimento: TipoEstabelecimento[] = [];
+
+  tipoSelecionado?: TipoEstabelecimento = undefined;
+
+  private auth = inject(AuthService);
+  private user?: Auth0User;
+  
+  constructor(
+      private router: Router
+    , private categoriaProdutoService:CategoriaProdutoService
+    , private estabelecimentoService:EstabelecimentoService
+    , private tipoEstabelecimentoService:TipoEstabelecimentoService){ }
+
+  ngOnInit(): void {
+
+    this.auth.user$.subscribe({
+      next: (user) => {
+        this.user = Auth0User.fromAuth0(user);
+        console.log(user);
+      },
+      error: (err) => console.error('Erro', err)
+    });
+
+    //Estabelecimento 1 é o principal, que contem todos dados de cadastro de exemplo
+    this.categoriaProdutoService.listarCategoriasPrincipais(1).subscribe({ 
+      next: (categoriasPrincipais) => {
+        this.categorias = categoriasPrincipais;
+      },
+      error: (err) => console.error('Erro', err)
+    })
+
+    this.tipoEstabelecimentoService.listar().subscribe({
+      next: (tiposDeEstabelecimento) => {
+        this.tiposEstabelecimento = tiposDeEstabelecimento;
+        console.log("tiposDeEstabelecimento",tiposDeEstabelecimento)
+      },
+      error: (err) => console.error('Erro', err)
+    });
+
+  }
 
   // Seleção única para tipo
-  selecionarTipo(tipo: any) {
+  selecionarTipo(tipo: TipoEstabelecimento) {
     if (this.tipoSelecionado === tipo) {
-      this.tipoSelecionado = null; // desmarca se clicar novamente
+      this.tipoSelecionado = undefined; // desmarca se clicar novamente
     } else {
       this.tipoSelecionado = tipo;
     }
   }
 
-  categoriasSelecionadas: any[] = [];
+  categoriasSelecionadas: CategoriaProduto[] = [];
 
   toggleCategoria(categoria: any): void {
     const index = this.categoriasSelecionadas.findIndex(c => c.id === categoria.id);
@@ -123,6 +157,38 @@ export class ModalCadastroComponent {
       console.log('Categorias:', this.categoriasSelecionadas);
       // Aqui você pode emitir o evento ou chamar um serviço
     }
+
+    let usuario = new Usuario({
+      nome: this.user?.name,
+      email: this.user?.email,
+      papel: PAPEL_ADMINISTRADOR,
+      ativo: true,
+      foto: this.user?.picture
+    });
+
+    let novoEstabelecimento = new Estabelecimento({
+      nome: this.estabelecimentoNome,
+      email: this.user?.email,
+      tipoEstabelecimento: this.tipoSelecionado,
+      usuarios: [usuario],
+      categoriaProduto: this.categoriasSelecionadas
+    });
+
+    console.log(novoEstabelecimento, usuario);
+
+    this.estabelecimentoService.criar(novoEstabelecimento).subscribe({
+      next: (dados) => {
+        console.log(dados);
+
+        //nagegar p vendas
+        this.router.navigate(['/vendas']);
+
+        this.fechar.emit();
+
+      },
+      error: (err) => console.error('Erro', err)
+    });
+
   }
 
 

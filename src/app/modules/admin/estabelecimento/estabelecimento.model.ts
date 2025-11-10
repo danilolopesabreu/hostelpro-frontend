@@ -1,5 +1,6 @@
 import { CategoriaProduto } from "@shared/components/categoria-produto/categoria-produto.model";
 import { Usuario } from "../usuario/usuario.model";
+import { TipoEstabelecimento } from "./tipo-estabelecimento.model";
 
 export class Estabelecimento {
   id?: number;
@@ -10,7 +11,7 @@ export class Estabelecimento {
   endereco?: string;
   usuarios?: Usuario[];
   categoriaProduto?: CategoriaProduto[];
-  idTipoEstabelecimento?: number;
+  tipoEstabelecimento?: TipoEstabelecimento;
 
   constructor(init?: Partial<Estabelecimento>) {
     Object.assign(this, init);

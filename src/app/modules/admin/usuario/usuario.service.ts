@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Usuario } from './usuario.model';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of, throwError } from 'rxjs';
 import { environment } from '@env/environment';
 
 @Injectable({
@@ -16,6 +16,20 @@ export class UsuarioService {
   listar(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(this.baseUrl);
   }
+
+  consultarPorEmail(email: string): Observable<Usuario | null> {
+  return this.http.post<Usuario>(`${this.baseUrl}/email`, { email })
+    .pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 404) {
+          // Usuário não encontrado → retorna null
+          return of(null);
+        }
+        // Outros erros → propaga
+        return throwError(() => error);
+      })
+    );
+}
 
   buscarPorId(id: number): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.baseUrl}/${id}`);

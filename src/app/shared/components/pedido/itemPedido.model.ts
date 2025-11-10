@@ -1,3 +1,4 @@
+import { ProdutoEstabelecimento } from "../produto/produto-estabelecimento.model";
 import { Produto } from "../produto/produto.model";
 
 export class ItemPedido {
@@ -11,7 +12,7 @@ export class ItemPedido {
 
   precoTotal!: number;
 
-  produto?: Produto;
+  produtoEstabelecimento?: ProdutoEstabelecimento;
 
   constructor(init?: Partial<ItemPedido>) {
     Object.assign(this, init);

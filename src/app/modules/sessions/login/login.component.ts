@@ -20,6 +20,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SettingsService } from '@core/services/settings.service';
 import { CommonModule } from '@angular/common';
+import { UsuarioService } from 'app/modules/admin/usuario/usuario.service';
 
 
 @Component({
@@ -65,7 +66,8 @@ export class LoginComponent implements OnInit {
     private tokenService: TokenService,
     private rolesService: NgxRolesService,
     private store: LocalStorageService,
-    private settings: SettingsService
+    private settings: SettingsService,
+    private usuarioService: UsuarioService
   ) {
     this.themeStyle = this.options.theme;
   }
@@ -78,7 +80,31 @@ export class LoginComponent implements OnInit {
           this.auth.loginWithRedirect();
         } else {
           //redirecionar
-          this.router.navigate(['/estabelecimento/cadastro']);
+          this.auth.user$.subscribe({
+            next: (usuarioLogado) => {
+                if(usuarioLogado){
+                  this.usuarioService.consultarPorEmail(usuarioLogado?.email!).subscribe({
+                    next: (usuarioCadastrado) => {
+                      if (usuarioCadastrado) {
+                        console.log('Usuário encontrado:', usuarioCadastrado);
+                        this.router.navigate(['/vendas']);
+                      } else {
+                        console.log('Usuário não cadastrado');
+                        this.router.navigate(['/estabelecimento/cadastro']);
+                      }
+                    },
+                    error: (err) => {
+                      console.error('Erro na requisição', err);
+                    }
+                  });
+              } else {
+                this.router.navigate(['/auth/login']);     
+              }
+              
+            }
+          });
+
+          
         }
       },
       error: (err) => console.error('Erro', err)
