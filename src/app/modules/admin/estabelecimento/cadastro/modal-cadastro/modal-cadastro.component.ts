@@ -110,30 +110,6 @@ export class ModalCadastroComponent {
         console.error('Erro no forkJoin:', err);
       }
     });
-    /*
-    this.auth.user$.subscribe({
-      next: (user) => {
-        this.user = Auth0User.fromAuth0(user);
-        console.log(user);
-      },
-      error: (err) => console.error('Erro', err)
-    });
-
-    //Estabelecimento 1 é o principal, que contem todos dados de cadastro de exemplo
-    this.categoriaProdutoService.listarCategoriasPrincipais(1).subscribe({ 
-      next: (categoriasPrincipais) => {
-        this.categorias = categoriasPrincipais;
-      },
-      error: (err) => console.error('Erro', err)
-    })
-
-    this.tipoEstabelecimentoService.listar().subscribe({
-      next: (tiposDeEstabelecimento) => {
-        this.tiposEstabelecimento = tiposDeEstabelecimento;
-        console.log("tiposDeEstabelecimento",tiposDeEstabelecimento)
-      },
-      error: (err) => console.error('Erro', err)
-    });*/
 
   }
 
@@ -211,21 +187,6 @@ export class ModalCadastroComponent {
     });
 
     console.log(novoEstabelecimento, usuario);
-
-    /*this.estabelecimentoService.criar(novoEstabelecimento).subscribe({
-      next: (dados) => {
-        console.log(dados);
-
-        //nagegar p vendas
-        //this.router.navigate(['/estabelecimento/itens-agrupados']);
-        this.mostrarTelaNovoEstabelecimento = false;
-        this.mostrarTelaItensAgrupados = true;
-
-        //this.fechar.emit();
-
-      },
-      error: (err) => console.error('Erro', err)
-    });*/
 
     this.loading.runWithLoading({
       estabelecimentoCadastrado: this.estabelecimentoService.criar(novoEstabelecimento)
@@ -377,12 +338,7 @@ export class ModalCadastroComponent {
         console.log(resultado);
 
         this.router.navigate(['/vendas']);
-        /*if (this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'pedido') {
-          this.fechar.emit();
-        }*/
 
-        //this.mostrarTelaNovoEstabelecimento = false;
-        //this.mostrarTelaItensAgrupados = true;
       },
       error: err => {
         console.error('Erro no forkJoin:', err);
