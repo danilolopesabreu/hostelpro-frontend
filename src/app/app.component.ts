@@ -9,6 +9,9 @@ import {
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
+import { LoadingService } from '@shared/components/loading/loading.service';
+import { OverlayService } from '@shared/components/loading/overlay.service';
+import { tap } from 'rxjs';
 
 @Component({
     selector: 'app-root',
@@ -23,7 +26,8 @@ export class AppComponent implements AfterViewInit , OnInit{
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private loadingService: LoadingService, private overlayService: OverlayService
   ) {}
 
   ngOnInit(): void {
@@ -38,6 +42,14 @@ export class AppComponent implements AfterViewInit , OnInit{
       },
       error: (err) => console.error('Erro', err)
     });*/
+
+    this.loadingService.loading$.pipe(
+      tap(isLoading => {
+        if (isLoading) this.overlayService.show();
+        else this.overlayService.hide();
+      })
+    ).subscribe();
+
   }
 
   ngAfterViewInit(): void {

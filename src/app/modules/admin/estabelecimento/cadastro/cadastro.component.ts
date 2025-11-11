@@ -37,6 +37,7 @@ export class CadastroComponent implements OnInit {
 
     // Passa referência para o componente poder fechar
     componentRef.instance.fechar.subscribe(() => this.fecharTela());
+    
 
     // Fecha ao clicar fora (opcional)
     //this.overlayRef.backdropClick().subscribe(() => this.fecharTela());
@@ -48,4 +49,5 @@ export class CadastroComponent implements OnInit {
       this.overlayRef = undefined;
     }
   }
+
 }

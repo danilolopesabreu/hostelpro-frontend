@@ -1,59 +1,151 @@
 <!-- Container do overlay -->
 <div class="overlay-background" (click)="onBackgroundClick($event)">
-  <div class="overlay-content">
-    <div class="header">
-      <h2>Cadastre seu Estabelecimento</h2>
-    </div>
-
-    <div class="form-container">
-      <!-- Nome do estabelecimento -->
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Nome do Estabelecimento</mat-label>
-        <input
-          matInput
-          [(ngModel)]="estabelecimentoNome"
-          placeholder="Ex: Pousada Sol e Mar"
-        />
-      </mat-form-field>
-
-      <!-- Tipo do estabelecimento -->
-      <mat-form-field appearance="outline" class="w-100" style="margin-top: 12px;">
-        <mat-label>Tipo de Estabelecimento</mat-label>
-        <mat-select [(ngModel)]="tipoSelecionado">
-          <mat-option *ngFor="let tipo of tiposEstabelecimento" [value]="tipo">
-            {{ tipo.nome }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <label class="label-produtos">O que você quer vender?</label>
-    </div>
-
-    <div class="categorias-scroll">
-      <div class="categorias-container">
-        <div class="categoria-card"
-            *ngFor="let cat of categorias; let isLast = last"
-            [class.selected]="isCategoriaSelecionada(cat)"
-            [ngStyle]="{'margin-bottom': isLast ? '50px' : '0'}"
-            (click)="toggleCategoria(cat)"
-            >
-            <img [src]="cat.imagem" [alt]="cat.nome" style="height: 120px" />
-            <div class="categoria-descricao">{{ cat.nome }}</div>
+    <div class="overlay-content" *ngIf="mostrarTelaNovoEstabelecimento">
+        <div class="header">
+            <h2>Cadastre seu Estabelecimento</h2>
         </div>
-      </div>
+
+        <div class="form-container">
+            <!-- Nome do estabelecimento -->
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Nome do Estabelecimento</mat-label>
+                <input matInput [(ngModel)]="estabelecimentoNome" placeholder="Ex: Pousada Sol e Mar" />
+            </mat-form-field>
+
+            <!-- Tipo do estabelecimento -->
+            <mat-form-field appearance="outline" class="w-100" style="margin-top: 12px;">
+                <mat-label>Tipo de Estabelecimento</mat-label>
+                <mat-select [(ngModel)]="tipoSelecionado">
+                    <mat-option *ngFor="let tipo of tiposEstabelecimento" [value]="tipo">
+                        {{ tipo.nome }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <label class="label-produtos">O que você quer vender?</label>
+        </div>
+
+        <div class="categorias-scroll">
+            <div class="categorias-container">
+                <div class="categoria-card" *ngFor="let cat of categorias; let isLast = last"
+                    [class.selected]="isCategoriaSelecionada(cat)" [ngStyle]="{'margin-bottom': isLast ? '50px' : '0'}"
+                    (click)="toggleCategoria(cat)">
+                    <img [src]="cat.imagem" [alt]="cat.nome" style="height: 120px" />
+                    <div class="categoria-descricao">{{ cat.nome }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão flutuante -->
+        <button mat-fab color="primary" class="btn-flutuante" [disabled]="!isFormularioValido()"
+            (click)="confirmarCadastro()" matTooltip="Confirmar cadastro">
+            <mat-icon>check</mat-icon>
+            CONTINUAR
+        </button>
     </div>
 
-    <!-- Botão flutuante -->
-    <button
-      mat-fab
-      color="primary"
-      class="btn-flutuante"
-      [disabled]="!isFormularioValido()"
-      (click)="confirmarCadastro()"
-      matTooltip="Confirmar cadastro"
-    >
-      <mat-icon>check</mat-icon>
-      CONFIRMAR
-    </button>
-  </div>
+    <!-- Itens Agrupados -->
+
+    <div class="overlay-content" *ngIf="mostrarTelaItensAgrupados">
+        <div class="header">
+            <h2>{{ estabelecimentoCadastrado?.tipoEstabelecimento?.nome }}</h2>
+        </div>
+
+        <div class="form-container">
+            <!-- Nome do agrupador -->
+            <div class="linha-campos">
+                <mat-form-field appearance="outline" class="w-75"
+                    *ngIf="estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'mesa'">
+                    <mat-label>Número/Nome da Mesa</mat-label>
+                    <input matInput [(ngModel)]="umItemAgrupado.nome" placeholder="Ex: 1" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-75"
+                    *ngIf="estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'quarto'">
+                    <mat-label>Número/Nome do Quarto</mat-label>
+                    <input matInput [(ngModel)]="umItemAgrupado.nome" placeholder="Ex: 101" />
+                </mat-form-field>
+
+                <!-- Botão PLUS 1 -->
+                <button mat-icon-button color="primary" class="btn-plus" matTooltip="Adicionar novo agrupador"
+                    (click)="adicionarAgrupador()">
+                    <mat-icon>add</mat-icon>
+                </button>
+
+                
+            </div>
+            
+            <!-- Campos de intervalo e andar -->
+            <div class="linha-campos">
+                <mat-form-field appearance="outline" class="w-20">
+                    <mat-label>De</mat-label>
+                    <input matInput [(ngModel)]="itensAgrupadosDe" placeholder="Ex: 101" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-20">
+                    <mat-label>Até</mat-label>
+                    <input matInput [(ngModel)]="itensAgrupadosAte" placeholder="Ex: 109" />
+                </mat-form-field>
+
+                <!-- Botão PLUS 2 -->
+                <button mat-icon-button color="primary" class="btn-plus" matTooltip="Adicionar intervalo"
+                    (click)="adicionarItensAgrupados()">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+
+            <div *ngIf="mensagemErro" class="erro-msg">
+                ⚠️ {{ mensagemErro }}
+            </div>
+
+            <div *ngIf="mensagemAjuda" class="ajuda-msg">
+                {{ mensagemAjuda }}
+            </div>
+
+        </div>
+
+        <div class="categorias-header" *ngIf="itensAgrupadosAdicionados.length > 0">
+            <h3 class="titulo" *ngIf="estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'quarto'"> Quartos </h3>
+            <h3 class="titulo" *ngIf="estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'mesa'"> Mesas </h3>
+            <button
+                mat-stroked-button
+                color="warn"
+                (click)="removerTodos()"
+                [disabled]="itensAgrupadosAdicionados.length === 0"
+            >
+                <mat-icon>delete_sweep</mat-icon>
+                Limpar tudo
+            </button>
+            </div>
+
+            <div class="categorias-scroll">
+                <div class="categorias-container">
+                    <div
+                    class="item-card"
+                    *ngFor="let item of itensAgrupadosAdicionados; let i = index;"
+                    >
+                    <span class="item-nome">{{ item.nome }}</span>
+
+                    <button
+                        mat-icon-button
+                        color="warn"
+                        class="btn-remover"
+                        (click)="removerItem(i)"
+                        matTooltip="Remover item"
+                    >
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                    </div>
+                </div>
+            </div>
+
+        <!-- Botão flutuante -->
+        <button mat-fab color="primary" class="btn-flutuante" [disabled]="!isFormularioItensAgrupadoValido()"
+            (click)="confirmarCadastroItensAgrupados()" matTooltip="Confirmar cadastro">
+            <mat-icon>check</mat-icon>
+            CONFIRMAR
+        </button>
+    </div>
+
+
 </div>

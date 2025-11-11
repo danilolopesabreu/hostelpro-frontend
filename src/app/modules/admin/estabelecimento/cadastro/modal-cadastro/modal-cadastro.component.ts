@@ -27,6 +27,12 @@ import { TipoEstabelecimentoService } from '../../tipo-estabelecimento.service';
 import { TipoEstabelecimento } from '../../tipo-estabelecimento.model';
 import { PAPEL_ADMINISTRADOR } from '@shared/modelos/papel-permissao';
 import { Router } from '@angular/router';
+import { ItensAgrupadosComponent } from '@shared/components/itens-agrupados/itens-agrupados.component';
+import { LoadingService } from '@shared/components/loading/loading.service';
+import { of } from 'rxjs';
+import { catchError, take } from 'rxjs/operators';
+import { ItensAgrupados } from '@shared/modelos/itens-agrupados.model';
+import { ItensAgrupadosService } from '@shared/components/itens-agrupados/itens-agrupados.service';
 
 @Component({
   selector: 'app-modal-cadastro',
@@ -46,7 +52,7 @@ import { Router } from '@angular/router';
     FormsModule,
     MatButtonModule,
     ReactiveFormsModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
   ],
   templateUrl: './modal-cadastro.component.html',
   styleUrl: './modal-cadastro.component.scss',
@@ -64,17 +70,47 @@ export class ModalCadastroComponent {
 
   tipoSelecionado?: TipoEstabelecimento = undefined;
 
+  mostrarTelaNovoEstabelecimento: boolean = true;
+  mostrarTelaItensAgrupados: boolean = false;
+
+  estabelecimentoCadastrado?: Estabelecimento;
+
+  umItemAgrupado: ItensAgrupados = new ItensAgrupados();
+  itensAgrupadosAdicionados: ItensAgrupados[] = [];
+
+  itensAgrupadosDe: string = "";
+  itensAgrupadosAte: string = "";
+  itensAgrupadosQtdAndares: number = 1;
+
   private auth = inject(AuthService);
   private user?: Auth0User;
-  
+
   constructor(
-      private router: Router
-    , private categoriaProdutoService:CategoriaProdutoService
-    , private estabelecimentoService:EstabelecimentoService
-    , private tipoEstabelecimentoService:TipoEstabelecimentoService){ }
+    private router: Router
+    , private categoriaProdutoService: CategoriaProdutoService
+    , private estabelecimentoService: EstabelecimentoService
+    , private tipoEstabelecimentoService: TipoEstabelecimentoService
+    , private loading: LoadingService
+    , private itensAgrupadosService: ItensAgrupadosService) { }
 
   ngOnInit(): void {
 
+    this.loading.runWithLoading({
+      dados1: this.auth.user$.pipe(take(1)),
+      dados2: this.categoriaProdutoService.listarCategoriasPrincipais(1),
+      dados3: this.tipoEstabelecimentoService.listar()
+    }).subscribe({
+      next: resultado => {
+        console.log('Resultado do forkJoin:', resultado);
+        this.user = resultado.dados1;
+        this.categorias = resultado.dados2;
+        this.tiposEstabelecimento = resultado.dados3;
+      },
+      error: err => {
+        console.error('Erro no forkJoin:', err);
+      }
+    });
+    /*
     this.auth.user$.subscribe({
       next: (user) => {
         this.user = Auth0User.fromAuth0(user);
@@ -97,7 +133,7 @@ export class ModalCadastroComponent {
         console.log("tiposDeEstabelecimento",tiposDeEstabelecimento)
       },
       error: (err) => console.error('Erro', err)
-    });
+    });*/
 
   }
 
@@ -176,20 +212,183 @@ export class ModalCadastroComponent {
 
     console.log(novoEstabelecimento, usuario);
 
-    this.estabelecimentoService.criar(novoEstabelecimento).subscribe({
+    /*this.estabelecimentoService.criar(novoEstabelecimento).subscribe({
       next: (dados) => {
         console.log(dados);
 
         //nagegar p vendas
-        this.router.navigate(['/itens-agrupados']);
+        //this.router.navigate(['/estabelecimento/itens-agrupados']);
+        this.mostrarTelaNovoEstabelecimento = false;
+        this.mostrarTelaItensAgrupados = true;
 
         //this.fechar.emit();
 
       },
       error: (err) => console.error('Erro', err)
+    });*/
+
+    this.loading.runWithLoading({
+      estabelecimentoCadastrado: this.estabelecimentoService.criar(novoEstabelecimento)
+    }).subscribe({
+      next: resultado => {
+        this.estabelecimentoCadastrado = resultado.estabelecimentoCadastrado;
+        console.log(this.estabelecimentoCadastrado);
+
+        if (this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'pedido') {
+          this.router.navigate(['/vendas']);
+          this.fechar.emit();
+        }
+
+        this.mostrarTelaNovoEstabelecimento = false;
+        this.mostrarTelaItensAgrupados = true;
+      },
+      error: err => {
+        console.error('Erro no forkJoin:', err);
+      }
     });
 
   }
 
+  mensagemErro: string = '';
+  mensagemAjuda: string = '';
+
+  removerItem(index: number): void {
+    this.itensAgrupadosAdicionados.splice(index, 1);
+  }
+
+  removerTodos(): void {
+    this.itensAgrupadosAdicionados = [];
+  }
+
+  isFormularioItensAgrupadoValido():boolean{
+    return this.itensAgrupadosAdicionados.length > 0;
+  }
+
+  adicionarItensAgrupados() {
+    //this.itensAgrupadosAdicionados = [];
+    this.mensagemErro = '';
+    this.mensagemAjuda = '';
+    const de = this.itensAgrupadosDe?.trim();
+    const ate = this.itensAgrupadosAte?.trim();
+
+    if (!de || !ate) {
+      this.mensagemErro = 'Preencha os campos "De" e "Até".';
+      this.mensagemAjuda = 'Exemplo: De 1 até 10 ou De 1-A até 5-B.';
+      return;
+    }
+
+    const regex = /^(\d+)([-]?[A-Za-zÀ-ÿ0-9]*)?$/;
+
+    const deMatch = de.match(regex);
+    const ateMatch = ate.match(regex);
+
+    if (!deMatch || !ateMatch) {
+      this.mensagemErro = 'Formato inválido.';
+      this.mensagemAjuda = `Exemplos válidos:
+      • De 1 até 15 → 1, 2, 3, ..., 15
+      • De 1-A até 5-C → 1-A, 2-A...5-A, 1-B...5-C
+      • De 1Santorine até 5Bethoven → 1Santorine...5Bethoven`;
+      return;
+    }
+
+    const deNum = parseInt(deMatch[1], 10);
+    const ateNum = parseInt(ateMatch[1], 10);
+    const deSufixo = deMatch[2] || '';
+    const ateSufixo = ateMatch[2] || '';
+
+    // Apenas números → sequência direta
+    if (!deSufixo && !ateSufixo) {
+      for (let i = deNum; i <= ateNum; i++) {
+        this.itensAgrupadosAdicionados.push(new ItensAgrupados({
+          nome: i.toString(),
+          estabelecimentoId: this.estabelecimentoCadastrado?.id,
+          tipoEstabelecimentoId: this.estabelecimentoCadastrado?.tipoEstabelecimento?.id
+        }));
+      }
+      return;
+    }
+
+    // Verifica hífen
+    const usaHifen = deSufixo.startsWith('-') || ateSufixo.startsWith('-');
+    const limpaDeSufixo = deSufixo.replace(/^-/, '');
+    const limpaAteSufixo = ateSufixo.replace(/^-/, '');
+
+    const sufixos = this.getTextRange(limpaDeSufixo, limpaAteSufixo);
+
+    if (!sufixos.length) {
+      this.mensagemErro = 'Não foi possível interpretar o intervalo informado.';
+      this.mensagemAjuda = `Tente algo como:
+      • De 1-A até 5-B
+      • De 1Santorine até 3Bethoven`;
+      return;
+    }
+
+    for (const sufixo of sufixos) {
+      for (let i = deNum; i <= ateNum; i++) {
+        const nome = usaHifen ? `${i}-${sufixo}` : `${i}${sufixo}`;
+        this.itensAgrupadosAdicionados.push(new ItensAgrupados({
+          nome: nome,
+          estabelecimentoId: this.estabelecimentoCadastrado?.id,
+          tipoEstabelecimentoId: this.estabelecimentoCadastrado?.tipoEstabelecimento?.id
+        }));
+      }
+    }
+  }
+
+  /** Gera a lista de sufixos */
+  private getTextRange(deText: string, ateText: string): string[] {
+    if (!deText && !ateText) return [''];
+
+    const letraRegex = /^[A-Za-z]$/;
+    const results: string[] = [];
+
+    if (letraRegex.test(deText) && letraRegex.test(ateText)) {
+      const start = deText.charCodeAt(0);
+      const end = ateText.charCodeAt(0);
+      for (let c = start; c <= end; c++) {
+        results.push(String.fromCharCode(c));
+      }
+    } else if (deText !== ateText) {
+      results.push(deText, ateText);
+    } else {
+      results.push(deText);
+    }
+
+    return results;
+  }
+
+  adicionarAgrupador() {
+    this.itensAgrupadosAdicionados.push(new ItensAgrupados({
+      nome: this.umItemAgrupado.nome,
+      estabelecimentoId: this.estabelecimentoCadastrado?.id,
+      tipoEstabelecimentoId: this.estabelecimentoCadastrado?.tipoEstabelecimento?.id
+    }));
+  }
+
+  confirmarCadastroItensAgrupados(){
+    alert('confirmarCadastroItensAgrupados')
+    this.loading.runWithLoading({
+      itensAgrupadosCadastrados: this.itensAgrupadosService.criarLista(this.itensAgrupadosAdicionados)
+    }).subscribe({
+      next: resultado => {
+        
+        this.fechar.emit();
+
+        console.log(resultado);
+
+        this.router.navigate(['/vendas']);
+        /*if (this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'pedido') {
+          this.fechar.emit();
+        }*/
+
+        //this.mostrarTelaNovoEstabelecimento = false;
+        //this.mostrarTelaItensAgrupados = true;
+      },
+      error: err => {
+        console.error('Erro no forkJoin:', err);
+      }
+    });
+
+  }
 
 }

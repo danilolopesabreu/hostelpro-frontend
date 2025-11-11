@@ -19,11 +19,9 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(
-        45deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        transparent 100%
-      );
+      background: linear-gradient(45deg,
+          rgba(255, 255, 255, 0.1) 0%,
+          transparent 100%);
       pointer-events: none;
     }
 
@@ -120,68 +118,68 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-      45deg,
-      rgba(255, 255, 255, 0.05) 0%,
-      transparent 100%
-    );
+    background: linear-gradient(45deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        transparent 100%);
     pointer-events: none;
   }
 
   .row.no-gutters {
-  margin-right: 0;
-  margin-left: 0;
-}
+    margin-right: 0;
+    margin-left: 0;
+  }
 
-.cart-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.main-content {
-  flex: 1;
-  transition: all 0.3s ease-in-out;
-}
-
-
-
-
-.dialog-resumo-pedido .mat-dialog-container {
-  padding: 0;
-  border-radius: 12px;
-}
-@media (max-width: 991px) {
   .cart-wrapper {
-    display: none !important;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
+
   .main-content {
-    width: 100% !important;
+    flex: 1;
+    transition: all 0.3s ease-in-out;
   }
-}
 
-.price-edit-field.small {
-  width: 50px;
-  margin-right: 2px;
-}
 
-.price-edit-field.small .mat-mdc-form-field-flex {
-  padding: 0 4px !important;
-  height: 32px !important;
-}
 
-.price-edit-field.small input {
-  font-size: 0.85rem !important;
-  text-align: right;
-}
 
-button[mat-icon-button] {
-  height: 32px;
-  width: 32px;
-}
+  .dialog-resumo-pedido .mat-dialog-container {
+    padding: 0;
+    border-radius: 12px;
+  }
 
-  
-.cart-header {
+  @media (max-width: 991px) {
+    .cart-wrapper {
+      display: none !important;
+    }
+
+    .main-content {
+      width: 100% !important;
+    }
+  }
+
+  .price-edit-field.small {
+    width: 50px;
+    margin-right: 2px;
+  }
+
+  .price-edit-field.small .mat-mdc-form-field-flex {
+    padding: 0 4px !important;
+    height: 32px !important;
+  }
+
+  .price-edit-field.small input {
+    font-size: 0.85rem !important;
+    text-align: right;
+  }
+
+  button[mat-icon-button] {
+    height: 32px;
+    width: 32px;
+  }
+
+
+  .cart-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -204,7 +202,7 @@ button[mat-icon-button] {
         font-size: 1.2rem;
       }
     }
-    }
+  }
 
   .filter-header {
     display: flex;
@@ -431,12 +429,10 @@ button[mat-icon-button] {
           left: -100%;
           width: 100%;
           height: 100%;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(33, 150, 243, 0.4),
-            transparent
-          );
+          background: linear-gradient(90deg,
+              transparent,
+              rgba(33, 150, 243, 0.4),
+              transparent);
           animation: shimmer 1.5s infinite;
           z-index: 10;
         }
@@ -849,6 +845,7 @@ button[mat-icon-button] {
     }
 
     .room-content {
+
       .room-type,
       .room-bed,
       .room-occupancy,
@@ -885,14 +882,18 @@ button[mat-icon-button] {
       color: rgba(255, 255, 255, 0.8);
     }
   }
+
   .refresh-controls {
     background: rgba(0, 0, 0, 0.25) !important;
   }
+
   .rooms-grid .room-card-wrapper .room-card {
     .room-header .room-number .room-value {
       color: #9eacb9 !important;
     }
+
     .room-content {
+
       .room-type,
       .room-bed,
       .room-occupancy,
@@ -910,10 +911,12 @@ button[mat-icon-button] {
           background: linear-gradient(45deg, #141414, #121212) !important;
         }
       }
+
       .stay-dates .date-info {
         color: #9eacb9 !important;
       }
     }
+
     .room-footer {
       background: rgba(0, 0, 0, 0.2) !important;
     }
@@ -1075,6 +1078,7 @@ button[mat-icon-button] {
   0% {
     left: -100%;
   }
+
   100% {
     left: 100%;
   }
@@ -1085,10 +1089,12 @@ button[mat-icon-button] {
     transform: scale(1);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
+
   50% {
     transform: scale(1.05);
     box-shadow: 0 16px 48px rgba(76, 175, 80, 0.6);
   }
+
   100% {
     transform: scale(1);
     box-shadow: 0 12px 40px rgba(76, 175, 80, 0.4);
@@ -1100,6 +1106,7 @@ button[mat-icon-button] {
     opacity: 0;
     transform: translateY(20px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -1111,6 +1118,7 @@ button[mat-icon-button] {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1122,6 +1130,7 @@ button[mat-icon-button] {
     opacity: 0;
     transform: translateX(100px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -1132,9 +1141,11 @@ button[mat-icon-button] {
   0% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.05);
   }
+
   100% {
     transform: scale(1);
   }
@@ -1257,6 +1268,7 @@ button[mat-icon-button] {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -1349,9 +1361,12 @@ button[mat-icon-button] {
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
   }
 }
+
 .d-flex.align-items-center {
-  gap: 12px; /* ajusta para a distância que quiser */
+  gap: 12px;
+  /* ajusta para a distância que quiser */
 }
+
 @media (min-width: 992px) {
   .floating-cart-btn {
     display: none;
@@ -1382,4 +1397,3 @@ button[mat-icon-button] {
   margin-top: auto;
   padding-top: 1px;
 }
-
