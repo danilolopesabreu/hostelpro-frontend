@@ -17,7 +17,7 @@ export class EstabelecimentoService {
     return this.http.get<Estabelecimento[]>(this.baseUrl);
   }
 
-  buscarPorId(id: number): Observable<Estabelecimento> {
+  buscarPorId(id: number | any): Observable<Estabelecimento> {
     return this.http.get<Estabelecimento>(`${this.baseUrl}/${id}`);
   }
 

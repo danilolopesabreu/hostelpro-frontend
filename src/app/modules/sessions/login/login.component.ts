@@ -85,8 +85,12 @@ export class LoginComponent implements OnInit {
                 if(usuarioLogado){
                   this.usuarioService.consultarPorEmail(usuarioLogado?.email!).subscribe({
                     next: (usuarioCadastrado) => {
+                      this.store.set("usuarioLogado",usuarioLogado);
                       if (usuarioCadastrado) {
                         console.log('Usuário encontrado:', usuarioCadastrado);
+                        
+                        this.store.set("usuarioCadastrado",usuarioCadastrado);
+
                         this.router.navigate(['/vendas']);
                       } else {
                         console.log('Usuário não cadastrado');

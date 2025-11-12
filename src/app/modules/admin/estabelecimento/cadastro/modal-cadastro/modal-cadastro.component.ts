@@ -31,7 +31,7 @@ import { TipoEstabelecimentoService } from '../../tipo-estabelecimento.service';
 import { LoadingService } from '@shared/components/loading/loading.service';
 import { ItensAgrupados } from '@shared/modelos/itens-agrupados.model';
 import { ItensAgrupadosService } from '@shared/components/itens-agrupados/itens-agrupados.service';
-
+import { LocalStorageService } from '@shared';
 @Component({
   selector: 'app-modal-cadastro',
   imports: [
@@ -102,14 +102,16 @@ export class ModalCadastroComponent {
     private estabelecimentoService: EstabelecimentoService,
     private tipoEstabelecimentoService: TipoEstabelecimentoService,
     private loading: LoadingService,
-    private itensAgrupadosService: ItensAgrupadosService
+    private itensAgrupadosService: ItensAgrupadosService,
+    private store: LocalStorageService
   ) {}
 
   // ---------------------------
   // Lifecycle
   // ---------------------------
   ngOnInit(): void {
-    this.carregarDadosIniciais();
+    this.verificarElementosLocalStorage();
+    
   }
 
   // ---------------------------
@@ -117,12 +119,12 @@ export class ModalCadastroComponent {
   // ---------------------------
   private carregarDadosIniciais(): void {
     this.loading.runWithLoading({
-      user: this.auth.user$.pipe(take(1)),
+      //user: this.auth.user$.pipe(take(1)),
       categorias: this.categoriaProdutoService.listarCategoriasPrincipais(1),
       tipos: this.tipoEstabelecimentoService.listar()
     }).subscribe({
       next: resultado => {
-        this.user = resultado.user;
+        //this.user = resultado.user;
         this.categorias = resultado.categorias;
         this.tiposEstabelecimento = resultado.tipos;
       },
@@ -130,6 +132,19 @@ export class ModalCadastroComponent {
         console.error('Erro ao carregar dados iniciais', err);
       }
     });
+  }
+
+  private verificarElementosLocalStorage(){
+    //let usuario:Usuario = this.store.get("usuarioCadastrado");
+    this.user = this.store.get("usuarioLogado");
+    let estabelecimento:Estabelecimento = this.store.get("estabelecimentoCadastrado");
+    if(estabelecimento.id !== undefined){
+      this.estabelecimentoCadastrado = estabelecimento;
+      this.mostrarTelaNovoEstabelecimento = false;
+      this.mostrarTelaItensAgrupados = true;
+    } else {
+      this.carregarDadosIniciais();
+    }
   }
 
   // ---------------------------
@@ -206,6 +221,11 @@ export class ModalCadastroComponent {
     }).subscribe({
       next: resultado => {
         this.estabelecimentoCadastrado = resultado.estabelecimento;
+
+        this.store.set("usuarioCadastrado", resultado.estabelecimento.usuarios[0]);
+        this.store.set("estabelecimentoCadastrado", resultado.estabelecimento);
+
+        console.log("this.store.get", this.store.get("usuarioCadastrado"))
 
         if (this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'pedido') {
           this.router.navigate(['/vendas']);

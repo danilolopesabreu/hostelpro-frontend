@@ -102,6 +102,7 @@ export class AuthServiceLocal {
 
   logout() {
     console.log('logoff')
+    this.store.clear();
     this.auth.logout({ 
       logoutParams: { 
         returnTo: window.location.origin 

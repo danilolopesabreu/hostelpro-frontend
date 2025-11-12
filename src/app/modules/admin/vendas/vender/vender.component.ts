@@ -34,6 +34,11 @@ import { ItemPedido } from '@shared/components/pedido/itemPedido.model';
 import { PedidoService } from '@shared/components/pedido/pedido.service';
 import { ProdutoEstabelecimentoService } from '@shared/components/produto/produto-estabelecimento.service';
 import { ProdutoEstabelecimento } from '@shared/components/produto/produto-estabelecimento.model';
+import { LocalStorageService } from '@shared';
+import { Usuario } from '../../usuario/usuario.model';
+import { EstabelecimentoService } from '../../estabelecimento/estabelecimento.service';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-vender',
@@ -74,23 +79,43 @@ export class VenderComponent {
   cartItemsConfirmado: ProdutoEstabelecimento[] = [];
   pedidoFinalizado: boolean = false;
   isLargeScreen = true;
-
+  usuarioCadastrado?:Usuario;
   pedido?: Pedido;
 
   constructor(
+    private router: Router,
     private dialog: MatDialog,
     private breakpointObserver: BreakpointObserver,
     private produtoService: ProdutoService,
     private quartoService: QuartoService,
     private pedidoService:PedidoService,
-    private produtoEstabelecimentoService:ProdutoEstabelecimentoService ) {  }
+    private estabelecimentoService:EstabelecimentoService,
+    private produtoEstabelecimentoService:ProdutoEstabelecimentoService,
+    private localStorageService:LocalStorageService) {  }
 
   ngOnInit(): void {
+
+    this.usuarioCadastrado = this.localStorageService.get("usuarioCadastrado");
+
     this.checkScreenSize();
-    this.carregarProdutos();
+    this.verificarItensAgrupados();
+    //this.carregarProdutos();
     //this.carregarQuartos();
     this.buscaChanged.pipe(debounceTime(300)).subscribe(() => {
       this.filtrarProdutos();
+    });
+  }
+
+  verificarItensAgrupados(){
+    this.estabelecimentoService.buscarPorId(this.usuarioCadastrado?.estabelecimentoId).subscribe({
+      next: (estabelecimento) => {
+        if(!estabelecimento.itensAgrupados || estabelecimento.itensAgrupados?.length == 0){
+          this.router.navigate(['/estabelecimento/cadastro']);
+        } else {
+          this.carregarProdutos();        
+        }
+      },
+      error: (err) => console.error('Erro ao buscar estabelecimento:', err)
     });
   }
 
@@ -101,7 +126,7 @@ export class VenderComponent {
       error: (err) => console.error('Erro ao buscar produtos:', err)
     });*/
 
-    this.produtoEstabelecimentoService.listarPorEstabelecimento(4).subscribe({
+    this.produtoEstabelecimentoService.listarPorEstabelecimento(this.usuarioCadastrado?.estabelecimentoId).subscribe({
       next: (dados) => { this.produtos = dados; this.produtosFiltrados = [...this.produtos]; },
       error: (err) => console.error('Erro ao buscar produtos:', err)
     });

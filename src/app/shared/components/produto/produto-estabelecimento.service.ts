@@ -15,7 +15,7 @@ export class ProdutoEstabelecimentoService {
   constructor(private http: HttpClient) {}
 
   // Listar todos os produtos de um estabelecimento
-  listarPorEstabelecimento(estabelecimentoId: number): Observable<ProdutoEstabelecimento[]> {
+  listarPorEstabelecimento(estabelecimentoId: number | any): Observable<ProdutoEstabelecimento[]> {
     return this.http.get<ProdutoEstabelecimento[]>(`${this.baseUrl}/estabelecimento/${estabelecimentoId}`);
   }
 
