@@ -38,6 +38,8 @@ import { LocalStorageService } from '@shared';
 import { Usuario } from '../../usuario/usuario.model';
 import { EstabelecimentoService } from '../../estabelecimento/estabelecimento.service';
 import { Router } from '@angular/router';
+import { Estabelecimento } from '../../estabelecimento/estabelecimento.model';
+import { LoadingService } from '@shared/components/loading/loading.service';
 
 
 @Component({
@@ -79,8 +81,10 @@ export class VenderComponent {
   cartItemsConfirmado: ProdutoEstabelecimento[] = [];
   pedidoFinalizado: boolean = false;
   isLargeScreen = true;
-  usuarioCadastrado?:Usuario;
+  usuarioCadastrado?: Usuario;
   pedido?: Pedido;
+
+  estabelecimentoCadastrado?: Estabelecimento;
 
   constructor(
     private router: Router,
@@ -88,17 +92,18 @@ export class VenderComponent {
     private breakpointObserver: BreakpointObserver,
     private produtoService: ProdutoService,
     private quartoService: QuartoService,
-    private pedidoService:PedidoService,
-    private estabelecimentoService:EstabelecimentoService,
-    private produtoEstabelecimentoService:ProdutoEstabelecimentoService,
-    private localStorageService:LocalStorageService) {  }
+    private pedidoService: PedidoService,
+    private estabelecimentoService: EstabelecimentoService,
+    private produtoEstabelecimentoService: ProdutoEstabelecimentoService,
+    private localStorageService: LocalStorageService,
+    private loading: LoadingService) { }
 
   ngOnInit(): void {
 
     this.usuarioCadastrado = this.localStorageService.get("usuarioCadastrado");
 
     this.checkScreenSize();
-    this.verificarItensAgrupados();
+    this.carregarDadosIniciais();
     //this.carregarProdutos();
     //this.carregarQuartos();
     this.buscaChanged.pipe(debounceTime(300)).subscribe(() => {
@@ -106,31 +111,48 @@ export class VenderComponent {
     });
   }
 
-  verificarItensAgrupados(){
+  /*verificarItensAgrupados() {
     this.estabelecimentoService.buscarPorId(this.usuarioCadastrado?.estabelecimentoId).subscribe({
       next: (estabelecimento) => {
-        if(!estabelecimento.itensAgrupados || estabelecimento.itensAgrupados?.length == 0){
+        if (!estabelecimento.itensAgrupados || estabelecimento.itensAgrupados?.length == 0) {
           this.router.navigate(['/estabelecimento/cadastro']);
         } else {
-          this.carregarProdutos();        
+          this.estabelecimentoCadastrado = estabelecimento;
+          //this.carregarProdutos();
         }
       },
       error: (err) => console.error('Erro ao buscar estabelecimento:', err)
     });
+  }*/
+
+  carregarDadosIniciais(): void {
+
+    this.loading.runWithLoading({
+      estabelecimento: this.estabelecimentoService.buscarPorId(this.usuarioCadastrado?.estabelecimentoId),
+      produtos: this.produtoEstabelecimentoService.listarPorEstabelecimento(this.usuarioCadastrado?.estabelecimentoId)
+    }).subscribe({
+      next: dados => {
+        this.produtos = dados.produtos; this.produtosFiltrados = [...this.produtos],
+        this.callBackCarregamentoEstabelecimento(dados.estabelecimento)
+      },
+      error: err => {
+        console.error('Erro ao carregar dados dados', err);
+      }
+    });
+    /*
+        this.produtoEstabelecimentoService.listarPorEstabelecimento(this.usuarioCadastrado?.estabelecimentoId).subscribe({
+          next: (dados) => { this.produtos = dados; this.produtosFiltrados = [...this.produtos]; },
+          error: (err) => console.error('Erro ao buscar produtos:', err)
+        });*/
+
   }
 
-  carregarProdutos(): void {
-    
-    /*this.produtoService.listarProdutosPorEstabelecimento(1).subscribe({
-      next: (dados) => { this.produtos = dados; this.produtosFiltrados = [...this.produtos]; },
-      error: (err) => console.error('Erro ao buscar produtos:', err)
-    });*/
-
-    this.produtoEstabelecimentoService.listarPorEstabelecimento(this.usuarioCadastrado?.estabelecimentoId).subscribe({
-      next: (dados) => { this.produtos = dados; this.produtosFiltrados = [...this.produtos]; },
-      error: (err) => console.error('Erro ao buscar produtos:', err)
-    });
-
+  private callBackCarregamentoEstabelecimento(estabelecimento: Estabelecimento) {
+    if (!estabelecimento.itensAgrupados || estabelecimento.itensAgrupados?.length == 0) {
+      this.router.navigate(['/estabelecimento/cadastro']);
+    } else {
+      this.estabelecimentoCadastrado = estabelecimento;
+    }
   }
 
   /*carregarQuartos(): void {
@@ -202,14 +224,14 @@ export class VenderComponent {
       return;
     }
 
-    if(!this.quartoSelecionado){
+    if (!this.quartoSelecionado) {
       alert('Selecione um quarto!');
       return;
     }
 
-    if(this.numeroQuarto !== this.quartoSelecionado.numero){
+    if (this.numeroQuarto !== this.quartoSelecionado.numero) {
       this.quartoSelecionado = this.quartos.find(q => q.numero === this.numeroQuarto);
-      if(!this.quartoSelecionado){
+      if (!this.quartoSelecionado) {
         alert('Numero do quarto informado não existe!');
         return;
       }

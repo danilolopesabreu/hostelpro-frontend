@@ -6,8 +6,9 @@ import {
   FormsModule,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '@auth0/auth0-angular';
-import { TokenService } from '@core';
+import { AuthService, User as UserAuth0 } from '@auth0/auth0-angular';
+
+import { AuthServiceLocal, TokenService } from '@core';
 import { NgxRolesService } from 'ngx-permissions';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -21,7 +22,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SettingsService } from '@core/services/settings.service';
 import { CommonModule } from '@angular/common';
 import { UsuarioService } from 'app/modules/admin/usuario/usuario.service';
-
+import { User } from '@core/models/interface';
+import { Usuario } from 'app/modules/admin/usuario/usuario.model';
+import { BehaviorSubject, Observable, iif, merge, of } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -62,7 +65,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    //private auth: AuthService,
+    private localAuthService: AuthServiceLocal,
     private tokenService: TokenService,
     private rolesService: NgxRolesService,
     private store: LocalStorageService,
@@ -85,12 +88,19 @@ export class LoginComponent implements OnInit {
                 if(usuarioLogado){
                   this.usuarioService.consultarPorEmail(usuarioLogado?.email!).subscribe({
                     next: (usuarioCadastrado) => {
+                      
                       this.store.set("usuarioLogado",usuarioLogado);
+                     
                       if (usuarioCadastrado) {
+
+                        this.store.set('currentUser', this.getUserFromUserAuthAndUserCadastrado(usuarioLogado, usuarioCadastrado));
+                        this.store.set('roleNames', JSON.stringify([usuarioCadastrado.papel?.nome]));
                         console.log('Usuário encontrado:', usuarioCadastrado);
                         
                         this.store.set("usuarioCadastrado",usuarioCadastrado);
 
+                        this.localAuthService.assignUser(new BehaviorSubject<User>(this.store.get('currentUser')));
+                        this.localAuthService.menu();
                         this.router.navigate(['/vendas']);
                       } else {
                         console.log('Usuário não cadastrado');
@@ -113,6 +123,24 @@ export class LoginComponent implements OnInit {
       },
       error: (err) => console.error('Erro', err)
     });
+  }
+
+  private getUserFromUserAuthAndUserCadastrado(user:UserAuth0, usuario:Usuario): User {
+    return {
+      id: usuario.id,
+      //username: "admin",
+      //password: "admin",
+      name: user.given_name,
+      email: user.email,
+      role: [
+        { 
+          name: usuario.papel?.nome,
+          priority: 1
+        }
+      ],
+      permissions: usuario.papel?.permissoes.map(p => p.nome),
+      avatar: user.picture
+    };
   }
 
   get username() {
