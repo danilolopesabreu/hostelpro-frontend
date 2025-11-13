@@ -93,27 +93,45 @@
           <input matInput [(ngModel)]="clienteNome" placeholder="Digite o nome" />
         </mat-form-field>
 
-        <mat-form-field class="w-100" appearance="outline">
-          <mat-label>Número do Quarto</mat-label>
+        <mat-form-field class="w-100" appearance="outline"
+        *ngIf="(estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'quarto')
+              || (estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'mesa')">
+        
+          <mat-label *ngIf="estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'quarto'">Selecione o Quarto</mat-label>
+          <mat-label *ngIf="estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'mesa'">Selecione a Mesa</mat-label>
 
           <input
             type="text"
             matInput
             [matAutocomplete]="auto"
-            [(ngModel)]="numeroQuarto"
-            (ngModelChange)="filtrarQuartos($event)"
+            [(ngModel)]="dummyItemAgrupado"
+            (ngModelChange)="filtrarItensAgrupados($event)"
+            (blur)="validarItemAgrupado()"
             placeholder="Ex: 101"
           />
 
-          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selecionarQuarto($event.option.value)">
-            <mat-option *ngFor="let quarto of quartosFiltrados" [value]="quarto.numero">
-              {{ quarto.numero }} 
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selecionarItemAgrupado($event.option.value)" [displayWith]="displayItemAgrupado">
+            <mat-option *ngFor="let itemAgrupado of itensAgrupadosFiltrados" [value]="itemAgrupado">
+              {{ itemAgrupado.nome }} 
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
 
-      </div>
+        <mat-form-field class="w-100" appearance="outline"
+          *ngIf="(estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'pedido')">
+        
+          <mat-label>Número do Pedido</mat-label>
 
+          <input
+            type="text"
+            matInput
+            [(ngModel)]="numeroDoPedido"
+            placeholder="Ex: 985632"
+          />
+
+        </mat-form-field>        
+      </div>
+      
       <ul class="list-group mb-3" style="padding-inline-start:5px">
         <li style="padding-bottom: 5px; border-bottom: 1px solid #ddd; margin-bottom: 5px;"
             class="list-group-item d-flex justify-content-between align-items-center"
@@ -154,7 +172,19 @@
       </div>
       <div class="mb-3" style="padding-inline-start:5px;">
         <p><b>Cliente:</b> {{ clienteNome }}</p>
-        <p><b>Quarto:</b> {{ numeroQuarto }}</p>
+
+        <p *ngIf="(estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'mesa')"><b>Mesa:</b> 
+          {{ typeof dummyItemAgrupado === 'string'
+              ? dummyItemAgrupado
+              : dummyItemAgrupado?.nome }}
+        </p>
+        <p *ngIf="(estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'quarto')"><b>Quarto:</b> 
+          {{ typeof dummyItemAgrupado === 'string'
+              ? dummyItemAgrupado
+              : dummyItemAgrupado?.nome }}
+        </p>
+        <p *ngIf="(estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'pedido')"><b>Pedido:</b> {{ numeroDoPedido }}</p>
+
         <p><b>Total:</b> R$ {{ getTotal() | number:'1.2-2' }}</p>
 
         <ul class="list-group" style="padding-left: 0;">

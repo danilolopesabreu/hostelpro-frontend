@@ -39,9 +39,9 @@ export class AuthGuardLocal {
     const roleArray = this.store.get('roleNames') || [''];
     const roles: string = route.data['role'];
 
-    let inroll;
+    /*let inroll;
     let rolesArray: string[];
-    /*if (roles) {
+    if (roles) {
       if (String(roles).split(',').length > 1) {
         rolesArray = String(roles).split(',');
       } else {
@@ -49,7 +49,8 @@ export class AuthGuardLocal {
       }
 
       for (const role of rolesArray) {
-        if (roleArray && roleArray.includes(role)) {
+        console.log(roleArray)
+        if (roleArray !== undefined && roleArray.length > 0 && roleArray.includes(role)) {
           inroll = true;
           break;
         } else {

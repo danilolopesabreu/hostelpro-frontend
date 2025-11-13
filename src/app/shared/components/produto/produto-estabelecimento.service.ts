@@ -19,6 +19,10 @@ export class ProdutoEstabelecimentoService {
     return this.http.get<ProdutoEstabelecimento[]>(`${this.baseUrl}/estabelecimento/${estabelecimentoId}`);
   }
 
+  listarProdutosMaisVendidosPorEstabelecimento(estabelecimentoId: number | any): Observable<ProdutoEstabelecimento[]> {
+    return this.http.get<ProdutoEstabelecimento[]>(`${this.baseUrl}/estabelecimento/${estabelecimentoId}/maisvendidos`);
+  }
+
   // Obter um produto por ID
   obterPorId(id: number): Observable<ProdutoEstabelecimento> {
     return this.http.get<ProdutoEstabelecimento>(`${this.baseUrl}/${id}`);

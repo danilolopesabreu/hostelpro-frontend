@@ -14,7 +14,7 @@ export class ItensAgrupadosService {
 
   constructor(private http: HttpClient) {}
 
-  listarPorEstabelecimento(estabelecimentoId: number): Observable<ItensAgrupados[]> {
+  listarPorEstabelecimento(estabelecimentoId: number | any): Observable<ItensAgrupados[]> {
     return this.http.get<ItensAgrupados[]>(`${this.baseUrl}/estabelecimento/${estabelecimentoId}`);
   }
 

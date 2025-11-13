@@ -40,6 +40,9 @@ import { EstabelecimentoService } from '../../estabelecimento/estabelecimento.se
 import { Router } from '@angular/router';
 import { Estabelecimento } from '../../estabelecimento/estabelecimento.model';
 import { LoadingService } from '@shared/components/loading/loading.service';
+import { Agrupador } from '@shared/modelos/agrupador.model';
+import { ItensAgrupadosService } from '@shared/components/itens-agrupados/itens-agrupados.service';
+import { ItensAgrupados } from '@shared/modelos/itens-agrupados.model';
 
 
 @Component({
@@ -85,6 +88,12 @@ export class VenderComponent {
   pedido?: Pedido;
 
   estabelecimentoCadastrado?: Estabelecimento;
+  agrupador?: Agrupador;
+  itensAgrupados: ItensAgrupados[] = [];
+  itemAgrupadoSelecionado?: ItensAgrupados;
+  itensAgrupadosFiltrados: ItensAgrupados[] = [];
+  dummyItemAgrupado?: string | ItensAgrupados;
+  numeroDoPedido?: string = '';
 
   constructor(
     private router: Router,
@@ -96,54 +105,36 @@ export class VenderComponent {
     private estabelecimentoService: EstabelecimentoService,
     private produtoEstabelecimentoService: ProdutoEstabelecimentoService,
     private localStorageService: LocalStorageService,
-    private loading: LoadingService) { }
+    private loading: LoadingService,
+    private itensAgrupadosService: ItensAgrupadosService) { }
 
   ngOnInit(): void {
 
     this.usuarioCadastrado = this.localStorageService.get("usuarioCadastrado");
 
-    this.checkScreenSize();
     this.carregarDadosIniciais();
-    //this.carregarProdutos();
-    //this.carregarQuartos();
+    this.checkScreenSize();
     this.buscaChanged.pipe(debounceTime(300)).subscribe(() => {
       this.filtrarProdutos();
     });
   }
 
-  /*verificarItensAgrupados() {
-    this.estabelecimentoService.buscarPorId(this.usuarioCadastrado?.estabelecimentoId).subscribe({
-      next: (estabelecimento) => {
-        if (!estabelecimento.itensAgrupados || estabelecimento.itensAgrupados?.length == 0) {
-          this.router.navigate(['/estabelecimento/cadastro']);
-        } else {
-          this.estabelecimentoCadastrado = estabelecimento;
-          //this.carregarProdutos();
-        }
-      },
-      error: (err) => console.error('Erro ao buscar estabelecimento:', err)
-    });
-  }*/
-
   carregarDadosIniciais(): void {
 
     this.loading.runWithLoading({
       estabelecimento: this.estabelecimentoService.buscarPorId(this.usuarioCadastrado?.estabelecimentoId),
-      produtos: this.produtoEstabelecimentoService.listarPorEstabelecimento(this.usuarioCadastrado?.estabelecimentoId)
+      produtos: this.produtoEstabelecimentoService.listarProdutosMaisVendidosPorEstabelecimento(this.usuarioCadastrado?.estabelecimentoId),
+      itensAgrupados: this.itensAgrupadosService.listarPorEstabelecimento(this.usuarioCadastrado?.estabelecimentoId)
     }).subscribe({
       next: dados => {
         this.produtos = dados.produtos; this.produtosFiltrados = [...this.produtos],
-        this.callBackCarregamentoEstabelecimento(dados.estabelecimento)
+          this.callBackCarregamentoEstabelecimento(dados.estabelecimento),
+          this.itensAgrupados = dados.itensAgrupados
       },
       error: err => {
         console.error('Erro ao carregar dados dados', err);
       }
     });
-    /*
-        this.produtoEstabelecimentoService.listarPorEstabelecimento(this.usuarioCadastrado?.estabelecimentoId).subscribe({
-          next: (dados) => { this.produtos = dados; this.produtosFiltrados = [...this.produtos]; },
-          error: (err) => console.error('Erro ao buscar produtos:', err)
-        });*/
 
   }
 
@@ -152,15 +143,9 @@ export class VenderComponent {
       this.router.navigate(['/estabelecimento/cadastro']);
     } else {
       this.estabelecimentoCadastrado = estabelecimento;
+      this.agrupador = estabelecimento.tipoEstabelecimento?.agrupador;
     }
   }
-
-  /*carregarQuartos(): void {
-    this.quartoService.listarPorEstabelecimento(1).subscribe({
-      next: (dados) => { this.quartos = dados; this.quartosFiltrados = dados; },
-      error: (err) => console.error('Erro ao buscar quartos:', err)
-    });
-  }*/
 
   filtrarProdutos() {
     const termo = this.removerAcentos(this.searchText.trim().toLowerCase());
@@ -182,11 +167,27 @@ export class VenderComponent {
     );
   }
 
+  filtrarItensAgrupados(valor: string | ItensAgrupados) {
+    const filtro = typeof valor === 'string' ? valor.toLowerCase() : valor?.nome?.toLowerCase() ?? '';
+    this.itensAgrupadosFiltrados = this.itensAgrupados.filter(
+      item => item.nome.toLowerCase().includes(filtro)
+    );
+  }
+
+  displayItemAgrupado(item?: ItensAgrupados): string {
+    return item ? item.nome : '';
+  }
+
   selecionarQuarto(numeroSelecionado: string): void {
     //this.numeroQuarto = numero;
     console.log(numeroSelecionado);
     this.quartoSelecionado = this.quartos.find(q => q.numero === numeroSelecionado);
     console.log('Quarto selecionado:', this.quartoSelecionado);
+  }
+
+  selecionarItemAgrupado(item: ItensAgrupados) {
+    this.dummyItemAgrupado = item;
+    console.log('Selecionado:', item);
   }
 
   // função utilitária para remover acentos e diacríticos
@@ -218,23 +219,70 @@ export class VenderComponent {
     this.isLargeScreen = window.innerWidth >= 992; // breakpoint "lg" do Bootstrap
   }
 
-  finalizarPedido() {
-    if (!this.clienteNome || !this.numeroQuarto) {
-      alert('Informe o nome do cliente e número do quarto!');
-      return;
-    }
+  validarItemAgrupado(): boolean {
+    // Se o usuário digitou texto e não selecionou item
+    if (typeof this.dummyItemAgrupado === 'string') {
+      const valorDigitado = this.dummyItemAgrupado.toLowerCase();
 
-    if (!this.quartoSelecionado) {
-      alert('Selecione um quarto!');
-      return;
-    }
+      const encontrado = this.itensAgrupados.find(
+        i => i.nome.toLowerCase() === valorDigitado
+      );
 
-    if (this.numeroQuarto !== this.quartoSelecionado.numero) {
-      this.quartoSelecionado = this.quartos.find(q => q.numero === this.numeroQuarto);
-      if (!this.quartoSelecionado) {
-        alert('Numero do quarto informado não existe!');
-        return;
+      if (!encontrado) {
+        console.warn('Valor digitado não encontrado, limpando campo...');
+        this.dummyItemAgrupado = '';
+        return false;
+      } else {
+        this.dummyItemAgrupado = encontrado;
+        return true;
       }
+    }
+    return true;
+  }
+
+  finalizarPedido() {
+    if (!this.clienteNome) {
+      alert('Informe o nome do cliente!');
+      return;
+    }
+
+    let nomeCampo: string = '';
+
+    const tipo = this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome;
+    switch (tipo) {
+      case 'mesa':
+        nomeCampo = 'Mesa';
+        break;
+      case 'quarto':
+        nomeCampo = 'Quarto';
+        break;
+      case 'pedido':
+        nomeCampo = 'Pedido';
+        break;
+      default:
+        console.log('Tipo desconhecido');
+    }
+
+
+    if (this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'quarto'
+      && !this.validarItemAgrupado()
+    ) {
+      alert('Informe o Quarto!');
+      return;
+    }
+
+    if (this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'mesa'
+      && !this.validarItemAgrupado()
+    ) {
+      alert('Informe a Mesa!');
+      return;
+    }
+
+    if (this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'pedido'
+      && !this.itemAgrupadoSelecionado
+    ) {
+      alert('Informe o Pedido!');
+      return;
     }
 
     let itensPedido = this.cartItems.map(produto =>
@@ -249,21 +297,34 @@ export class VenderComponent {
 
     this.pedido = new Pedido({
       estabelecimentoId: 1,
-      usuarioId: 3,
-      quartoId: this.quartoSelecionado.id,
+      usuarioId: this.usuarioCadastrado?.id,
       nomeCliente: this.clienteNome,
       status: 'aberto',
-      itens: itensPedido
+      itens: itensPedido,
+      numeroDoPedido: this.numeroDoPedido,
+      itensAgrupados: this.dummyItemAgrupado
     });
 
-    this.pedidoService.criarPedido(this.pedido).subscribe({
+    /*this.pedidoService.criarPedido(this.pedido).subscribe({
       next: (dados) => { console.log(dados) },
       error: (err) => console.error('Erro ao criar pedido:', err)
+    });*/
+
+    this.loading.runWithLoading({
+      pedido: this.pedidoService.criarPedido(this.pedido),
+    }).subscribe({
+      next: dados => {
+        console.log(dados.pedido);
+        this.pedidoFinalizado = true; 
+        this.itensAgrupadosFiltrados = this.itensAgrupados;
+      },
+      error: err => {
+        console.error('Erro ao realizar pedido', err);
+      }
     });
 
     // Aqui você poderia enviar os dados para o backend...
-    this.pedidoFinalizado = true;
-    this.quartosFiltrados = this.quartos;
+    //this.dummyItemAgrupado = '';
   }
 
   fecharPedido() {
@@ -272,6 +333,8 @@ export class VenderComponent {
     this.clienteNome = '';
     this.numeroQuarto = '';
     this.pedidoFinalizado = false;
+    //this.itemAgrupadoSelecionado = undefined;
+    this.dummyItemAgrupado = '';
     this.dialog.closeAll();
   }
 
