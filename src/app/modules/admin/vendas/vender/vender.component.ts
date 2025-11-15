@@ -346,6 +346,11 @@ export class VenderComponent {
   addToCart(produtoEstabelecimento: ProdutoEstabelecimento) {
     // procura se o produto já existe no carrinho
     const existing = this.cartItems.find(item => item.id === produtoEstabelecimento.id);
+    
+    let filtrados = this.produtosFiltrados.find(item => item.id === produtoEstabelecimento.id);
+
+    if(filtrados)
+      filtrados.quantidadeVendida++;
 
     if (existing) {
       existing.quantidadeVendida++;
@@ -359,6 +364,11 @@ export class VenderComponent {
   // Incrementa a quantidade do item
   incrementItem(item: ProdutoEstabelecimento) {
     item.quantidadeVendida++;
+
+    let filtrados = this.produtosFiltrados.find(item2 => item2.id === item.id);
+
+    if(filtrados)
+      filtrados.quantidadeVendida++;
   }
 
   // Decrementa a quantidade do item (removendo se for 0)
@@ -367,12 +377,21 @@ export class VenderComponent {
     if (item.quantidadeVendida <= 0) {
       this.removeItem(item);
     }
+    let filtrados = this.produtosFiltrados.find(item2 => item2.id === item.id);
+
+    if(filtrados)
+      filtrados.quantidadeVendida--;
   }
 
   // Remove item do carrinho
   removeItem(item: ProdutoEstabelecimento) {
     this.cartItems = this.cartItems.filter(i => i.id !== item.id);
     this.fecharModalQtdItemProdutoZerado();
+
+    let filtrados = this.produtosFiltrados.find(item2 => item2.id === item.id);
+
+    if(filtrados)
+      filtrados.quantidadeVendida = 0;
   }
 
   fecharModalQtdItemProdutoZerado() {
@@ -423,5 +442,23 @@ export class VenderComponent {
   cancelEdit(produtoEstabelecimento: any) {
     produtoEstabelecimento.editando = false;
   }
+
+  editarProduto(produto: any) {
+  produto.editando = true;
+  produto._backup = { ...produto }; // salva valores originais
+}
+
+confirmarEdicao(produto: any) {
+  produto.editando = false;
+  delete produto._backup;
+  // Aqui você pode chamar o backend, ex:
+  // this.produtoService.atualizar(produto).subscribe(...)
+}
+
+cancelarEdicao(produto: any) {
+  Object.assign(produto, produto._backup);
+  produto.editando = false;
+  delete produto._backup;
+}
 
 }

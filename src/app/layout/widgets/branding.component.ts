@@ -11,18 +11,18 @@ import { LocalStorageService } from '@shared';
       (click)="goToHome()"
     >
       <img
-        src="./assets/images/logo.png"
+        src="./assets/images/horeca-logo-mini.png"
         class="brand-logo align-middle m-2"
         alt="logo"
       />
-      <span class="brand-name">Luxuria</span>
+      
     </div>
   `,
   styles: [
     `
       .brand-logo {
-        width: 30px;
-        height: 30px;
+        width: 135px;
+        height: 34px;
         cursor: pointer;
       }
       .brand-name {
