@@ -9,6 +9,7 @@ export class ProdutoEstabelecimento {
   imagem?: string;
   estoque: number = 0;
   quantidadeVendida: number = 0;
+  quantidadeCarrinho:number = 0;
   situacao: string = 'ativo';
   origemCadastro: string = 'fabrica';
   editando?: boolean;

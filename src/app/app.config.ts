@@ -1,10 +1,11 @@
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { APP_ROUTE } from './modules/app.routes';
 import { appInitializerProviders, httpInterceptorProviders } from '@core';
+import { AuthHttpInterceptor } from '@core/interceptor/auth-http-interceptor';
 import {
   DateAdapter,
   MAT_DATE_FORMATS,
@@ -31,6 +32,9 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     httpInterceptorProviders,
+    provideHttpClient(
+      withInterceptors([AuthHttpInterceptor])
+    ),
     appInitializerProviders,
     importProvidersFrom(NgProgressHttpModule, NgProgressRouterModule),
     provideTranslateService({

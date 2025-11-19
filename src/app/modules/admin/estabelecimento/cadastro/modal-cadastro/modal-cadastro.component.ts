@@ -16,15 +16,16 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { catchError, take } from 'rxjs/operators';
-import { of } from 'rxjs';
-
+import { BehaviorSubject, of } from 'rxjs';
+import { User } from '@core/models/interface';
+import { AuthServiceLocal, TokenService } from '@core';
 import { Estabelecimento } from '../../estabelecimento.model';
 import { TipoEstabelecimento } from '../../tipo-estabelecimento.model';
 import { CategoriaProduto } from '@shared/components/categoria-produto/categoria-produto.model';
 import { Usuario } from 'app/modules/admin/usuario/usuario.model';
 import { Auth0User } from '@core/models/user.auth0.model';
 import { PAPEL_ADMINISTRADOR } from '@shared/modelos/papel-permissao';
-import { AuthService } from '@auth0/auth0-angular';
+import { AuthService, User as UserAuth0 } from '@auth0/auth0-angular';
 import { CategoriaProdutoService } from '@shared/components/categoria-produto/categoria-produto.service';
 import { EstabelecimentoService } from '../../estabelecimento.service';
 import { TipoEstabelecimentoService } from '../../tipo-estabelecimento.service';
@@ -94,7 +95,7 @@ export class ModalCadastroComponent {
   // Auth / Serviços
   // ---------------------------
   private auth = inject(AuthService);
-  private user?: Auth0User;
+  private user: Auth0User = new Auth0User();
 
   constructor(
     private router: Router,
@@ -103,7 +104,8 @@ export class ModalCadastroComponent {
     private tipoEstabelecimentoService: TipoEstabelecimentoService,
     private loading: LoadingService,
     private itensAgrupadosService: ItensAgrupadosService,
-    private store: LocalStorageService
+    private store: LocalStorageService,
+    private localAuthService: AuthServiceLocal
   ) {}
 
   // ---------------------------
@@ -223,6 +225,9 @@ export class ModalCadastroComponent {
         this.estabelecimentoCadastrado = resultado.estabelecimento;
 
         this.store.set("usuarioCadastrado", resultado.estabelecimento.usuarios[0]);
+        this.store.set('currentUser', this.getUserFromUserAuthAndUserCadastrado(this.user, resultado.estabelecimento.usuarios[0]));
+        this.localAuthService.assignUser(new BehaviorSubject<User>(this.store.get('currentUser')));
+        this.localAuthService.menu();
         this.store.set("estabelecimentoCadastrado", resultado.estabelecimento);
 
         console.log("this.store.get", this.store.get("usuarioCadastrado"))
@@ -238,6 +243,24 @@ export class ModalCadastroComponent {
       error: err => console.error('Erro ao criar estabelecimento', err)
     });
   }
+
+  private getUserFromUserAuthAndUserCadastrado(user:UserAuth0, usuario:Usuario): User {
+      return {
+        id: usuario.id,
+        //username: "admin",
+        //password: "admin",
+        name: user.given_name,
+        email: user.email,
+        role: [
+          { 
+            name: usuario.papel?.nome,
+            priority: 1
+          }
+        ],
+        permissions: usuario.papel?.permissoes.map(p => p.nome),
+        avatar: user.picture
+      };
+    }
 
   // ---------------------------
   // Itens Agrupados

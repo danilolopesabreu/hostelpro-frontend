@@ -9,6 +9,7 @@ export interface Produto {
   imagem: string;
   descricao: string;
   quantidadeVendida: number;
+  quantidadeCarrinho:number;
   situacao: string;
   editando: boolean;
   novoPreco: number;

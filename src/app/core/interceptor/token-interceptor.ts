@@ -22,7 +22,7 @@ export class TokenInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    const handler = () => {
+   /* const handler = () => {
       if (request.url.includes('/auth/logout')) {
         this.router.navigateByUrl('/auth/login');
       }
@@ -50,7 +50,9 @@ export class TokenInterceptor implements HttpInterceptor {
         );
     }
 
-    return next.handle(request).pipe(tap(() => handler()));
+    return next.handle(request).pipe(tap(() => handler()));*/
+
+    return next.handle(request);
   }
 
   private shouldAppendToken(url: string) {

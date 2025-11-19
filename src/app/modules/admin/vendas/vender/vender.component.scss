@@ -1497,11 +1497,6 @@
   color: #333;
 }
 
-.btn-adicionar {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
 
 .btn-adicionar {
   flex: 1;
@@ -1510,7 +1505,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-width: 120px;
+  width: 120px;
 }
 
 .preco-container {

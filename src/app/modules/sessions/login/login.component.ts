@@ -104,6 +104,7 @@ export class LoginComponent implements OnInit {
                         this.router.navigate(['/vendas']);
                       } else {
                         console.log('Usuário não cadastrado');
+                        //this.store.clear();
                         this.router.navigate(['/estabelecimento/cadastro']);
                       }
                     },

@@ -127,9 +127,9 @@ export class VenderComponent {
       itensAgrupados: this.itensAgrupadosService.listarPorEstabelecimento(this.usuarioCadastrado?.estabelecimentoId)
     }).subscribe({
       next: dados => {
-        this.produtos = dados.produtos; this.produtosFiltrados = [...this.produtos],
-          this.callBackCarregamentoEstabelecimento(dados.estabelecimento),
-          this.itensAgrupados = dados.itensAgrupados
+        this.produtos = Array.isArray(dados.produtos) ? dados.produtos : []; this.produtosFiltrados = [...this.produtos];
+        this.callBackCarregamentoEstabelecimento(dados.estabelecimento);
+        this.itensAgrupados = dados.itensAgrupados;
       },
       error: err => {
         console.error('Erro ao carregar dados dados', err);
@@ -139,11 +139,13 @@ export class VenderComponent {
   }
 
   private callBackCarregamentoEstabelecimento(estabelecimento: Estabelecimento) {
-    if (!estabelecimento.itensAgrupados || estabelecimento.itensAgrupados?.length == 0) {
-      this.router.navigate(['/estabelecimento/cadastro']);
-    } else {
-      this.estabelecimentoCadastrado = estabelecimento;
-      this.agrupador = estabelecimento.tipoEstabelecimento?.agrupador;
+    if(estabelecimento){
+      if (!estabelecimento.itensAgrupados || estabelecimento.itensAgrupados?.length == 0) {
+        this.router.navigate(['/estabelecimento/cadastro']);
+      } else {
+        this.estabelecimentoCadastrado = estabelecimento;
+        this.agrupador = estabelecimento.tipoEstabelecimento?.agrupador;
+      }
     }
   }
 
@@ -288,9 +290,9 @@ export class VenderComponent {
     let itensPedido = this.cartItems.map(produto =>
       new ItemPedido({
         produtoId: produto.id,
-        quantidade: produto.quantidadeVendida,
+        quantidade: produto.quantidadeCarrinho,
         precoUnitario: produto.preco,
-        precoTotal: (produto.preco) * (produto.quantidadeVendida),
+        precoTotal: (produto.preco) * (produto.quantidadeCarrinho),
         produtoEstabelecimento: produto
       })
     );
@@ -315,8 +317,17 @@ export class VenderComponent {
     }).subscribe({
       next: dados => {
         console.log(dados.pedido);
-        this.pedidoFinalizado = true; 
+        this.pedidoFinalizado = true;
         this.itensAgrupadosFiltrados = this.itensAgrupados;
+
+        let idsNoCarrinho = new Set(this.cartItems.map(item => item.id));
+
+        this.produtosFiltrados.forEach(produto => {
+          if (idsNoCarrinho.has(produto.id)) {
+            produto.quantidadeCarrinho = 0;
+          }
+        });
+
       },
       error: err => {
         console.error('Erro ao realizar pedido', err);
@@ -346,41 +357,43 @@ export class VenderComponent {
   addToCart(produtoEstabelecimento: ProdutoEstabelecimento) {
     // procura se o produto já existe no carrinho
     const existing = this.cartItems.find(item => item.id === produtoEstabelecimento.id);
-    
+
     let filtrados = this.produtosFiltrados.find(item => item.id === produtoEstabelecimento.id);
 
-    if(filtrados)
-      filtrados.quantidadeVendida++;
+    if (filtrados)
+      filtrados.quantidadeCarrinho++;
 
     if (existing) {
-      existing.quantidadeVendida++;
+      existing.quantidadeCarrinho++;
     } else {
       // importante: usar o mesmo objeto para que alterações reflitam no carrinho
-      this.cartItems.push({ ...produtoEstabelecimento, quantidadeVendida: 1, _ref: produtoEstabelecimento });
+      this.cartItems.push({ ...produtoEstabelecimento, quantidadeCarrinho: 1, _ref: produtoEstabelecimento });
     }
+
+    console.log(produtoEstabelecimento)
   }
 
 
   // Incrementa a quantidade do item
   incrementItem(item: ProdutoEstabelecimento) {
-    item.quantidadeVendida++;
+    item.quantidadeCarrinho++;
 
     let filtrados = this.produtosFiltrados.find(item2 => item2.id === item.id);
 
-    if(filtrados)
-      filtrados.quantidadeVendida++;
+    if (filtrados)
+      filtrados.quantidadeCarrinho++;
   }
 
   // Decrementa a quantidade do item (removendo se for 0)
   decrementItem(item: ProdutoEstabelecimento) {
-    item.quantidadeVendida--;
-    if (item.quantidadeVendida <= 0) {
+    item.quantidadeCarrinho--;
+    if (item.quantidadeCarrinho <= 0) {
       this.removeItem(item);
     }
     let filtrados = this.produtosFiltrados.find(item2 => item2.id === item.id);
 
-    if(filtrados)
-      filtrados.quantidadeVendida--;
+    if (filtrados)
+      filtrados.quantidadeCarrinho--;
   }
 
   // Remove item do carrinho
@@ -390,8 +403,8 @@ export class VenderComponent {
 
     let filtrados = this.produtosFiltrados.find(item2 => item2.id === item.id);
 
-    if(filtrados)
-      filtrados.quantidadeVendida = 0;
+    if (filtrados)
+      filtrados.quantidadeCarrinho = 0;
   }
 
   fecharModalQtdItemProdutoZerado() {
@@ -402,15 +415,15 @@ export class VenderComponent {
 
   // Calcula o total do pedido
   getTotal(): number {
-    return this.cartItems.reduce((total, item) => total + (item.preco * item.quantidadeVendida), 0);
+    return this.cartItems.reduce((total, item) => total + (item.preco * item.quantidadeCarrinho), 0);
   }
 
   getTotalConfirmado(): number {
-    return this.cartItemsConfirmado.reduce((total, item) => total + (item.preco * item.quantidadeVendida), 0);
+    return this.cartItemsConfirmado.reduce((total, item) => total + (item.preco * item.quantidadeCarrinho), 0);
   }
 
   getTotalQuantidadeVendida(): number {
-    return this.cartItems.reduce((total, item) => total + item.quantidadeVendida, 0);
+    return this.cartItems.reduce((total, item) => total + item.quantidadeCarrinho, 0);
   }
   editPrice(produtoEstabelecimento: ProdutoEstabelecimento, event: Event) {
     event.preventDefault(); // evita rolagem da página por causa do link
@@ -444,21 +457,20 @@ export class VenderComponent {
   }
 
   editarProduto(produto: any) {
-  produto.editando = true;
-  produto._backup = { ...produto }; // salva valores originais
-}
+    produto.editando = true;
+    produto._backup = { ...produto }; // salva valores originais
+  }
 
-confirmarEdicao(produto: any) {
-  produto.editando = false;
-  delete produto._backup;
-  // Aqui você pode chamar o backend, ex:
-  // this.produtoService.atualizar(produto).subscribe(...)
-}
+  confirmarEdicao(produto: any) {
+    produto.editando = false;
+    delete produto._backup;
 
-cancelarEdicao(produto: any) {
-  Object.assign(produto, produto._backup);
-  produto.editando = false;
-  delete produto._backup;
-}
+  }
+
+  cancelarEdicao(produto: any) {
+    Object.assign(produto, produto._backup);
+    produto.editando = false;
+    delete produto._backup;
+  }
 
 }

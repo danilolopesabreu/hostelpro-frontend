@@ -23,7 +23,7 @@
       <div class="row" *ngIf="produtosFiltrados.length > 0">
         <div
           class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4"
-          *ngFor="let produto of produtosFiltrados">
+          *ngFor="let produto of produtosFiltrados ?? []">
           <mat-card class="produto-card">
             <mat-card-content class="produto-content">
               <!-- Cabeçalho -->
@@ -47,7 +47,7 @@
 
                 <!-- Se o produto ainda não tem quantidade → mostra o botão "Adicionar" -->
                 <button
-                  *ngIf="!produto.quantidadeVendida || produto.quantidadeVendida === 0"
+                  *ngIf="!produto.quantidadeCarrinho || produto.quantidadeCarrinho === 0"
                   mat-raised-button
                   color="primary"
                   class="btn-adicionar"
@@ -60,13 +60,13 @@
                 <!-- Controle multifuncional de quantidade -->
                 <div
                   class="controle-quantidade"
-                  *ngIf="produto.quantidadeVendida && produto.quantidadeVendida > 0"
+                  *ngIf="produto.quantidadeCarrinho && produto.quantidadeCarrinho > 0"
                 >
                   <button mat-icon-button color="warn" (click)="removeItem(produto)">
                     <mat-icon>delete</mat-icon>
                   </button>
 
-                  <span class="quantidade-display">{{ produto.quantidadeVendida }}</span>
+                  <span class="quantidade-display">{{ produto.quantidadeCarrinho }}</span>
 
                   <button mat-icon-button color="primary" (click)="addToCart(produto)">
                     <mat-icon>add</mat-icon>
@@ -130,7 +130,7 @@
       <div class="mb-3">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Nome do Cliente</mat-label>
-          <input matInput [(ngModel)]="clienteNome" placeholder="Digite o nome" />
+          <input matInput [(ngModel)]="clienteNome" placeholder="Nome do Cliente" />
         </mat-form-field>
 
         <mat-form-field class="w-100" appearance="outline"
@@ -178,7 +178,7 @@
             *ngFor="let item of cartItems">
           <div> 
             <label style="font-size: 1rem">{{ item.nome }}</label><br>
-            <b>R$ {{ item.preco | number:'1.2-2' }} x {{ item.quantidadeVendida }}</b>
+            <b>R$ {{ item.preco | number:'1.2-2' }} x {{ item.quantidadeCarrinho }}</b>
           </div>
           <div class="d-flex align-items-center">
             <button mat-icon-button (click)="incrementItem(item)" matTooltip="Adicionar">
@@ -230,8 +230,8 @@
         <ul class="list-group" style="padding-left: 0;">
           <li class="list-group-item d-flex justify-content-between align-items-center"
               *ngFor="let item of cartItems">
-            <span>{{ item.nome }} (x{{ item.quantidadeVendida }})</span>
-            <span>R$ {{ (item.preco * item.quantidadeVendida) | number:'1.2-2' }}</span>
+            <span>{{ item.nome }} (x{{ item.quantidadeCarrinho }})</span>
+            <span>R$ {{ (item.preco * item.quantidadeCarrinho) | number:'1.2-2' }}</span>
           </li>
         </ul>
 
