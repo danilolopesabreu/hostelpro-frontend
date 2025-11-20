@@ -14,7 +14,7 @@ export class Pedido {
 
   status?: string;
 
-  itens?: ItemPedido[];
+  itens: ItemPedido[] = [];
 
   nomeCliente?: string;
 
@@ -22,7 +22,7 @@ export class Pedido {
 
   numeroDoPedido?:string;
 
-  itensAgrupados?: ItensAgrupados | string;
+  itensAgrupados?: ItensAgrupados;
 
   constructor(init?: Partial<Pedido>) {
     Object.assign(this, init);

@@ -14,6 +14,8 @@ export class ItemPedido {
 
   produtoEstabelecimento?: ProdutoEstabelecimento;
 
+  selecionado?: boolean;
+
   constructor(init?: Partial<ItemPedido>) {
     Object.assign(this, init);
   }

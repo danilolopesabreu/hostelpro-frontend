@@ -304,7 +304,7 @@ export class VenderComponent {
       status: 'aberto',
       itens: itensPedido,
       numeroDoPedido: this.numeroDoPedido,
-      itensAgrupados: this.dummyItemAgrupado
+      itensAgrupados: this.dummyItemAgrupado as ItensAgrupados
     });
 
     /*this.pedidoService.criarPedido(this.pedido).subscribe({

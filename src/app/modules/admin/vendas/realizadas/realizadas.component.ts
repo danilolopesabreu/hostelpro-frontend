@@ -47,6 +47,7 @@ import { Usuario } from '../../usuario/usuario.model';
 import { LoadingService } from '@shared/components/loading/loading.service';
 import { Pedido } from '@shared/components/pedido/pedido.model';
 import { ItensAgrupados } from '@shared/modelos/itens-agrupados.model';
+import { EditarPedidoComponent } from './dialogs/editar-pedido/editar-pedido.component';
 
 @Component({
   selector: 'app-realizadas',
@@ -150,7 +151,7 @@ export class RealizadasComponent implements OnInit, OnDestroy{
       .map((cd) => cd.def);
   }
 
-  editCall(row: AllRooms) {
+  editCall(row: Pedido) {
     this.openDialog('edit', row);
   }
 
@@ -158,11 +159,11 @@ export class RealizadasComponent implements OnInit, OnDestroy{
     this.openDialog('add');
   }
 
-  openDialog(action: 'add' | 'edit', data?: AllRooms) {
-    const dialogRef = this.dialog.open(FormDialogComponent, {
+  openDialog(action: 'add' | 'edit', data?: Pedido) {
+    const dialogRef = this.dialog.open(EditarPedidoComponent, {
       width: '60vw',
       maxWidth: '100vw',
-      data: { allRooms: data, action },
+      data: { pedido: data, action },
       autoFocus: false,
     });
 
