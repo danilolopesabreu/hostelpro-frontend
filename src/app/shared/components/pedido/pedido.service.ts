@@ -34,6 +34,10 @@ export class PedidoService {
     return this.http.get<Pedido>(`${this.baseUrl}/${id}`);
   }
 
+  buscarPorEstabelecimentoId(id: number | undefined): Observable<Pedido[]> {
+    return this.http.get<Pedido[]>(`${this.baseUrl}/estabelecimento/${id}`);
+  }
+
   /**
    * 🔹 Atualiza status do pedido (opcional)
    */

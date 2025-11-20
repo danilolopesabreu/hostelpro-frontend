@@ -28,4 +28,14 @@ export class Pedido {
     Object.assign(this, init);
   }
 
+  fromDTO(dto: any): Pedido {
+    Object.assign(this, dto);
+    return this;
+  }
+
+  calcularTotalPedido(): number | undefined{
+    return this.itens?.reduce((soma, item) => 
+      soma + (item.precoTotal), 0);
+  }
+
 }

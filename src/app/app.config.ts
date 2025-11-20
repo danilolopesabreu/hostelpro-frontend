@@ -1,8 +1,8 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, LOCALE_ID } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { HashLocationStrategy, LocationStrategy, registerLocaleData } from '@angular/common';
 import { APP_ROUTE } from './modules/app.routes';
 import { appInitializerProviders, httpInterceptorProviders } from '@core';
 import { AuthHttpInterceptor } from '@core/interceptor/auth-http-interceptor';
@@ -24,6 +24,9 @@ import { AppDirectionality } from '@shared';
 import { Directionality } from '@angular/cdk/bidi';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import localePt from '@angular/common/locales/pt';
+
+registerLocaleData(localePt, 'pt-BR');
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -44,7 +47,8 @@ export const appConfig: ApplicationConfig = {
         suffix: '.json',
       }),
     }),
-    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
+    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
+    { provide: LOCALE_ID, useValue: 'pt-BR' },
     { provide: DateAdapter, useClass: MomentDateAdapter },
     {
       provide: MAT_DATE_FORMATS,

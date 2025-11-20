@@ -298,7 +298,7 @@ export class VenderComponent {
     );
 
     this.pedido = new Pedido({
-      estabelecimentoId: 1,
+      estabelecimentoId: this.usuarioCadastrado?.estabelecimentoId,
       usuarioId: this.usuarioCadastrado?.id,
       nomeCliente: this.clienteNome,
       status: 'aberto',
@@ -370,7 +370,7 @@ export class VenderComponent {
       this.cartItems.push({ ...produtoEstabelecimento, quantidadeCarrinho: 1, _ref: produtoEstabelecimento });
     }
 
-    console.log(produtoEstabelecimento)
+    //console.log(filtrados)
   }
 
 
@@ -389,11 +389,14 @@ export class VenderComponent {
     item.quantidadeCarrinho--;
     if (item.quantidadeCarrinho <= 0) {
       this.removeItem(item);
+      return;
     }
     let filtrados = this.produtosFiltrados.find(item2 => item2.id === item.id);
 
     if (filtrados)
       filtrados.quantidadeCarrinho--;
+
+    //console.log('filtrados:',filtrados)
   }
 
   // Remove item do carrinho
@@ -405,6 +408,7 @@ export class VenderComponent {
 
     if (filtrados)
       filtrados.quantidadeCarrinho = 0;
+    
   }
 
   fecharModalQtdItemProdutoZerado() {

@@ -12,7 +12,7 @@ const auth0Config = mergeApplicationConfig(appConfig, {
       clientId: environment.auth0.clientId,
       authorizationParams: {
         redirect_uri: window.location.origin,
-        audience: environment.auth0.audience
+        audience: environment.auth0.audience,
       },
       cacheLocation: 'localstorage',
       useRefreshTokens: true
