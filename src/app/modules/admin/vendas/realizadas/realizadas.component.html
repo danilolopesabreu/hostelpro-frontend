@@ -66,12 +66,17 @@
                   }
                   @case ('fechado') {
                   <div>
+                    <span class="badge badge-solid-blue">{{ row[column.def] }}</span>
+                  </div>
+                  }
+                  @case ('pendente') {
+                  <div>
                     <span class="badge badge-solid-orange">{{ row[column.def] }}</span>
                   </div>
                   }
-                  @case ('parcial') {
+                  @case ('cancelado') {
                   <div>
-                    <span class="badge badge-solid-blue">{{ row[column.def] }}</span>
+                    <span class="badge badge-solid-red">{{ row[column.def] }}</span>
                   </div>
                   }
                   }
@@ -133,7 +138,7 @@
                   <app-feather-icons [icon]="'check-square'" [class]="'tbl-fav-check-green'"></app-feather-icons>
                 </button>
                 <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="deleteItem(row)"
-                  class="tbl-action-btn">
+                   *ngIf="row.status === 'aberto'" class="tbl-action-btn">
                   <app-feather-icons [icon]="'trash-2'" [class]="'tbl-fav-delete'"></app-feather-icons>
                 </button>
               </mat-cell>

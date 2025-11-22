@@ -21,6 +21,14 @@ export class PedidoService {
   }
 
   /**
+   * 🔹 Cria um novo pedido
+   */
+  atualizarPedido(pedido: Pedido): Observable<Pedido> {
+    return this.http.put<Pedido>(this.baseUrl, pedido);
+  }
+
+
+  /**
    * 🔹 Busca todos os pedidos
    */
   listarPedidos(): Observable<Pedido[]> {
@@ -50,5 +58,9 @@ export class PedidoService {
    */
   excluirPedido(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  excluirItemPedido(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/item-pedido/${id}`);
   }
 }

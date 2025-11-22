@@ -2,7 +2,7 @@ import { ItensAgrupados } from "@shared/modelos/itens-agrupados.model";
 import { ItemPedido } from "./itemPedido.model";
 
 export class Pedido {
-  id?: number;
+  id!: number;
 
   estabelecimentoId!: number;
 

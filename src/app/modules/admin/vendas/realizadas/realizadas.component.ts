@@ -168,8 +168,14 @@ export class RealizadasComponent implements OnInit, OnDestroy{
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      console.log(result)
       if (result) {
-        if (action === 'add') {
+        if(result.status === 'deletado'){
+          this.dataSource.data = this.dataSource.data.filter(
+            (record) => record.id !== result.id
+          );
+        }
+        /*if (action === 'add') {
           this.dataSource.data = [result, ...this.dataSource.data];
         } else {
           this.updateRecord(result);
@@ -180,7 +186,7 @@ export class RealizadasComponent implements OnInit, OnDestroy{
           `${action === 'add' ? 'Add' : 'Edit'} Record Successfully...!!!`,
           'bottom',
           'center'
-        );
+        );*/
       }
     });
   }
@@ -200,6 +206,7 @@ export class RealizadasComponent implements OnInit, OnDestroy{
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      console.log(result)
       if (result) {
         this.dataSource.data = this.dataSource.data.filter(
           (record) => record.id !== row.id

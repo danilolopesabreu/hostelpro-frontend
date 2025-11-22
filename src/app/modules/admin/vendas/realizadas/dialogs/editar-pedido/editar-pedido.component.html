@@ -2,92 +2,172 @@
   <div class="modalHeader">
     <div class="avatarDetails">
       <div class="modalTitle">
-        {{dialogTitle}}
+        {{ dialogTitle }}
       </div>
     </div>
-    <button mat-icon-button (click)="dialogRef.close()" class="modal-close-button" aria-label="Close dialog">
+
+    <button mat-icon-button (click)="onNoClick()" class="modal-close-button fw-bold"
+            aria-label="Close dialog" color="warn">
       <mat-icon>close</mat-icon>
     </button>
   </div>
+
   <div mat-dialog-content>
-<table mat-table [dataSource]="pedido.itens" class="mat-elevation-z8 w-100">
 
-  <!-- Checkbox Column -->
-  <ng-container matColumnDef="select">
-    <th mat-header-cell *matHeaderCellDef>
-      <mat-checkbox
-        color="primary"
-        (change)="toggleSelecionarTodos()"
-        [checked]="todosSelecionados"
-        [indeterminate]="indeterminado">
-      </mat-checkbox>
-    </th>
-    <td mat-cell *matCellDef="let element">
-      <mat-checkbox
-        color="primary"
-        [(ngModel)]="element.selecionado"
-        (change)="verificarSelecao()">
-      </mat-checkbox>
-    </td>
-    <td mat-footer-cell *matFooterCellDef></td>
-  </ng-container>
+    <!-- ====================== CARD DE INFORMAÇÕES DO PEDIDO ====================== -->
+    <mat-card class="mb-3 p-3 shadow-sm">
+      <mat-card-content>
+        <mat-card-title class="mb-2">Dados do Pedido</mat-card-title>
+        <br/>
 
-  <!-- Produto Column -->
-  <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef> Produto </th>
-    <td mat-cell *matCellDef="let element"> {{ element.produtoEstabelecimento?.nome }} </td>
-    <td mat-footer-cell *matFooterCellDef></td>
-  </ng-container>
+        <div class="row">
 
-  <!-- Preço Column -->
-  <ng-container matColumnDef="weight">
-    <th mat-header-cell *matHeaderCellDef> Preço </th>
-    <td mat-cell *matCellDef="let element">
-      {{ element.precoUnitario | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
-    </td>
-    <td mat-footer-cell *matFooterCellDef></td>
-  </ng-container>
-
-  <!-- Quantidade Column -->
-  <ng-container matColumnDef="symbol">
-    <th mat-header-cell *matHeaderCellDef> Quantidade </th>
-    <td mat-cell *matCellDef="let element"> {{ element.quantidade }} </td>
-    <td mat-footer-cell *matFooterCellDef class="text-end fw-bold">
-      Total do Pedido:
-    </td>
-  </ng-container>
-
-  <!-- Total Item Column -->
-  <ng-container matColumnDef="valorTotal">
-    <th mat-header-cell *matHeaderCellDef class="text-center"> Total </th>
-    <td mat-cell *matCellDef="let element" class="text-center">
-      {{ element.precoTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
-    </td>
-    <td mat-footer-cell *matFooterCellDef class="text-center fw-bold">
-      {{ calcularTotalPedido() | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
-    </td>
-  </ng-container>
-
-  <!-- HEADER -->
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-
-  <!-- ROWS -->
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-  <!-- FOOTER -->
-  <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
-
-</table>
-
-
-      
-      <div class="row m-b-24">
-        <div class="col-sm-12">
-          <div class="example-button-row">
-            <button mat-raised-button color="primary" [disabled]="true" (click)="submit()">Confirmar</button>
-            <button mat-raised-button color="warn" (click)="onNoClick()" tabindex="-1" type="button">Cancelar</button>
+          <div class="col-6">
+            <strong>Cliente:</strong><br>
+            {{ pedido.nomeCliente || '—' }}
           </div>
+
+          <div class="col-6">
+            <strong>Status:</strong><br>
+            @switch (pedido.status) {
+              @case ('aberto') {
+                <span class="badge badge-solid-green">{{ pedido.status }}</span>
+              }
+              @case ('fechado') {
+                <span class="badge badge-solid-blue">{{ pedido.status }}</span>
+              }
+              @case ('pendente') {
+                <span class="badge badge-solid-orange">{{ pedido.status }}</span>
+              }
+              @case ('cancelado') {
+                <span class="badge badge-solid-red">{{ pedido.status }}</span>
+              }
+            }
+          </div>
+
+          <div class="col-6 mt-3">
+            <strong>Data do Pedido:</strong><br>
+            {{ pedido.dataCriacao | date:'dd/MM/yyyy HH:mm':'pt-BR' }}
+          </div>
+
+          <div class="col-6 mt-3">
+            <strong>Quarto / Mesa / Grupo:</strong><br>
+            {{ pedido.itensAgrupados?.nome || '—' }}
+          </div>
+
         </div>
-      </div>    
+      </mat-card-content>
+    </mat-card>
+    <!-- =========================================================================== -->
+
+
+
+    <!-- ====================== TABELA DE ITENS ====================== -->
+    <table mat-table [dataSource]="pedido.itens" class="mat-elevation-z8 w-100">
+
+      <!-- ========== Checkbox Column (some se ocultarBotoes = true) ========== -->
+      <ng-container matColumnDef="select" *ngIf="!ocultarBotoes">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox
+            color="primary"
+            (change)="toggleSelecionarTodos()"
+            [checked]="todosSelecionados"
+            [indeterminate]="indeterminado">
+          </mat-checkbox>
+        </th>
+
+        <td mat-cell *matCellDef="let element">
+          <mat-checkbox *ngIf="element.status === 'pendente' || element.status === 'aberto'"
+            color="primary"
+            [(ngModel)]="element.selecionado"
+            (change)="verificarSelecao()">
+          </mat-checkbox>
+          <label *ngIf="element.status === 'fechado'">Pago</label>
+        </td>
+
+        <td mat-footer-cell *matFooterCellDef></td>
+      </ng-container>
+
+      <!-- Produto -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Produto </th>
+        <td mat-cell *matCellDef="let element"> {{ element.produtoEstabelecimento?.nome }} </td>
+        <td mat-footer-cell *matFooterCellDef></td>
+      </ng-container>
+
+      <!-- Preço -->
+      <ng-container matColumnDef="weight">
+        <th mat-header-cell *matHeaderCellDef> Preço </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.precoUnitario | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+        </td>
+        <td mat-footer-cell *matFooterCellDef></td>
+      </ng-container>
+
+      <!-- Quantidade -->
+      <ng-container matColumnDef="symbol">
+        <th mat-header-cell *matHeaderCellDef> Quantidade </th>
+        <td mat-cell *matCellDef="let element"> {{ element.quantidade }} </td>
+        <td mat-footer-cell *matFooterCellDef class="text-end fw-bold">
+          Total do Pedido:
+        </td>
+      </ng-container>
+
+      <!-- Total Item -->
+      <ng-container matColumnDef="valorTotal">
+        <th mat-header-cell *matHeaderCellDef class="text-center"> Total </th>
+
+        <td mat-cell *matCellDef="let element" class="text-center">
+          {{ element.precoTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+        </td>
+
+        <td mat-footer-cell *matFooterCellDef class="text-center fw-bold">
+          {{ calcularTotalPedido() | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+        </td>
+      </ng-container>
+
+      <!-- ========== Action Column (some se ocultarBotoes = true) ========== -->
+      <ng-container matColumnDef="action" *ngIf="!ocultarBotoes">
+        <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+
+        <td mat-cell *matCellDef="let element" class="text-center">
+          <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="deleteItem(element)"
+                *ngIf="pedido.status !== 'pendente'"  class="tbl-action-btn">
+            <app-feather-icons icon="trash-2" class="tbl-fav-delete"></app-feather-icons>
+          </button>
+        </td>
+
+        <td mat-footer-cell *matFooterCellDef></td>
+      </ng-container>
+
+      <!-- HEADER -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+      <!-- ROWS -->
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- FOOTER -->
+      <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
+
+    </table>
+    <!-- ================================================================ -->
+
+
+    <!-- ========== BOTÕES (somem se ocultarBotoes = true) ========== -->
+    <div class="row my-3" *ngIf="!ocultarBotoes">
+      <div class="col-sm-12">
+        <div class="example-button-row">
+          <button mat-raised-button color="primary" [disabled]="!isAlgumSelecionados()" (click)="confirmarPagamento()">
+            Confirmar Pagamento
+          </button>
+
+          <button mat-raised-button color="warn" (click)="cancelarPedido()" tabindex="-1" type="button"
+            *ngIf="pedido.status !== 'pendente'">
+            Cancelar Pedido
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

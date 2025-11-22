@@ -2,7 +2,7 @@ import { ProdutoEstabelecimento } from "../produto/produto-estabelecimento.model
 import { Produto } from "../produto/produto.model";
 
 export class ItemPedido {
-  id?: number;
+  id!: number;
 
   produtoId!: number;
 
@@ -12,9 +12,11 @@ export class ItemPedido {
 
   precoTotal!: number;
 
-  produtoEstabelecimento?: ProdutoEstabelecimento;
+  produtoEstabelecimento!: ProdutoEstabelecimento;
 
   selecionado?: boolean;
+
+  status?:string;
 
   constructor(init?: Partial<ItemPedido>) {
     Object.assign(this, init);
