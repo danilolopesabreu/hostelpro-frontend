@@ -63,4 +63,8 @@ export class PedidoService {
   excluirItemPedido(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/item-pedido/${id}`);
   }
+
+  cancelarItemPedido(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/item-pedido/cancelar/${id}`);
+  }
 }

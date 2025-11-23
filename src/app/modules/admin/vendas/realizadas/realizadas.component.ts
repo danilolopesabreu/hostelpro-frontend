@@ -200,26 +200,69 @@ export class RealizadasComponent implements OnInit, OnDestroy{
     }
   }
 
-  deleteItem(row: AllRooms) {
-    const dialogRef = this.dialog.open(DeleteDialogComponent, {
-      data: row,
-    });
+  deletarPedido(pedido: Pedido) {
+    
+    this.loading.runWithLoading({
+      pedido: this.pedidoService.excluirPedido(pedido.id),
+    }).subscribe({
+      next: dados => {
+        console.log(dados.pedido);
 
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log(result)
-      if (result) {
         this.dataSource.data = this.dataSource.data.filter(
-          (record) => record.id !== row.id
+          (record) => record.id !== pedido.id
         );
-        this.refreshTable();
+
         this.showNotification(
           'snackbar-danger',
-          'Delete Record Successfully...!!!',
+          'Pedido deletado com sucesso!!!',
           'bottom',
           'center'
         );
       }
     });
+    
+  }
+
+  cancelarPedido(pedido: Pedido){
+    pedido.status = 'cancelado';
+    pedido.itens.forEach(item =>{
+      item.status = 'cancelado';
+    });
+
+    this.loading.runWithLoading({
+      pedido: this.pedidoService.atualizarPedido(pedido),
+    }).subscribe({
+      next: dados => {
+        console.log(dados.pedido);
+        this.showNotification(
+          'snackbar-danger',
+          'Pedido cancelado com sucesso!!!',
+          'bottom',
+          'center'
+        );
+      }
+    });
+
+  }
+
+  confirmarPedido(pedido:Pedido){
+    
+    pedido.itens.forEach(i => {
+      if(i.status !== 'fechado')
+        i.status = i.selecionado ? 'fechado' : 'pendente';
+    });
+
+    pedido.status = 'fechado';
+    //this.pedido.itens = itensPedidoSelecionados;
+    console.log(pedido)
+    this.loading.runWithLoading({
+      pedido: this.pedidoService.atualizarPedido(pedido),
+    }).subscribe({
+      next: dados => {
+        console.log(dados.pedido);    
+      }
+    });
+
   }
 
   private refreshTable() {

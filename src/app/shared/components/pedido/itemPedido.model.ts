@@ -16,7 +16,7 @@ export class ItemPedido {
 
   selecionado?: boolean;
 
-  status?:string;
+  status!:string;
 
   constructor(init?: Partial<ItemPedido>) {
     Object.assign(this, init);

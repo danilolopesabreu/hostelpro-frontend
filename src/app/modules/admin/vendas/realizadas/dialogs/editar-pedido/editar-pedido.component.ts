@@ -47,15 +47,10 @@ export interface DialogData {
     MatNativeDateModule,
     MatMomentDateModule,
     MatCheckboxModule,
-    DecimalPipe,
-    MatListItem,
-    MatList,
     FormsModule,
     MatCardContent,
-    MatCardSubtitle,
     MatCardTitle,
-    MatCardHeader,
-    MatCard, PageHeaderComponent, MatCardModule, MatTableModule, FeatherIconsComponent
+    MatCard, MatCardModule, MatTableModule, FeatherIconsComponent
   ],
   templateUrl: './editar-pedido.component.html',
   styleUrl: './editar-pedido.component.scss',
@@ -154,14 +149,15 @@ export class EditarPedidoComponent implements OnInit {
 
   calcularTotalPedido(): number {
     return (this.pedido.itens ?? [])
-      .filter(i => i.selecionado)
+      ?.filter(i => i.status !== 'cancelado' && i.status !== 'fechado')
       .reduce((sum, item) => sum + (item.precoTotal ?? 0), 0);
   }
 
   // Calcula o total do pedido considerando apenas os itens selecionados
   calcularTotal() {
     return this.pedido.itens
-      ?.reduce((t, i) => t + (i.precoTotal ?? 0), 0) ?? 0;
+      ?.filter(i => i.status !== 'cancelado' && i.status !== 'fechado')
+      .reduce((t, i) => t + (i.precoTotal ?? 0), 0) ?? 0;
   }
 
   cancelarPedido(){
@@ -176,6 +172,19 @@ export class EditarPedidoComponent implements OnInit {
       next: dados => {
         console.log(dados.pedido);
         this.callBackCancelarPedido()      
+      }
+    });
+
+  }
+
+  deletarPedido(){
+    this.loading.runWithLoading({
+      pedido: this.pedidoService.excluirPedido(this.pedido.id),
+    }).subscribe({
+      next: dados => {
+        console.log(dados.pedido);
+        this.pedido.status = 'deletado';
+        this.onNoClick();
       }
     });
 
@@ -198,7 +207,7 @@ export class EditarPedidoComponent implements OnInit {
     });*/
 
     itensPedido.forEach(i => {
-      if(i.status !== 'fechado')
+      if(i.status !== 'fechado' && i.status !== 'cancelado')
         i.status = i.selecionado ? 'fechado' : 'pendente';
     });
 
@@ -225,26 +234,18 @@ export class EditarPedidoComponent implements OnInit {
     console.log("Removendo item:", item);
 
     if(this.pedido.status === 'aberto' && this.pedido.itens.length == 1){
-      this.loading.runWithLoading({
-        pedido: this.pedidoService.excluirPedido(this.pedido.id),
-      }).subscribe({
-        next: dados => {
-          console.log(dados.pedido);
-          this.pedido.status = 'deletado';
-          this.onNoClick();    
-        }
-      });
+      this.deletarPedido();
       return;
     }
 
-    this.removerItemPedidoDeletadoLista(item);
+    //this.removerItemPedidoDeletadoLista(item);
 
     this.loading.runWithLoading({
       pedido: this.pedidoService.excluirItemPedido(item.id),
     }).subscribe({
       next: dados => {
         console.log(dados.pedido);
-        this.callBackDeleteItem(item)      
+        this.removerItemPedidoDeletadoLista(item);  
       }
     });
 

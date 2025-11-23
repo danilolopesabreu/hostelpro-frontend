@@ -208,6 +208,10 @@ export class VenderComponent {
       .subscribe(result => this.isLargeScreen = !result.matches);
   }
 
+  checkScreenSize() {
+    this.isLargeScreen = window.innerWidth >= 1340; // breakpoint "lg" do Bootstrap
+  }
+
   abrirDialogResumo(): void {
     this.dialog.open(this.painelResumoConfirmacaoPedido, {
       width: '95vw',
@@ -215,11 +219,7 @@ export class VenderComponent {
       panelClass: 'dialog-resumo-pedido',
       disableClose: true
     });
-  }
-
-  checkScreenSize() {
-    this.isLargeScreen = window.innerWidth >= 992; // breakpoint "lg" do Bootstrap
-  }
+  } 
 
   validarItemAgrupado(): boolean {
     // Se o usuário digitou texto e não selecionou item
@@ -328,6 +328,9 @@ export class VenderComponent {
           }
         });
 
+        this.cartItemsConfirmado = structuredClone(this.cartItems);
+        this.cartItems = [];
+
       },
       error: err => {
         console.error('Erro ao realizar pedido', err);
@@ -355,6 +358,14 @@ export class VenderComponent {
 
   // Adiciona produto ao carrinho (ou incrementa quantidade se já existe)
   addToCart(produtoEstabelecimento: ProdutoEstabelecimento) {
+
+    if(this.pedidoFinalizado){
+      this.pedidoFinalizado = false;
+      this.cartItemsConfirmado = [];
+      this.clienteNome = '';
+      this.dummyItemAgrupado = '';
+    }
+
     // procura se o produto já existe no carrinho
     const existing = this.cartItems.find(item => item.id === produtoEstabelecimento.id);
 

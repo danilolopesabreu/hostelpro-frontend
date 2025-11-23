@@ -129,18 +129,29 @@
             <ng-container matColumnDef="actions">
               <mat-header-cell class="pr-0" *matHeaderCellDef>Ações</mat-header-cell>
               <mat-cell *matCellDef="let row; let i=index;" class="pr-0">
+                
+                <!--Editar ou Detalhar-->
                 <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="editCall(row)"
-                  class="tbl-action-btn">
+                   *ngIf="row.status === 'fechado' || row.status === 'cancelado'" class="tbl-action-btn">
+                  <app-feather-icons [icon]="'plus-circle'" [class]="'tbl-fav-edit'"></app-feather-icons>
+                </button>
+                <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="editCall(row)"
+                   *ngIf="row.status !== 'fechado' && row.status !== 'cancelado'" class="tbl-action-btn">
                   <app-feather-icons [icon]="'edit'" [class]="'tbl-fav-edit'"></app-feather-icons>
                 </button>
-                <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="editCall(row)"
-                  class="tbl-action-btn">
+
+                <!--Confirmar-->
+                <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="confirmarPedido(row)"
+                    *ngIf="row.status !== 'fechado' && row.status !== 'cancelado'" class="tbl-action-btn">
                   <app-feather-icons [icon]="'check-square'" [class]="'tbl-fav-check-green'"></app-feather-icons>
                 </button>
-                <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="deleteItem(row)"
+
+                <!--Deletar-->
+                <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="cancelarPedido(row)"
                    *ngIf="row.status === 'aberto'" class="tbl-action-btn">
                   <app-feather-icons [icon]="'trash-2'" [class]="'tbl-fav-delete'"></app-feather-icons>
                 </button>
+
               </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>

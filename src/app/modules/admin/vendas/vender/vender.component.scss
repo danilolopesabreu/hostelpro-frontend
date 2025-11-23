@@ -1534,3 +1534,48 @@
   width: 90px;
   margin: 0;
 }
+
+/* Garante que a coluna principal nunca force quebra da coluna lateral */
+.col-md-9 {
+  min-width: 0;
+}
+
+/* Painel lateral — evita encolher ao ponto de quebrar o layout */
+.cart-panel {
+  min-width: 280px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Evita que qualquer card interno estoure o grid */
+.produto-card,
+.produto-content,
+.produto-header,
+.produto-footer {
+  min-width: 0 !important;
+}
+
+/* Se houver text overflow em nomes longos */
+.produto-nome,
+.produto-descricao {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Define largura mínima dos cards */
+.produto-card {
+  min-width: 220px;
+  height: 93%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Garante que as colunas respeitem a largura mínima */
+.col-12.col-sm-6.col-md-4.col-lg-3 {
+  min-width: 220px;
+}
+
+/* Evita que conteúdo interno estoure o card */
+.produto-card * {
+  min-width: 0;
+}
