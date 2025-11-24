@@ -95,6 +95,8 @@ export class VenderComponent {
   dummyItemAgrupado?: string | ItensAgrupados;
   numeroDoPedido?: string = '';
 
+  tamanhoJanela:number = 0;
+
   constructor(
     private router: Router,
     private dialog: MatDialog,
@@ -209,6 +211,7 @@ export class VenderComponent {
   }
 
   checkScreenSize() {
+    this.tamanhoJanela = window.innerWidth;
     this.isLargeScreen = window.innerWidth >= 1340; // breakpoint "lg" do Bootstrap
   }
 
@@ -344,6 +347,7 @@ export class VenderComponent {
   fecharPedido() {
     // Limpa carrinho e volta para modo vendas
     this.cartItems = [];
+    this.cartItemsConfirmado = [];
     this.clienteNome = '';
     this.numeroQuarto = '';
     this.pedidoFinalizado = false;

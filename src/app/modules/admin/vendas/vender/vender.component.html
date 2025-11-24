@@ -2,7 +2,7 @@
   <div class="row">
 
     <!-- Coluna principal -->
-    <div [ngClass]="cartItems.length > 0 && isLargeScreen ? 'col-md-9' : 'col-md-12'">
+    <div [ngClass]="(cartItems.length > 0 || cartItemsConfirmado.length > 0) && tamanhoJanela >= 1340 ? 'col-md-9' : 'col-md-12'">
       <div class="filterBody form-field-full">
         <div class="filter-header">
           <h3 class="filter-title">Consultar Produtos</h3>
@@ -20,11 +20,11 @@
       </div>
 
       <!-- Produtos -->
-      <div class="row" *ngIf="produtosFiltrados.length > 0">
+      <div class="row  row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4" *ngIf="produtosFiltrados.length > 0">
         <div
-          class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4"
+          class="col"
           *ngFor="let produto of produtosFiltrados ?? []">
-          <mat-card class="produto-card">
+          <mat-card class="produto-card h-100">
             <mat-card-content class="produto-content">
               <!-- Cabeçalho -->
               <div class="produto-header">
@@ -111,7 +111,7 @@
     </div>
 
     <!-- Painel lateral (somente telas grandes) -->
-    <div class="col-md-3" *ngIf="(cartItems.length > 0 || pedidoFinalizado) && isLargeScreen">
+    <div class="col-md-3" *ngIf="(cartItems.length > 0 || pedidoFinalizado) && tamanhoJanela >= 1340">
       <ng-container *ngTemplateOutlet="painelResumoConfirmacaoPedido"></ng-container>
     </div>
 
@@ -244,7 +244,7 @@
 </ng-template>
 
 <!-- 🛒 Botão flutuante - visível apenas em telas pequenas -->
-<button *ngIf="!isLargeScreen && cartItems.length > 0"
+<button *ngIf="!isLargeScreen && cartItems.length > 0 && tamanhoJanela < 1000"
         mat-fab color="accent"
         class="floating-cart-btn"
         (click)="abrirDialogResumo()"
@@ -253,4 +253,13 @@
         matBadgeOverlap="false"
         matBadgePosition="above after">
   <mat-icon>shopping_cart</mat-icon>
+</button>
+
+<button *ngIf="(tamanhoJanela > 1000 && tamanhoJanela < 1340) && cartItems.length > 0"
+        mat-raised-button
+        color="accent"
+        class="floating-cart-btn-md"
+        (click)="abrirDialogResumo()">
+  <mat-icon class="me-2">shopping_cart</mat-icon>
+  Ver Produtos
 </button>

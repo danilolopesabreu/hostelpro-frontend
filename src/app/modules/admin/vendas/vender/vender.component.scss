@@ -1353,12 +1353,43 @@
   right: 20px !important;
   z-index: 1000 !important;
   transform: none !important;
+  background-color: #28a745 !important; /* Verde forte */
+  color: #ffffff !important; /* Texto branco */
+  
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 
   &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+    transform: scale(1.06);
+    background-color: #218838 !important; /* Verde mais escuro no hover */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  }
+}
+
+.floating-cart-btn-md {
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  z-index: 1000 !important;
+
+  padding: 0.8rem 1.4rem;
+  font-size: 1.05rem;
+  font-weight: 500;
+  border-radius: 30px; /* mais largo */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  background-color: #28a745 !important; /* Verde forte */
+  color: #ffffff !important; /* Texto branco */
+  
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+
+  &:hover {
+    transform: scale(1.06);
+    background-color: #218838 !important; /* Verde mais escuro no hover */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
   }
 }
 
@@ -1367,11 +1398,11 @@
   /* ajusta para a distância que quiser */
 }
 
-@media (min-width: 992px) {
+/*@media (min-width: 992px) {
   .floating-cart-btn {
     display: none;
   }
-}
+}*/
 
 .produto-card {
   display: flex;
@@ -1578,4 +1609,8 @@
 /* Evita que conteúdo interno estoure o card */
 .produto-card * {
   min-width: 0;
+}
+
+.row > .col {
+  min-width: 250px; /* Ajuste este valor conforme necessário */
 }
