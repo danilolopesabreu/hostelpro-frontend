@@ -259,7 +259,11 @@
         mat-raised-button
         color="accent"
         class="floating-cart-btn-md"
-        (click)="abrirDialogResumo()">
+        (click)="abrirDialogResumo()"
+        [matBadge]="getTotalQuantidadeVendida()"
+        matBadgeColor="warn"
+        matBadgeOverlap="false"
+        matBadgePosition="above after">
   <mat-icon class="me-2">shopping_cart</mat-icon>
   Ver Produtos
 </button>

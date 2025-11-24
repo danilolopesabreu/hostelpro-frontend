@@ -1364,6 +1364,7 @@
     background-color: #218838 !important; /* Verde mais escuro no hover */
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
   }
+  animation: glow 1.0s infinite alternate;
 }
 
 .floating-cart-btn-md {
@@ -1391,7 +1392,18 @@
     background-color: #218838 !important; /* Verde mais escuro no hover */
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
   }
+  animation: glow 1.0s infinite alternate;
 }
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px #28a745, 0 0 10px #28a745;
+  }
+  100% {
+    box-shadow: 0 0 15px #28a745, 0 0 30px #28a745;
+  }
+}
+
 
 .d-flex.align-items-center {
   gap: 12px;
