@@ -36,6 +36,17 @@ export const APP_ROUTE: Route[] = [
           role: [Role.Admin],
         },
       },
+      {
+        path: 'produtos',
+        canActivate: [AuthGuardLocal],
+        loadChildren: () =>
+          import('../modules/admin/produtos/produtos.routes').then(
+            (m) => m.DASHBOARD_ROUTE
+          ),
+        data: {
+          role: [Role.Admin],
+        },
+      },
       // Admin menu start
       {
         path: 'dashboard',

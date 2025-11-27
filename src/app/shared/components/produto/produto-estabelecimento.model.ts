@@ -18,6 +18,11 @@ export class ProdutoEstabelecimento {
   // esta linha permite adicionar "_ref" e outras props dinâmicas
   [key: string]: any;
 
+  fromDTO?(dto: any): ProdutoEstabelecimento {
+    Object.assign(this, dto);
+    return this;
+  }
+
   constructor(init?: Partial<ProdutoEstabelecimento>) {
     Object.assign(this, init);
   }

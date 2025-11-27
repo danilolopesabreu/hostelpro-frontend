@@ -28,13 +28,26 @@
             } @else {
             @if (column.type === 'image') {
             <ng-container [matColumnDef]="column.def">
-              <mat-header-cell *matHeaderCellDef mat-sort-header [ngClass]="'tbl-col-width-per-6'">
-                <span class="truncate-text">{{ column.label }}</span>
-              </mat-header-cell>
-              <mat-cell *matCellDef="let row" [ngClass]="'tbl-col-width-per-6'">
-                <span class="mobile-label">{{ column.label }}:</span>
-                <img [src]="row.img" class="table-img" alt="image" />
-              </mat-cell>
+                <mat-header-cell *matHeaderCellDef>
+                    <span class="truncate-text">{{ column.label }}</span>
+                </mat-header-cell>
+
+                <mat-cell *matCellDef="let row; let i=index;">
+                    <span class="mobile-label">{{ column.label }}:</span>
+
+                    <label class="hoverable" [for]="'tableFileInput-' + i">
+                        <img [src]="row.imagem" class="produto-imagem" alt="image" />
+                        <div class="hover-text">Upload</div>
+                        <div class="background"></div>
+                    </label>
+
+                    <input
+                        type="file"
+                        class="table-file-input"
+                        [id]="'tableFileInput-' + i"
+                        (change)="onSelectFile($event, row)"/>
+                        
+                </mat-cell>
             </ng-container>
             } @else {
             @if (column.type === 'date') {
@@ -50,7 +63,7 @@
               </mat-cell>
             </ng-container>
             } @else {
-            @if (column.def === 'status') {
+            @if (column.def === 'situacao') {
             <ng-container [matColumnDef]="column.def">
               <mat-header-cell *matHeaderCellDef mat-sort-header>
                 <span class="truncate-text">{{ column.label }}</span>
@@ -59,7 +72,7 @@
                 <span class="mobile-label">{{ column.label }}:</span>
                 <div>
                   @switch (row[column.def]) {
-                  @case ('aberto') {
+                  @case ('ativo') {
                   <div>
                     <span class="badge badge-solid-green">{{ row[column.def] }}</span>
                   </div>
@@ -101,7 +114,7 @@
               </mat-header-cell>
               <mat-cell *matCellDef="let row">
                 <span class="mobile-label">{{ column.label }}:</span>
-                <span class="truncate-text">{{ getColumnValue(row, column.def) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+                <span class="truncate-text">{{  row[column.def] | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
               </mat-cell>
             </ng-container>
             } @else {
@@ -111,7 +124,7 @@
               </mat-header-cell>
               <mat-cell *matCellDef="let row">
                 <span class="mobile-label">{{ column.label }}:</span>
-                <span class="truncate-text">{{ getColumnValue(row, column.def) }}</span>
+                <span class="truncate-text">{{ row[column.def] }}</span>
               </mat-cell>
             </ng-container>
             }
@@ -131,31 +144,21 @@
               <mat-cell *matCellDef="let row; let i=index;" class="pr-0">
                 
                 <!--Editar ou Detalhar-->
-                <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="editCall(row)"
-                   *ngIf="row.status === 'fechado' || row.status === 'cancelado'" class="tbl-action-btn">
+                <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="editarProduto(row)"
+                   *ngIf="row.situacao === 'ativo'" class="tbl-action-btn">
                   <app-feather-icons [icon]="'plus-circle'" [class]="'tbl-fav-edit'"></app-feather-icons>
-                </button>
-                <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="editCall(row)"
-                   *ngIf="row.status !== 'fechado' && row.status !== 'cancelado'" class="tbl-action-btn">
-                  <app-feather-icons [icon]="'edit'" [class]="'tbl-fav-edit'"></app-feather-icons>
-                </button>
-
-                <!--Confirmar-->
-                <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="confirmarPedido(row)"
-                    *ngIf="row.status !== 'fechado' && row.status !== 'cancelado'" class="tbl-action-btn">
-                  <app-feather-icons [icon]="'check-square'" [class]="'tbl-fav-check-green'"></app-feather-icons>
                 </button>
 
                 <!--Deletar-->
-                <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="cancelarPedido(row)"
-                   *ngIf="row.status === 'aberto'" class="tbl-action-btn">
+                <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="cancelarProduto(row)"
+                   *ngIf="row.situacao === 'ativo'" class="tbl-action-btn">
                   <app-feather-icons [icon]="'trash-2'" [class]="'tbl-fav-delete'"></app-feather-icons>
                 </button>
 
               </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
-            <mat-row [@rowsAnimation]="" *matRowDef="let row; columns: getDisplayedColumns();" (click)="editCall(row)"
+            <mat-row [@rowsAnimation]="" *matRowDef="let row; columns: getDisplayedColumns();" (click)="editarProduto(row)"
               [style.cursor]="'pointer'" matRipple>
             </mat-row>
           </table>
@@ -170,7 +173,7 @@
       }
       @if (!isLoading) {
       <div class="no-results" [style.display]="dataSource.data.length === 0 ? '' : 'none'">
-        Sem pedidos
+        Sem Produtos
       </div>
       }
 

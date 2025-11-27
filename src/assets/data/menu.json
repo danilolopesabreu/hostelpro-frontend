@@ -8,7 +8,7 @@
       "route": "vendas",
       "name": "vendas",
       "type": "sub",
-      "icon": "space_dashboard",
+      "icon": "shopping_bag",
       "children": [
         {
           "route": "vender",
@@ -21,6 +21,15 @@
           "type": "link"
         }
       ],
+      "permissions": {
+        "only": "ADMIN"
+      }
+    },
+    {
+      "route": "produtos",
+      "name": "produtos",
+      "type": "link",
+      "icon": "inventory_2",
       "permissions": {
         "only": "ADMIN"
       }
