@@ -43,6 +43,7 @@ import { LoadingService } from '@shared/components/loading/loading.service';
 import { Agrupador } from '@shared/modelos/agrupador.model';
 import { ItensAgrupadosService } from '@shared/components/itens-agrupados/itens-agrupados.service';
 import { ItensAgrupados } from '@shared/modelos/itens-agrupados.model';
+import { EditarProdutoComponent } from '../../produtos/editar-produto/editar-produto.component';
 
 
 @Component({
@@ -475,10 +476,39 @@ export class VenderComponent {
     produtoEstabelecimento.editando = false;
   }
 
-  editarProduto(produto: any) {
+  /*editarProduto(produto: any) {
     produto.editando = true;
     produto._backup = { ...produto }; // salva valores originais
+  }*/
+
+  editarProduto(produtoEstabelecimento: ProdutoEstabelecimento) {
+    console.log(produtoEstabelecimento)
+    const dialogRef = this.dialog.open(EditarProdutoComponent, {
+      width: '90vw',
+      maxWidth: '100vw',
+      data: { produtoEstabelecimento: produtoEstabelecimento },
+      autoFocus: false,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log(result)
+      }
+    });
+
   }
+  
+  pressTimeout: any;
+
+  startPress(event: TouchEvent, produto: ProdutoEstabelecimento) {
+    this.pressTimeout = setTimeout(() => {
+      this.editarProduto(produto);
+    }, 600); // 600ms = tempo de toque longo
+  }
+
+  endPress() {
+    clearTimeout(this.pressTimeout);
+  }  
 
   confirmarEdicao(produto: any) {
     produto.editando = false;

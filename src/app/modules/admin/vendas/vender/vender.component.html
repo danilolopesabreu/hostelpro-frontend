@@ -24,7 +24,11 @@
         <div
           class="col"
           *ngFor="let produto of produtosFiltrados ?? []">
-          <mat-card class="produto-card h-100">
+          <mat-card class="produto-card h-100" 
+            (dblclick)="editarProduto(produto)"
+            (touchstart)="startPress($event, produto)"
+            (touchend)="endPress()">
+
             <mat-card-content class="produto-content">
               <!-- Cabeçalho -->
               <div class="produto-header">

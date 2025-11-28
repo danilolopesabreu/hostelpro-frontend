@@ -19,6 +19,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { ProdutoEstabelecimentoService } from '@shared/components/produto/produto-estabelecimento.service';
 
 export interface DialogData {
   produtoEstabelecimento: ProdutoEstabelecimento;
@@ -56,6 +57,7 @@ export class EditarProdutoComponent {
   constructor(
     public dialogRef: MatDialogRef<EditarProdutoComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private produtoEstabelecimentoService: ProdutoEstabelecimentoService,
   ){
     this.produtoEstabelecimento = data.produtoEstabelecimento;
   }
@@ -63,6 +65,16 @@ export class EditarProdutoComponent {
   salvarProduto() {
     console.log('Produto atualizado:', this.produtoEstabelecimento);
     // Aqui você pode chamar o serviço para atualizar no backend
+
+    this.produtoEstabelecimentoService.atualizar(this.produtoEstabelecimento).subscribe({
+      next: produtoAtualizado => {
+        console.log(produtoAtualizado);
+      },
+      error: err => {
+        console.error('Erro ao atualizar prodtuto', err);
+      }
+    });
+
   }
 
   cancelar() {

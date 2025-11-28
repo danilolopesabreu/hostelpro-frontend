@@ -7,6 +7,7 @@ export class ProdutoEstabelecimento {
   descricao: string = '';
   preco!: number;
   imagem?: string;
+  novaImagemBase64?: string;
   estoque: number = 0;
   quantidadeVendida: number = 0;
   quantidadeCarrinho:number = 0;
