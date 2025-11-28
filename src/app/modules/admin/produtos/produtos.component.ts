@@ -169,8 +169,18 @@ export class ProdutosComponent implements OnInit {
 
         // Converte de volta para base64
         produtoEstabelecimento.imagem = canvas.toDataURL(file.type);
+
+        this.produtoEstabelecimentoService.atualizar(produtoEstabelecimento).subscribe({
+          next: produtoAtualizado => {
+            console.log(produtoAtualizado);
+          },
+          error: err => {
+            console.error('Erro ao atualizar prodtuto', err);
+          }
+        });
       };
     };
+
   }
 
 

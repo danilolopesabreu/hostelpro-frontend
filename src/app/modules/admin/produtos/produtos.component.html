@@ -32,7 +32,7 @@
                     <span class="truncate-text">{{ column.label }}</span>
                 </mat-header-cell>
 
-                <mat-cell *matCellDef="let row; let i=index;">
+                <mat-cell *matCellDef="let row; let i=index;" (click)="$event.stopPropagation()">
                     <span class="mobile-label">{{ column.label }}:</span>
 
                     <label class="hoverable" [for]="'tableFileInput-' + i">
@@ -46,7 +46,7 @@
                         class="table-file-input"
                         [id]="'tableFileInput-' + i"
                         (change)="onSelectFile($event, row)"/>
-                        
+
                 </mat-cell>
             </ng-container>
             } @else {

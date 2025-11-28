@@ -461,7 +461,7 @@ export class VenderComponent {
       }
 
       if (produtoEstabelecimento.id !== undefined) {
-        this.produtoEstabelecimentoService.atualizar(produtoEstabelecimento.id, produtoEstabelecimento).subscribe({
+        this.produtoEstabelecimentoService.atualizar(produtoEstabelecimento).subscribe({
           next: (dados) => { console.log(dados) },
           error: (err) => console.error('Erro ao alterar o preco:', err)
         });

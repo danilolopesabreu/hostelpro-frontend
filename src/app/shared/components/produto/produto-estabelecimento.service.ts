@@ -34,8 +34,8 @@ export class ProdutoEstabelecimentoService {
   }
 
   // Atualizar produto existente
-  atualizar(id: number, produto: ProdutoEstabelecimento): Observable<ProdutoEstabelecimento> {
-    return this.http.put<ProdutoEstabelecimento>(`${this.baseUrl}/${id}`, produto);
+  atualizar(produto: ProdutoEstabelecimento): Observable<ProdutoEstabelecimento> {
+    return this.http.put<ProdutoEstabelecimento>(`${this.baseUrl}`, produto);
   }
 
   // Excluir produto
