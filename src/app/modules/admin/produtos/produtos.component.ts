@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { LoadingService } from '@shared/components/loading/loading.service';
 import { ProdutoEstabelecimentoService } from '@shared/components/produto/produto-estabelecimento.service';
 import { LocalStorageService } from '@shared';
@@ -105,6 +105,21 @@ export class ProdutosComponent implements OnInit {
       .trim()
       .toLowerCase();
     this.dataSource.filter = filterValue;
+  }
+
+  tamanhoJanela:number = 0;
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScreenSize();
+  }
+
+  checkScreenSize() {
+    this.tamanhoJanela = window.innerWidth;
+  }
+
+  addNovoProduto(){
+
   }
 
   editarProduto(produtoEstabelecimento: ProdutoEstabelecimento) {

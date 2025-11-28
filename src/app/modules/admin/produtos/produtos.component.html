@@ -11,7 +11,6 @@
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
         </div>
-        
       </div>
     </div>
   </mat-card-header>
@@ -186,3 +185,20 @@
     </div>
   </mat-card-content>
 </mat-card>
+
+<!-- 🛒 Botão flutuante - visível apenas em telas pequenas -->
+<button *ngIf="tamanhoJanela <= 1000"
+        mat-fab color="accent"
+        class="floating-cart-btn"
+        (click)="addNovoProduto()">
+  <mat-icon>plus_one</mat-icon>
+</button>
+
+<button *ngIf="tamanhoJanela > 1000"
+        mat-raised-button
+        color="accent"
+        class="floating-cart-btn-md"
+        (click)="addNovoProduto()">
+  <mat-icon class="me-2">add</mat-icon>
+  Novo Produto
+</button>

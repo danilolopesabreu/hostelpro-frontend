@@ -79,7 +79,7 @@ export class EditarProdutoComponent {
 
   cancelar() {
     console.log('Edição cancelada');
-    // Aqui pode fechar o modal ou resetar os dados
+    this.onNoClick();
   }
 
   onNoClick(): void {
