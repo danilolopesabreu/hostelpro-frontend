@@ -23,6 +23,8 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
+import { EditarProdutoComponent } from './editar-produto/editar-produto.component';
 
 @Component({
   selector: 'app-produtos',
@@ -42,7 +44,6 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatCheckboxModule,
     MatTableModule,
     MatSortModule,
-    NgClass,
     FeatherIconsComponent,
     MatRippleModule,
     MatProgressSpinnerModule,
@@ -75,8 +76,8 @@ export class ProdutosComponent implements OnInit {
 
   constructor(
     private produtoEstabelecimentoService: ProdutoEstabelecimentoService,
-    private loading: LoadingService,
-    private localStorageService: LocalStorageService,) { }
+    private localStorageService: LocalStorageService,
+    private dialog: MatDialog,) { }
 
   ngOnInit(): void {
     this.usuarioCadastrado = this.localStorageService.get("usuarioCadastrado");
@@ -107,7 +108,20 @@ export class ProdutosComponent implements OnInit {
   }
 
   editarProduto(produtoEstabelecimento: ProdutoEstabelecimento) {
-    //this.openDialog('edit', row);
+    console.log(produtoEstabelecimento)
+    const dialogRef = this.dialog.open(EditarProdutoComponent, {
+      width: '90vw',
+      maxWidth: '100vw',
+      data: { produtoEstabelecimento: produtoEstabelecimento },
+      autoFocus: false,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log(result)
+      }
+    });
+
   }
 
   cancelarProduto(produtoEstabelecimento: ProdutoEstabelecimento) {
