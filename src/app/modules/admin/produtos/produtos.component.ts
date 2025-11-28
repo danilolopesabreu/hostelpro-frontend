@@ -25,6 +25,7 @@ import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { EditarProdutoComponent } from './editar-produto/editar-produto.component';
+import { NovoProdutoComponent } from './novo-produto/novo-produto.component';
 
 @Component({
   selector: 'app-produtos',
@@ -119,7 +120,18 @@ export class ProdutosComponent implements OnInit {
   }
 
   addNovoProduto(){
+    const dialogRef = this.dialog.open(NovoProdutoComponent, {
+      width: '90vw',
+      maxWidth: '100vw',
+      data: { estabelecimentoId: this.usuarioCadastrado?.estabelecimentoId },
+      autoFocus: false,
+    });
 
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log(result)
+      }
+    });
   }
 
   editarProduto(produtoEstabelecimento: ProdutoEstabelecimento) {
