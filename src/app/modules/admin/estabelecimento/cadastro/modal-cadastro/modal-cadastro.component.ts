@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, EventEmitter, Output, inject, ViewChild, ElementRef, ChangeDetectorRef, Input } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -33,6 +33,8 @@ import { LoadingService } from '@shared/components/loading/loading.service';
 import { ItensAgrupados } from '@shared/modelos/itens-agrupados.model';
 import { ItensAgrupadosService } from '@shared/components/itens-agrupados/itens-agrupados.service';
 import { LocalStorageService } from '@shared';
+import { OverlayRef } from '@angular/cdk/overlay';
+
 @Component({
   selector: 'app-modal-cadastro',
   imports: [
@@ -91,6 +93,8 @@ export class ModalCadastroComponent {
   tiposEstabelecimento: TipoEstabelecimento[] = [];
   estabelecimentoCadastrado?: Estabelecimento;
 
+  @Input() overlayRef!: OverlayRef;
+
   // ---------------------------
   // Auth / Serviços
   // ---------------------------
@@ -105,7 +109,8 @@ export class ModalCadastroComponent {
     private loading: LoadingService,
     private itensAgrupadosService: ItensAgrupadosService,
     private store: LocalStorageService,
-    private localAuthService: AuthServiceLocal
+    private localAuthService: AuthServiceLocal,
+    private cdr: ChangeDetectorRef
   ) {}
 
   // ---------------------------
@@ -231,10 +236,12 @@ export class ModalCadastroComponent {
         this.store.set("estabelecimentoCadastrado", resultado.estabelecimento);
 
         console.log("this.store.get", this.store.get("usuarioCadastrado"))
-
+        console.log('agrupador.nome === pedido', this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'pedido', this.estabelecimentoCadastrado)
         if (this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'pedido') {
-          this.router.navigate(['/vendas']);
           this.fechar.emit();
+          this.overlayRef.dispose();
+          this.router.navigate(['/vendas']);
+          
         } else {
           this.mostrarTelaNovoEstabelecimento = false;
           this.mostrarTelaItensAgrupados = true;

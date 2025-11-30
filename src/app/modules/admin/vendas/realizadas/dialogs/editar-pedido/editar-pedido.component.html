@@ -51,8 +51,8 @@
           </div>
 
           <div class="col-6 mt-3">
-            <strong>Quarto / Mesa / Grupo:</strong><br>
-            {{ pedido.itensAgrupados?.nome || '—' }}
+            <strong>{{ obterIdentificadorItemAgrupado() }}:</strong><br>
+            {{ obterValorItemAgrupado() || '—' }}
           </div>
 
         </div>

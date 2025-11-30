@@ -94,7 +94,7 @@ export class VenderComponent {
   itemAgrupadoSelecionado?: ItensAgrupados;
   itensAgrupadosFiltrados: ItensAgrupados[] = [];
   dummyItemAgrupado?: string | ItensAgrupados;
-  numeroDoPedido?: string = '';
+  numeroDoPedido?: string = undefined;
 
   tamanhoJanela:number = 0;
 
@@ -252,42 +252,10 @@ export class VenderComponent {
       return;
     }
 
-    let nomeCampo: string = '';
+    let nomeCampo = this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.rotulo;
 
-    const tipo = this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome;
-    switch (tipo) {
-      case 'mesa':
-        nomeCampo = 'Mesa';
-        break;
-      case 'quarto':
-        nomeCampo = 'Quarto';
-        break;
-      case 'pedido':
-        nomeCampo = 'Pedido';
-        break;
-      default:
-        console.log('Tipo desconhecido');
-    }
-
-
-    if (this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'quarto'
-      && !this.validarItemAgrupado()
-    ) {
-      alert('Informe o Quarto!');
-      return;
-    }
-
-    if (this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'mesa'
-      && !this.validarItemAgrupado()
-    ) {
-      alert('Informe a Mesa!');
-      return;
-    }
-
-    if (this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'pedido'
-      && !this.itemAgrupadoSelecionado
-    ) {
-      alert('Informe o Pedido!');
+    if (!this.validarItemAgrupado()) {
+      alert('Informe '+nomeCampo);
       return;
     }
 
@@ -308,7 +276,7 @@ export class VenderComponent {
       status: 'aberto',
       itens: itensPedido,
       numeroDoPedido: this.numeroDoPedido,
-      itensAgrupados: this.dummyItemAgrupado as ItensAgrupados
+      itensAgrupados: this.numeroDoPedido ? undefined : this.dummyItemAgrupado as ItensAgrupados
     });
 
     /*this.pedidoService.criarPedido(this.pedido).subscribe({

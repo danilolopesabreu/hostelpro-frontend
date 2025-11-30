@@ -1,0 +1,28 @@
+.produto-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 500px;
+  padding: 16px;
+  margin: 0 auto;
+}
+
+.imagem-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+
+  .preview-imagem {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}

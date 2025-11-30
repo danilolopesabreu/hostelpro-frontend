@@ -1,5 +1,6 @@
 import { ItensAgrupados } from "@shared/modelos/itens-agrupados.model";
 import { ItemPedido } from "./itemPedido.model";
+import { TipoEstabelecimento } from "app/modules/admin/estabelecimento/tipo-estabelecimento.model";
 
 export class Pedido {
   id!: number;
@@ -23,6 +24,8 @@ export class Pedido {
   numeroDoPedido?:string;
 
   itensAgrupados?: ItensAgrupados;
+
+  tipoEstabelecimento?:TipoEstabelecimento;
 
   constructor(init?: Partial<Pedido>) {
     Object.assign(this, init);

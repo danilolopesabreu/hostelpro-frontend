@@ -79,14 +79,37 @@ import { EditarPedidoComponent } from './dialogs/editar-pedido/editar-pedido.com
   styleUrl: './realizadas.component.scss',
 })
 export class RealizadasComponent implements OnInit, OnDestroy{
+  
   columnDefinitions = [
-    { def: 'itensAgrupados.nome', label: 'Quarto', type: 'text', visible: true },
+    //{ def: 'itensAgrupados.nome', label: 'Quarto', type: 'text', visible: true },
     { def: 'nomeCliente', label: 'Nome Cliente', type: 'text', visible: true },
     { def: 'dataCriacao', label: 'Data Pedido', type: 'date', visible: true },
     { def: 'calcularTotalPedido', label: 'Total Pedido', type: 'currency', visible: true },
     { def: 'status', label: 'Situação', type: 'status', visible: true },
     { def: 'actions', label: 'Ações', type: 'actionBtn', visible: true },
   ];
+
+  definirPrimeiraColumnDefinition(pedido:Pedido){
+
+    let primeiraColuna = {def:'', label:'', type:'', visible:false};
+    
+    switch (pedido.itensAgrupados?.nome) {
+      case undefined:
+        primeiraColuna = { def: 'numeroDoPedido', label: 'Pedido', type: 'text', visible: true };
+        break;
+      case 'quarto':
+        primeiraColuna = { def: 'itensAgrupados.nome', label: 'Quarto', type: 'text', visible: true };
+        break;
+      case 'mesa':
+        primeiraColuna = { def: 'itensAgrupados.nome', label: 'Mesa', type: 'text', visible: true };
+        break;
+      default:
+        console.log('Tipo desconhecido');
+    }
+
+    this.columnDefinitions.unshift(primeiraColuna);
+
+  }
 
   dataSource = new MatTableDataSource<Pedido>([]);
   selection = new SelectionModel<AllRooms>(true, []);
@@ -113,11 +136,12 @@ export class RealizadasComponent implements OnInit, OnDestroy{
   ngOnInit() {
     this.usuarioCadastrado = this.localStorageService.get("usuarioCadastrado");
     
+    this.loadData();
+
     this.displayedColumns = this.columnDefinitions
       .filter(c => c.visible)
       .map(c => c.def);
 
-    this.loadData();
   }
 
   ngOnDestroy() {
@@ -309,6 +333,8 @@ export class RealizadasComponent implements OnInit, OnDestroy{
         this.pedidos = Array.isArray(pedidos) ? pedidos : [];
         this.dataSource.data = pedidos.map((p: any) => new Pedido().fromDTO(p));
         this.isLoading = false;
+        if(this.pedidos.length > 0)
+          this.definirPrimeiraColumnDefinition(this.pedidos[0]);
         this.refreshTable();
         this.definirFiltroTabela();
         

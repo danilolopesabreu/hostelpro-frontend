@@ -34,9 +34,15 @@ export class CadastroComponent implements OnInit {
 
     const portal = new ComponentPortal(ModalCadastroComponent);
     const componentRef = this.overlayRef.attach(portal);
+    
+    const ref = this.overlayRef;
+    componentRef.instance.overlayRef = ref;
 
     // Passa referência para o componente poder fechar
-    componentRef.instance.fechar.subscribe(() => this.fecharTela());
+    componentRef.instance.fechar.subscribe(() => {
+      console.log("Evento fechar recebido");
+      this.fecharTela()
+    });
     
 
     // Fecha ao clicar fora (opcional)
@@ -44,6 +50,7 @@ export class CadastroComponent implements OnInit {
   }
 
   fecharTela() {
+    console.log("Fechando overlay...");
     if (this.overlayRef) {
       this.overlayRef.dispose();
       this.overlayRef = undefined;

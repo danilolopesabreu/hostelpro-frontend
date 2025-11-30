@@ -94,6 +94,16 @@ export class EditarPedidoComponent implements OnInit {
     }
   }
 
+  obterIdentificadorItemAgrupado(){
+   return  this.pedido.tipoEstabelecimento?.agrupador?.rotulo;
+  }
+
+  obterValorItemAgrupado(){
+   return  this.pedido.itensAgrupados != undefined ? 
+      this.pedido.itensAgrupados.nome :
+      this.pedido.numeroDoPedido;
+  }
+
   definirEstadoAcoes() {
     let statusPedido = this.pedido.status;
     if(statusPedido === 'fechado' || statusPedido === 'cancelado')

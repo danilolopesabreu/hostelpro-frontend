@@ -1,1 +1,65 @@
-<p>novo-produto works!</p>
+<div class="produto-form">
+
+  <!-- IMAGEM -->
+  <div class="imagem-container">
+    <img
+      *ngIf="novoProdutoEstabelecimento.imagem"
+      [src]="novoProdutoEstabelecimento.imagem"
+      class="preview-imagem"
+      alt="Imagem do Produto"
+    />
+
+    <button mat-stroked-button color="primary" (click)="fileInput.click()">
+      Selecionar Imagem
+    </button>
+
+    <input
+      #fileInput
+      type="file"
+      accept="image/*"
+      (change)="onSelectFile($event)"
+      hidden
+    />
+  </div>
+
+  <!-- NOME -->
+  <mat-form-field appearance="outline">
+    <mat-label>Nome</mat-label>
+    <input
+      matInput
+      [(ngModel)]="novoProdutoEstabelecimento.nome"
+      name="nome"
+      required
+    >
+  </mat-form-field>
+
+  <!-- DESCRIÇÃO -->
+  <mat-form-field appearance="outline">
+    <mat-label>Descrição</mat-label>
+    <textarea
+      matInput
+      rows="3"
+      [(ngModel)]="novoProdutoEstabelecimento.descricao"
+      name="descricao"
+    ></textarea>
+  </mat-form-field>
+
+  <!-- PREÇO (com máscara em R$) -->
+  <mat-form-field appearance="outline">
+    <mat-label>Preço</mat-label>
+    <input
+      matInput
+      currencyMask
+
+      [(ngModel)]="precoMascara"
+      name="preco"
+    >
+  </mat-form-field>
+
+  <div class="actions">
+    <button mat-raised-button color="primary" (click)="salvarProduto()">
+      Salvar
+    </button>
+  </div>
+
+</div>

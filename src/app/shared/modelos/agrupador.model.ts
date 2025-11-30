@@ -5,6 +5,7 @@ export class Agrupador {
   nome?: string;
   observacao?: string;
   tipoEstabelecimento: TipoEstabelecimento[] = [];
+  rotulo?:string;
 
   constructor(init?: Partial<Agrupador>) {
     Object.assign(this, init);
