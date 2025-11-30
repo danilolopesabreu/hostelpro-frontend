@@ -63,7 +63,7 @@
 
 
     <!-- ====================== TABELA DE ITENS ====================== -->
-    <table mat-table [dataSource]="pedido.itens" class="mat-elevation-z8 w-100">
+    <table mat-table [dataSource]="pedido.itens" class="mat-elevation-z8 w-100 tabela-desktop">
 
       <!-- ========== Checkbox Column (some se ocultarBotoes = true) ========== -->
       <ng-container matColumnDef="select" *ngIf="!ocultarBotoes">
@@ -134,8 +134,8 @@
                 *ngIf="element.status === 'aberto' || element.status === 'pendente'"  class="tbl-action-btn">
             <app-feather-icons icon="trash-2" class="tbl-fav-delete"></app-feather-icons>
           </button>
-            <app-feather-icons *ngIf="element.status === 'cancelado'" [icon]="'x-square'" [class]="'tbl-fav-delete'"></app-feather-icons>
-            <app-feather-icons *ngIf="element.status === 'fechado'" [icon]="'check-square'" [class]="'tbl-fav-check-green'"></app-feather-icons>
+          <app-feather-icons *ngIf="element.status === 'cancelado'" [icon]="'x-square'" [class]="'tbl-fav-delete'"></app-feather-icons>
+          <app-feather-icons *ngIf="element.status === 'fechado'" [icon]="'check-square'" [class]="'tbl-fav-check-green'"></app-feather-icons>
         </td>
 
         <td mat-footer-cell *matFooterCellDef></td>
@@ -151,6 +151,80 @@
       <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
 
     </table>
+    <!-- Versão Mobile (cards) -->
+    <div class="tabela-mobile">
+        <div class="mobile-select-all" *ngIf="!ocultarBotoes">
+          <mat-checkbox
+            color="primary"
+            (change)="toggleSelecionarTodos()"
+            [checked]="todosSelecionados"
+            [indeterminate]="indeterminado"
+          >
+            Pagar todos
+          </mat-checkbox>
+        </div>
+
+      <div *ngFor="let item of pedido.itens" class="item-card">
+
+        <div class="campo" *ngIf="item.status === 'pendente' || item.status === 'aberto'">
+          <span class="label" style="margin-top: 10px;">Pagar:</span>
+          <span class="valor">
+            
+            <mat-checkbox 
+              color="primary" class="item-checkbox"
+              [(ngModel)]="item.selecionado"
+              (change)="verificarSelecao()">
+            </mat-checkbox>
+
+          </span>
+        </div>
+
+        <div class="campo">
+          <span class="label">Produto:</span>
+          <span class="valor">{{ item.produtoEstabelecimento!.nome }}</span>
+        </div>
+
+        <div class="campo">
+          <span class="label">Preço:</span>
+          <span class="valor">{{ item.precoUnitario | currency:'BRL' }}</span>
+        </div>
+
+        <div class="campo">
+          <span class="label">Quantidade:</span>
+          <span class="valor">{{ item.quantidade }}</span>
+        </div>
+
+        <div class="campo">
+          <span class="label">Total:</span>
+          <span class="valor">{{ item.precoTotal | currency:'BRL' }}</span>
+        </div>
+
+        <!-- Botões apenas se ocultarBotoes = false -->
+        <div class="campo" *ngIf="!ocultarBotoes">
+
+            <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="deleteItem(item)"
+                *ngIf="item.status === 'aberto' || item.status === 'pendente'"  class="tbl-action-btn">
+            <app-feather-icons icon="trash-2" class="tbl-fav-delete"></app-feather-icons>
+          </button>
+          <app-feather-icons *ngIf="item.status === 'cancelado'" [icon]="'x-square'" [class]="'tbl-fav-delete'"></app-feather-icons>
+          <app-feather-icons *ngIf="item.status === 'fechado'" [icon]="'check-square'" [class]="'tbl-fav-check-green'"></app-feather-icons>
+          
+        </div>
+
+      </div>
+
+      <div  class="item-card">
+        <div class="campo">
+            <span class="label" >Total a Pagar:</span>
+            <span class="valor">{{ totalPedidoAPagar | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+        </div>   
+        <div class="campo">
+            <span class="label" >Total Pago:</span>
+            <span class="valor">{{ totalPedidoPago | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+        </div>   
+      </div>
+
+    </div>
     <!-- ================================================================ -->
 
 

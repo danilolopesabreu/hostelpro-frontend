@@ -67,6 +67,9 @@ export class EditarPedidoComponent implements OnInit {
 
   ocultarBotoes:boolean = false;
 
+  totalPedidoPago:number = 0;
+  totalPedidoAPagar:number = 0;
+
   constructor(
     public dialogRef: MatDialogRef<EditarPedidoComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
@@ -126,6 +129,9 @@ export class EditarPedidoComponent implements OnInit {
     console.log(this.pedido)
     this.definirEstadoAcoes()
     this.updateDisplayedColumns();
+
+    this.totalPedidoAPagar = this.calcularTotalAPagar();
+    this.totalPedidoPago = this.calcularTotalPago();
   }
 
   toggleSelecionarTodos() {
@@ -135,6 +141,8 @@ export class EditarPedidoComponent implements OnInit {
     this.pedido.itens?.forEach(item => {
       item.selecionado = this.todosSelecionados;
     });
+
+    this.totalPedidoAPagar = this.calcularTotalAPagar();
   }
 
   verificarSelecao() {
@@ -145,6 +153,8 @@ export class EditarPedidoComponent implements OnInit {
     this.todosSelecionados = qtdSelecionados === itens.length;
     this.indeterminado =
       qtdSelecionados > 0 && qtdSelecionados < itens.length;
+
+    this.totalPedidoAPagar = this.calcularTotalAPagar();
   }
 
   isTodosSelecionados(): boolean{
@@ -167,6 +177,18 @@ export class EditarPedidoComponent implements OnInit {
   calcularTotal() {
     return this.pedido.itens
       ?.filter(i => i.status !== 'cancelado' && i.status !== 'fechado')
+      .reduce((t, i) => t + (i.precoTotal ?? 0), 0) ?? 0;
+  }
+
+  calcularTotalAPagar() {
+    return this.pedido.itens
+      ?.filter(i => (i.status === 'aberto' || i.status === 'pendente') && i.selecionado)
+      .reduce((t, i) => t + (i.precoTotal ?? 0), 0) ?? 0;
+  }
+
+  calcularTotalPago() {
+    return this.pedido.itens
+      ?.filter(i => i.status === 'fechado')
       .reduce((t, i) => t + (i.precoTotal ?? 0), 0) ?? 0;
   }
 
@@ -229,7 +251,9 @@ export class EditarPedidoComponent implements OnInit {
     }).subscribe({
       next: dados => {
         console.log(dados.pedido);
-        this.callBackConfirmarPagamento()      
+        this.callBackConfirmarPagamento()    
+        this.totalPedidoPago = this.calcularTotalPago();  
+        this.totalPedidoAPagar = this.calcularTotalAPagar();
       }
     });
         
