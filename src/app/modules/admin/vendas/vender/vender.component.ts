@@ -1,7 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener, ViewChild, TemplateRef } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { OccupancyService } from './occupancy.service';
-import { Occupancy, RoomStatus } from './occupancy.model';
 import { CommonModule } from '@angular/common';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -16,19 +14,13 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { GuestDetailsDialogComponent } from './guest-details-dialog/guest-details-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { AddGuestDetailsDialogComponent } from './add-guest-details-dialog/add-guest-details-dialog.component';
 import { debounceTime, Subject } from 'rxjs';
-import { MatDivider } from '@angular/material/divider';
-import { MatList, MatListItem } from '@angular/material/list';
-import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { ProdutoService } from '@shared/components/produto/produto.service';
 import { QuartoService } from '@shared/components/quarto/quarto.service';
-import { Produto } from '@shared/components/produto/produto.model';
 import { Quarto } from '@shared/components/quarto/quarto.model';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatAutocompleteModule, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Pedido } from '@shared/components/pedido/pedido.model';
 import { ItemPedido } from '@shared/components/pedido/itemPedido.model';
 import { PedidoService } from '@shared/components/pedido/pedido.service';
@@ -71,6 +63,8 @@ import { EditarProdutoComponent } from '../../produtos/editar-produto/editar-pro
 })
 export class VenderComponent {
   @ViewChild('painelResumoConfirmacaoPedido') painelResumoConfirmacaoPedido!: TemplateRef<any>;
+  @ViewChild(MatAutocompleteTrigger) autocompleteTrigger!: MatAutocompleteTrigger;
+  
   searchText = '';
   clienteNome = '';
   numeroQuarto: string | null = null;
@@ -93,7 +87,9 @@ export class VenderComponent {
   itensAgrupados: ItensAgrupados[] = [];
   itemAgrupadoSelecionado?: ItensAgrupados;
   itensAgrupadosFiltrados: ItensAgrupados[] = [];
+  
   dummyItemAgrupado?: string | ItensAgrupados;
+
   numeroDoPedido?: string = undefined;
 
   tamanhoJanela:number = 0;
@@ -119,6 +115,22 @@ export class VenderComponent {
     this.checkScreenSize();
     this.buscaChanged.pipe(debounceTime(300)).subscribe(() => {
       this.filtrarProdutos();
+    });
+  }
+
+  ignoreNextFocus = false;
+
+  abrirAutocomplete() {
+    // Atualiza a lista antes de abrir, se necessário
+    this.filtrarItensAgrupados(this.itemAgrupadoSelecionado as ItensAgrupados);
+
+    if (this.ignoreNextFocus) {
+      this.ignoreNextFocus = false; // reseta
+      return;
+    }
+    
+    setTimeout(() => {
+      this.autocompleteTrigger.openPanel();
     });
   }
 
@@ -192,6 +204,8 @@ export class VenderComponent {
 
   selecionarItemAgrupado(item: ItensAgrupados) {
     this.dummyItemAgrupado = item;
+    this.itemAgrupadoSelecionado = item;
+    this.ignoreNextFocus = true;
     console.log('Selecionado:', item);
   }
 
@@ -227,8 +241,13 @@ export class VenderComponent {
 
   validarItemAgrupado(): boolean {
     // Se o usuário digitou texto e não selecionou item
-    if (typeof this.dummyItemAgrupado === 'string') {
-      const valorDigitado = this.dummyItemAgrupado.toLowerCase();
+    console.log(this.itemAgrupadoSelecionado, typeof this.itemAgrupadoSelecionado === 'string')
+    if (typeof this.itemAgrupadoSelecionado === 'string') {
+      const valorDigitado = (this.itemAgrupadoSelecionado as string).toLowerCase();
+      console.log(this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome, valorDigitado);
+      if(this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'pedido' && valorDigitado){
+        return true;
+      }
 
       const encontrado = this.itensAgrupados.find(
         i => i.nome.toLowerCase() === valorDigitado
@@ -236,14 +255,14 @@ export class VenderComponent {
 
       if (!encontrado) {
         console.warn('Valor digitado não encontrado, limpando campo...');
-        this.dummyItemAgrupado = '';
+        this.itemAgrupadoSelecionado = undefined;
         return false;
       } else {
-        this.dummyItemAgrupado = encontrado;
+        this.itemAgrupadoSelecionado = encontrado;
         return true;
       }
     }
-    return true;
+    return this.itemAgrupadoSelecionado !== undefined;
   }
 
   finalizarPedido() {
@@ -276,7 +295,7 @@ export class VenderComponent {
       status: 'aberto',
       itens: itensPedido,
       numeroDoPedido: this.numeroDoPedido,
-      itensAgrupados: this.numeroDoPedido ? undefined : this.dummyItemAgrupado as ItensAgrupados
+      itensAgrupados: this.itemAgrupadoSelecionado
     });
 
     /*this.pedidoService.criarPedido(this.pedido).subscribe({
@@ -320,7 +339,7 @@ export class VenderComponent {
     this.clienteNome = '';
     this.numeroQuarto = '';
     this.pedidoFinalizado = false;
-    //this.itemAgrupadoSelecionado = undefined;
+    this.itemAgrupadoSelecionado = undefined;
     this.dummyItemAgrupado = '';
     this.dialog.closeAll();
   }

@@ -93,8 +93,8 @@ export class RealizadasComponent implements OnInit, OnDestroy{
 
     let primeiraColuna = {def:'', label:'', type:'', visible:false};
     
-    switch (pedido.itensAgrupados?.nome) {
-      case undefined:
+    switch (pedido.tipoEstabelecimento?.agrupador?.nome) {
+      case 'pedido':
         primeiraColuna = { def: 'numeroDoPedido', label: 'Pedido', type: 'text', visible: true };
         break;
       case 'quarto':

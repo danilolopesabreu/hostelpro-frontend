@@ -1,0 +1,28 @@
+.container {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.logo {
+  width: 160px;
+  height: auto;
+  margin-bottom: 20px;
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.message {
+  font-size: 1.1rem;
+  color: #444;
+  max-width: 320px;
+}

@@ -15,11 +15,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
-import { CommonModule, DatePipe, NgClass } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { MatSortModule } from '@angular/material/sort';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
-import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
 export interface DialogData {
@@ -29,7 +27,6 @@ export interface DialogData {
 @Component({
   selector: 'app-novo-produto',
   imports: [
-    PageHeaderComponent,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -44,7 +41,6 @@ export interface DialogData {
     MatCheckboxModule,
     MatTableModule,
     MatSortModule,
-    FeatherIconsComponent,
     MatRippleModule,
     MatProgressSpinnerModule,
     MatMenuModule,

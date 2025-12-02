@@ -137,43 +137,47 @@
           <input matInput [(ngModel)]="clienteNome" placeholder="Nome do Cliente" />
         </mat-form-field>
 
-        <mat-form-field class="w-100" appearance="outline"
-        *ngIf="(estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'quarto')
-              || (estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'mesa')">
-        
-          <mat-label *ngIf="estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'quarto'">Selecione o Quarto</mat-label>
-          <mat-label *ngIf="estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'mesa'">Selecione a Mesa</mat-label>
+          @if (estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'pedido') {
+            
+            <mat-form-field class="w-100" appearance="outline">
+              <mat-label>Número do Pedido</mat-label>
+              <input
+                type="text"
+                matInput
+                [(ngModel)]="numeroDoPedido"
+                placeholder="Ex: 985632"
+              />
+            </mat-form-field> 
 
-          <input
-            type="text"
-            matInput
-            [matAutocomplete]="auto"
-            [(ngModel)]="dummyItemAgrupado"
-            (ngModelChange)="filtrarItensAgrupados($event)"
-            (blur)="validarItemAgrupado()"
-            placeholder="Ex: 101"
-          />
+          } @else {
 
-          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selecionarItemAgrupado($event.option.value)" [displayWith]="displayItemAgrupado">
-            <mat-option *ngFor="let itemAgrupado of itensAgrupadosFiltrados" [value]="itemAgrupado">
-              {{ itemAgrupado.nome }} 
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
+            <mat-form-field class="w-100" appearance="outline"
+            *ngIf="(estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'quarto')
+                  || (estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'mesa')">
+            
+              <mat-label *ngIf="estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'quarto'">Selecione o Quarto</mat-label>
+              <mat-label *ngIf="estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'mesa'">Selecione a Mesa</mat-label>
+              
+            <input
+              type="text"
+              matInput
+              [matAutocomplete]="auto"
+              [(ngModel)]="itemAgrupadoSelecionado"
+              (ngModelChange)="filtrarItensAgrupados($event)"
+              (blur)="validarItemAgrupado()"
+              (focus)="abrirAutocomplete()"
+              placeholder="Ex: 101"
+            />
+            
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selecionarItemAgrupado($event.option.value)" [displayWith]="displayItemAgrupado">
+              <mat-option *ngFor="let itemAgrupado of itensAgrupadosFiltrados" [value]="itemAgrupado">
+                {{ itemAgrupado.nome }} 
+              </mat-option>
+            </mat-autocomplete>
 
-        <mat-form-field class="w-100" appearance="outline"
-          *ngIf="(estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'pedido')">
-        
-          <mat-label>Número do Pedido</mat-label>
-
-          <input
-            type="text"
-            matInput
-            [(ngModel)]="numeroDoPedido"
-            placeholder="Ex: 985632"
-          />
-
-        </mat-form-field>        
+          </mat-form-field>
+          }
+       
       </div>
       
       <ul class="list-group mb-3" style="padding-inline-start:5px">
@@ -217,16 +221,15 @@
       <div class="mb-3" style="padding-inline-start:5px;">
         <p><b>Cliente:</b> {{ clienteNome }}</p>
 
-        <p *ngIf="(estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'mesa')"><b>Mesa:</b> 
-          {{ typeof dummyItemAgrupado === 'string'
-              ? dummyItemAgrupado
-              : dummyItemAgrupado?.nome }}
-        </p>
-        <p *ngIf="(estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'quarto')"><b>Quarto:</b> 
-          {{ typeof dummyItemAgrupado === 'string'
-              ? dummyItemAgrupado
-              : dummyItemAgrupado?.nome }}
-        </p>
+        @if(estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'mesa' ||
+            estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'quarto'){
+
+              <p>
+                <b>{{ estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.rotulo }}:</b> 
+                   {{ itemAgrupadoSelecionado?.nome }}
+              </p>
+              
+        }
         <p *ngIf="(estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'pedido')"><b>Pedido:</b> {{ numeroDoPedido }}</p>
 
         <p><b>Total:</b> R$ {{ getTotalConfirmado() | number:'1.2-2' }}</p>

@@ -6,6 +6,7 @@ import { Page403Component } from './sessions/page403/page403.component';
 import { Page404Component } from './sessions/page404/page404.component';
 import { Page500Component } from './sessions/page500/page500.component';
 import { Role } from '@core/models/role';
+import { ConfirmarEmailComponent } from '@shared/components/confirmar-email/confirmar-email.component';
 
 export const APP_ROUTE: Route[] = [
   {
@@ -92,6 +93,10 @@ export const APP_ROUTE: Route[] = [
       {
         path: '500',
         component: Page500Component,
+      },
+      {
+        path: 'confirmar-email',
+        component: ConfirmarEmailComponent,
       },
     ],
   },

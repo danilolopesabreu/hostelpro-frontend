@@ -86,6 +86,15 @@ export class LoginComponent implements OnInit {
           this.auth.user$.subscribe({
             next: (usuarioLogado) => {
                 if(usuarioLogado){
+
+                  if(!usuarioLogado.email_verified){
+                    const retorno = window.location.origin + '/#/confirmar-email';
+                    this.auth.logout({
+                      logoutParams: { returnTo: retorno }
+                    });
+                    return;
+                  }
+
                   this.usuarioService.consultarPorEmail(usuarioLogado?.email!).subscribe({
                     next: (usuarioCadastrado) => {
                       

@@ -24,3 +24,9 @@
 :host ::ng-deep .advance-table .mat-mdc-header-cell {
   font-weight: 500;
 }
+
+@media (max-width: 600px) {
+  mat-cell:first-of-type, mat-header-cell:first-of-type, mat-footer-cell:first-of-type {
+      background-color: rgba(25, 135, 84, 0.15);
+  }
+}
