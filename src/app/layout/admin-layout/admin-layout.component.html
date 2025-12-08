@@ -15,7 +15,7 @@
   </app-header>
   }
   <mat-sidenav-container class="container" autosize autoFocus>
-    <mat-sidenav #sidenav class="sidenav" [mode]="isOver ? 'over' : 'side'" [ngClass]="{'hover-sidenav': isHovered}"
+    <mat-sidenav #sidenav class="sidenav" [mode]="isOver ? 'over' : 'side'" [ngClass]="{'hover-sidenav': isHovered}" 
       (mouseenter)="isHovered = true" (mouseleave)="isHovered = false"
       [opened]="options.navPos === 'side' && options.sidenavOpened && !isOver"
       (openedChange)="onSidenavOpenedChange($event)" (closedStart)="onSidenavClosedStart()">

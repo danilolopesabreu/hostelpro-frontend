@@ -9,7 +9,7 @@ import { CategoriaProduto } from './categoria-produto.model';
 })
 export class CategoriaProdutoService {
 
-  private baseUrl = `${environment.apiUrl}/categorias`; // ex: http://localhost:8080/api/categorias
+  private baseUrl = `${environment.apiUrl}/categorias`; 
 
   constructor(private http: HttpClient) { }
 

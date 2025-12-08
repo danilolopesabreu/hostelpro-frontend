@@ -8,13 +8,10 @@
   <app-branding></app-branding>
   }
   <span class="flex-fill"></span>
+
   <button mat-icon-button class="hide-small m-4" (click)="toggleFullscreen()">
     <i-feather name="maximize" class="header_icons"></i-feather>
   </button>
-  <app-translate></app-translate>
-  <app-notification class="hide-small"></app-notification>
-  <button mat-icon-button class="hide-small m-4" (click)="toggleSidenavNotice.emit()">
-    <i-feather name="bookmark" class="header_icons"></i-feather>
-  </button>
+  
   <app-user></app-user>
 </mat-toolbar>

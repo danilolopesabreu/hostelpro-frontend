@@ -34,14 +34,7 @@ import { MatButtonModule } from '@angular/material/button';
         <mat-icon class="material-icons-outlined">account_circle</mat-icon>
         <span class="f-s-14">{{ 'profile' | translate }}</span>
       </button>
-      <button routerLink="/profile/settings" mat-menu-item>
-        <mat-icon class="material-icons-outlined">edit</mat-icon>
-        <span class="f-s-14">{{ 'edit_profile' | translate }}</span>
-      </button>
-      <button mat-menu-item (click)="restore()">
-        <mat-icon class="material-icons-outlined">restore</mat-icon>
-        <span class="f-s-14">{{ 'restore_defaults' | translate }}</span>
-      </button>
+
       <button mat-menu-item (click)="logout()">
         <mat-icon class="material-icons-outlined">exit_to_app</mat-icon>
         <span class="f-s-14">{{ 'logout' | translate }}</span>
