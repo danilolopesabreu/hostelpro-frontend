@@ -1,77 +1,82 @@
-<div class="login-container">
-  <div class="login-image-container">
-    <img src="assets/images/pages/bg-01.png" alt="Login Image" class="login-image">
-  </div>
-  <div class="login-form-section">
-    <div class="login-logo">
-      <img src="assets/images/logo.png" alt="Logo">
+
+<app-loader-spinner></app-loader-spinner>
+
+<!--
+  <div class="login-container">
+    <div class="login-image-container">
+      <img src="assets/images/pages/bg-01.png" alt="Login Image" class="login-image">
     </div>
-    <h2 class="welcome-msg">Welcome to {{'login_title' | translate}}!</h2>
-    <div class="login-type-toggle">
-      <button mat-flat-button [class.active]="activeLoginType === 'admin'" (click)="adminSet()">Admin</button>
-      <button mat-flat-button [class.active]="activeLoginType === 'employee'" (click)="employeeSet()">Employee</button>
-    </div>
-    <h2 class="login-title">Sign in</h2>
-    <form class="login-form" [formGroup]="loginForm">
-      <mat-form-field appearance="outline">
-        <mat-label>Username</mat-label>
-        <input matInput placeholder="Enter your username" formControlName="username" required>
-        <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>face</mat-icon>
-        @if (username.invalid && (username.dirty || username.touched)) {
-          <mat-error>
-            @if (username.errors?.['required']) {
-              <span>Username is required.</span>
-            }
-          </mat-error>
-        }
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Password</mat-label>
-        <input matInput placeholder="Enter your password" [type]="hide ? 'password' : 'text'" formControlName="password"
-          required>
-          <a href="#" onClick="return false;" matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
-            [attr.aria-pressed]="hide">
-            <mat-icon class="material-icons-outlined color-icon m-12" matSuffix>
-            {{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-          </a>
-          @if (password.invalid && (password.dirty || password.touched)) {
+    <div class="login-form-section">
+      <div class="login-logo">
+        <img src="assets/images/logo.png" alt="Logo">
+      </div>
+      <h2 class="welcome-msg">Welcome to {{'login_title' | translate}}!</h2>
+      <div class="login-type-toggle">
+        <button mat-flat-button [class.active]="activeLoginType === 'admin'" (click)="adminSet()">Admin</button>
+        <button mat-flat-button [class.active]="activeLoginType === 'employee'" (click)="employeeSet()">Employee</button>
+      </div>
+      <h2 class="login-title">Sign in</h2>
+      <form class="login-form" [formGroup]="loginForm">
+        <mat-form-field appearance="outline">
+          <mat-label>Username</mat-label>
+          <input matInput placeholder="Enter your username" formControlName="username" required>
+          <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>face</mat-icon>
+          @if (username.invalid && (username.dirty || username.touched)) {
             <mat-error>
-              @if (password.errors?.['required']) {
-                <span>Password is required.</span>
+              @if (username.errors?.['required']) {
+                <span>Username is required.</span>
               }
             </mat-error>
           }
         </mat-form-field>
-        <div class="form-options">
-          <mat-checkbox formControlName="rememberMe">Remember Me</mat-checkbox>
-          <a class="forget-pwd" routerLink="/auth/forgot-password">Forgot Password?</a>
+        <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput placeholder="Enter your password" [type]="hide ? 'password' : 'text'" formControlName="password"
+            required>
+            <a href="#" onClick="return false;" matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+              [attr.aria-pressed]="hide">
+              <mat-icon class="material-icons-outlined color-icon m-12" matSuffix>
+              {{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </a>
+            @if (password.invalid && (password.dirty || password.touched)) {
+              <mat-error>
+                @if (password.errors?.['required']) {
+                  <span>Password is required.</span>
+                }
+              </mat-error>
+            }
+          </mat-form-field>
+          <div class="form-options">
+            <mat-checkbox formControlName="rememberMe">Remember Me</mat-checkbox>
+            <a class="forget-pwd" routerLink="/auth/forgot-password">Forgot Password?</a>
+          </div>
+          <button class="login-btn" mat-flat-button color="primary" [disabled]="loginForm.invalid || isSubmitting"
+            (click)="login()">
+            @if (!isSubmitting) {
+              <span>Login</span>
+            }
+            @if (isSubmitting) {
+              <mat-spinner [diameter]="20"></mat-spinner>
+            }
+          </button>
+        </form>
+        <div class="social-login">
+          <p>Or login with</p>
+          <div class="social-icons">
+            <button class="social-icon google">
+              <img src="assets/images/social/google.png" alt="Google">
+            </button>
+            <button class="social-icon apple">
+              <img src="assets/images/social/apple.png" alt="Apple">
+            </button>
+            <button class="social-icon facebook">
+              <img src="assets/images/social/facebook.png" alt="Facebook">
+            </button>
+          </div>
         </div>
-        <button class="login-btn" mat-flat-button color="primary" [disabled]="loginForm.invalid || isSubmitting"
-          (click)="login()">
-          @if (!isSubmitting) {
-            <span>Login</span>
-          }
-          @if (isSubmitting) {
-            <mat-spinner [diameter]="20"></mat-spinner>
-          }
-        </button>
-      </form>
-      <div class="social-login">
-        <p>Or login with</p>
-        <div class="social-icons">
-          <button class="social-icon google">
-            <img src="assets/images/social/google.png" alt="Google">
-          </button>
-          <button class="social-icon apple">
-            <img src="assets/images/social/apple.png" alt="Apple">
-          </button>
-          <button class="social-icon facebook">
-            <img src="assets/images/social/facebook.png" alt="Facebook">
-          </button>
+        <div class="signup-link">
+          <p>Don't have an account? <a routerLink="/auth/register">Sign Up</a></p>
         </div>
-      </div>
-      <div class="signup-link">
-        <p>Don't have an account? <a routerLink="/auth/register">Sign Up</a></p>
       </div>
     </div>
-  </div>
+-->

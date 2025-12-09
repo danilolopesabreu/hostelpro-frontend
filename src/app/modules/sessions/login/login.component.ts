@@ -25,6 +25,7 @@ import { UsuarioService } from 'app/modules/admin/usuario/usuario.service';
 import { User } from '@core/models/interface';
 import { Usuario } from 'app/modules/admin/usuario/usuario.model';
 import { BehaviorSubject, Observable, iif, merge, of } from 'rxjs';
+import { LoaderSpinnerComponent } from '@layout/loader-spinner/loader-spinner.component';
 
 @Component({
   selector: 'app-login',
@@ -43,7 +44,8 @@ import { BehaviorSubject, Observable, iif, merge, of } from 'rxjs';
     ReactiveFormsModule,
     MatProgressSpinnerModule,
     TranslateModule,
-    CommonModule
+    CommonModule,
+    LoaderSpinnerComponent
   ],
 })
 export class LoginComponent implements OnInit {
