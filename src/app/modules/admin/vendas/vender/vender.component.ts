@@ -36,6 +36,7 @@ import { Agrupador } from '@shared/modelos/agrupador.model';
 import { ItensAgrupadosService } from '@shared/components/itens-agrupados/itens-agrupados.service';
 import { ItensAgrupados } from '@shared/modelos/itens-agrupados.model';
 import { EditarProdutoComponent } from '../../produtos/editar-produto/editar-produto.component';
+import { WhatsappButtonComponent } from '@shared/components/whatsapp-button/whatsapp-button.component';
 
 
 @Component({
@@ -56,7 +57,8 @@ import { EditarProdutoComponent } from '../../produtos/editar-produto/editar-pro
     FormsModule,
     MatButtonModule,
     ReactiveFormsModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    WhatsappButtonComponent
   ],
   templateUrl: './vender.component.html',
   styleUrl: './vender.component.scss',
@@ -234,6 +236,7 @@ export class VenderComponent {
     this.dialog.open(this.painelResumoConfirmacaoPedido, {
       width: '95vw',
       maxWidth: '600px',
+      maxHeight:'95vh',
       panelClass: 'dialog-resumo-pedido',
       disableClose: true
     });
@@ -320,6 +323,7 @@ export class VenderComponent {
         });
 
         this.cartItemsConfirmado = structuredClone(this.cartItems);
+        this.montarMensagemWhatsapp(this.cartItemsConfirmado);
         this.cartItems = [];
 
       },
@@ -330,6 +334,40 @@ export class VenderComponent {
 
     // Aqui você poderia enviar os dados para o backend...
     //this.dummyItemAgrupado = '';
+  }
+
+  mensagemWhatsapp:string = "";
+
+  montarMensagemWhatsapp(cartItemsConfirmado: ProdutoEstabelecimento[]){
+    let nomeEstabelecimento = "*"+this.estabelecimentoCadastrado?.nome+"*\n";
+    let nomeCliente = "Cliente: *"+this.clienteNome+"*\n";
+    let agrupador = this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.rotulo+": ";
+    
+    if(this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'pedido'){
+      agrupador += "*"+this.numeroDoPedido+"*\n";
+    } else {
+      agrupador += "*"+this.itemAgrupadoSelecionado?.nome+"*\n";
+    }
+
+    let totalPedido = "Total: *"+this.formatarValorMonetario(this.getTotalConfirmado())+"*\n";
+
+    let itensCarrinhoMensagem = "";
+
+    cartItemsConfirmado.forEach(item => {
+      itensCarrinhoMensagem += item.nome+" x("+item.quantidadeCarrinho+") "+this.formatarValorMonetario(item.preco * item.quantidadeCarrinho)+"\n";
+    });
+
+    this.mensagemWhatsapp = nomeEstabelecimento+nomeCliente+agrupador+totalPedido+itensCarrinhoMensagem;
+
+  }
+
+  formatarValorMonetario(valor:number):string{
+    let valorFormatado = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(valor);
+
+    return valorFormatado;
   }
 
   fecharPedido() {

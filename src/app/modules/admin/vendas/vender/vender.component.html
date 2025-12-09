@@ -125,7 +125,7 @@
 
 <!-- Template reutilizável -->
 <ng-template #painelResumoConfirmacaoPedido>
-  <div class="filterBody form-field-full cart-panel">
+  <div class="filterBody form-field-full cart-panel ">
     <ng-container *ngIf="!pedidoFinalizado">
       <div class="cart-header mb-3">
         <h3 class="cart-title">Resumo do Pedido</h3>
@@ -242,9 +242,13 @@
           </li>
         </ul>
 
-        <button mat-raised-button color="primary" class="w-100 mt-3" (click)="fecharPedido()">
-          Fechar
-        </button>
+        <div class="d-flex align-items-center gap-2">
+          <button mat-raised-button color="primary" class="w-100 mt-3" (click)="fecharPedido()">
+            Fechar
+          </button>
+          <app-whatsapp-button [mensagem]="mensagemWhatsapp"></app-whatsapp-button>
+        </div>
+        
       </div>
     </ng-container>
   </div>

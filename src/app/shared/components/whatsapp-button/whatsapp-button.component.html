@@ -1,0 +1,24 @@
+<div class="whatsapp-container">
+
+  <!-- Botão inicial com ícone -->
+  <button *ngIf="!showInput" class="whatsapp-btn" (click)="toggleInput()">
+    <img src="assets/images/whatsapp-icon.png" alt="WhatsApp" class="whatsapp-icon">
+  </button>
+
+  <!-- Input + botão de envio -->
+  <div *ngIf="showInput" class="whatsapp-input-group">
+    <input 
+      type="tel" 
+      [(ngModel)]="telefone" 
+      placeholder="(00) 00000-0000"
+      mask="(00) 00000-0000"
+      maxlength="15"
+      inputmode="numeric"
+      class="whatsapp-input"
+    />
+    <button mat-raised-button color="success" (click)="enviarWhatsApp()">
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+
+</div>
