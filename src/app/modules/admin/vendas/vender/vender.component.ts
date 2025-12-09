@@ -340,6 +340,7 @@ export class VenderComponent {
 
   montarMensagemWhatsapp(cartItemsConfirmado: ProdutoEstabelecimento[]){
     let nomeEstabelecimento = "*"+this.estabelecimentoCadastrado?.nome+"*\n";
+    let pedidoRealizado = "*Informações do Pedido Realizado*\n";
     let nomeCliente = "Cliente: *"+this.clienteNome+"*\n";
     let agrupador = this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.rotulo+": ";
     
@@ -357,7 +358,7 @@ export class VenderComponent {
       itensCarrinhoMensagem += item.nome+" x("+item.quantidadeCarrinho+") "+this.formatarValorMonetario(item.preco * item.quantidadeCarrinho)+"\n";
     });
 
-    this.mensagemWhatsapp = nomeEstabelecimento+nomeCliente+agrupador+totalPedido+itensCarrinhoMensagem;
+    this.mensagemWhatsapp = nomeEstabelecimento+pedidoRealizado+nomeCliente+agrupador+totalPedido+itensCarrinhoMensagem;
 
   }
 
