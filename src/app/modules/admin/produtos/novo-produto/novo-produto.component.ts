@@ -145,6 +145,17 @@ export class NovoProdutoComponent implements OnInit {
         .replace(",", ".")
     );
 
+    this.novoProdutoEstabelecimento.origemCadastro = 'manual';
+
+    this.produtoEstabelecimentoService.criar(this.novoProdutoEstabelecimento).subscribe({
+      next: produto => {
+        console.log(produto);
+      },
+      error: err => {
+        console.error('Erro ao cadastrar prodtuto', err);
+      }
+    });
+
     console.log("Produto salvo:", this.novoProdutoEstabelecimento);
 
     // aqui você pode enviar ao backend
