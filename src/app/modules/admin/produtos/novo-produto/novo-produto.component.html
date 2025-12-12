@@ -1,65 +1,70 @@
-<div class="produto-form">
+<div class="dialogContainer">
+  <div class="modalHeader">
+    <div class="avatarDetails">
+      <div class="modalTitle">
+        Cadastrar Produto
+      </div>
+    </div>
 
-  <!-- IMAGEM -->
-  <div class="imagem-container">
-    <img
-      *ngIf="novoProdutoEstabelecimento.imagem"
-      [src]="novoProdutoEstabelecimento.imagem"
-      class="preview-imagem"
-      alt="Imagem do Produto"
-    />
-
-    <button mat-stroked-button color="primary" (click)="fileInput.click()">
-      Selecionar Imagem
-    </button>
-
-    <input
-      #fileInput
-      type="file"
-      accept="image/*"
-      (change)="onSelectFile($event)"
-      hidden
-    />
-  </div>
-
-  <!-- NOME -->
-  <mat-form-field appearance="outline">
-    <mat-label>Nome</mat-label>
-    <input
-      matInput
-      [(ngModel)]="novoProdutoEstabelecimento.nome"
-      name="nome"
-      required
-    >
-  </mat-form-field>
-
-  <!-- DESCRIÇÃO -->
-  <mat-form-field appearance="outline">
-    <mat-label>Descrição</mat-label>
-    <textarea
-      matInput
-      rows="3"
-      [(ngModel)]="novoProdutoEstabelecimento.descricao"
-      name="descricao"
-    ></textarea>
-  </mat-form-field>
-
-  <!-- PREÇO (com máscara em R$) -->
-  <mat-form-field appearance="outline">
-    <mat-label>Preço</mat-label>
-    <input
-      matInput
-      currencyMask
-
-      [(ngModel)]="precoMascara"
-      name="preco"
-    >
-  </mat-form-field>
-
-  <div class="actions">
-    <button mat-raised-button color="primary" (click)="salvarProduto()">
-      Salvar
+    <button mat-icon-button (click)="onNoClick()" class="modal-close-button fw-bold" aria-label="Close dialog"
+      color="warn">
+      <mat-icon>close</mat-icon>
     </button>
   </div>
 
+  <!-- Conteúdo com rolagem -->
+  <div class="dialogContentScrollable">
+    <mat-card class="edit-product-card">
+      <mat-card-content>
+
+        <!-- Imagem -->
+        <div class="image-upload-container">
+          <img
+            [src]="novoProdutoEstabelecimento.imagem || 'assets/images/produto-padrao.png'"
+            class="preview-img"
+            alt="Imagem do produto"
+          />
+          <label class="upload-label" for="fileInput">
+            <mat-icon>upload</mat-icon> Alterar Imagem
+          </label>
+          <input id="fileInput" type="file" (change)="onSelectFile($event, novoProdutoEstabelecimento)" />
+        </div>
+
+        <!-- Categoria -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Categoria</mat-label>
+          <mat-select [(ngModel)]="novoProdutoEstabelecimento.categoriaId">
+            <mat-option *ngFor="let categoria of categorias" [value]="categoria.id">
+              {{ categoria.nome }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Nome -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nome</mat-label>
+          <input matInput [(ngModel)]="novoProdutoEstabelecimento.nome" />
+        </mat-form-field>
+
+        <!-- Descrição -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descrição</mat-label>
+          <textarea matInput rows="3" [(ngModel)]="novoProdutoEstabelecimento.descricao"></textarea>
+        </mat-form-field>
+
+        <!-- Preço -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Preço</mat-label>
+          <input matInput type="number" step="0.01" min="0" [(ngModel)]="novoProdutoEstabelecimento.preco" />
+        </mat-form-field>
+
+      </mat-card-content>
+
+    </mat-card>
+
+  </div>
+  <mat-card-actions class="actions">
+    <button mat-raised-button color="primary" (click)="salvarProduto()">Cadastrar Produto</button>
+    <button mat-stroked-button color="warn" (click)="cancelar()">Cancelar</button>
+  </mat-card-actions>
 </div>

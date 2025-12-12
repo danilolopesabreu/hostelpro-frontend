@@ -58,6 +58,11 @@ export class CategoriaProdutoService {
     return this.http.get<CategoriaProduto[]>(url);
   }
 
+  listarCategoriasFolhas(estabelecimentoId: number): Observable<CategoriaProduto[]> {
+    const url = `${this.baseUrl}/estabelecimento/${estabelecimentoId}/folhas`;
+    return this.http.get<CategoriaProduto[]>(url);
+  }  
+
   /**
    * Lista as subcategorias de uma categoria específica.
    */

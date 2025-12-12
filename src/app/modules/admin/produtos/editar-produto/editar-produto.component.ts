@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ProdutoEstabelecimento } from '@shared/components/produto/produto-estabelecimento.model';
 import { MatMenuModule } from '@angular/material/menu';
@@ -20,6 +20,10 @@ import { MatSortModule } from '@angular/material/sort';
 import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { ProdutoEstabelecimentoService } from '@shared/components/produto/produto-estabelecimento.service';
+import { CategoriaProdutoService } from '@shared/components/categoria-produto/categoria-produto.service';
+import { LocalStorageService } from '@shared';
+import { Usuario } from '../../usuario/usuario.model';
+import { CategoriaProduto } from '@shared/components/categoria-produto/categoria-produto.model';
 
 export interface DialogData {
   produtoEstabelecimento: ProdutoEstabelecimento;
@@ -50,16 +54,37 @@ export interface DialogData {
   templateUrl: './editar-produto.component.html',
   styleUrl: './editar-produto.component.scss',
 })
-export class EditarProdutoComponent {
+export class EditarProdutoComponent implements OnInit {
   
   produtoEstabelecimento: ProdutoEstabelecimento = new ProdutoEstabelecimento();
+  
+  usuarioCadastrado?: Usuario;
+
+  categorias?:CategoriaProduto[];
 
   constructor(
     public dialogRef: MatDialogRef<EditarProdutoComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private produtoEstabelecimentoService: ProdutoEstabelecimentoService,
+    private categoriaProdutoService: CategoriaProdutoService,
+    private localStorageService: LocalStorageService
   ){
     this.produtoEstabelecimento = data.produtoEstabelecimento;
+  }
+  ngOnInit(): void {
+    
+    this.usuarioCadastrado = this.localStorageService.get("usuarioCadastrado");
+
+    this.categoriaProdutoService.listarCategoriasFolhas(this.usuarioCadastrado?.estabelecimentoId as number).subscribe({
+      next: categorias => {
+        console.log(categorias);
+        this.categorias = categorias;
+      },
+      error: err => {
+        console.error('Erro ao consultar categorias prodtuto', err);
+      }
+    });
+
   }
   
   salvarProduto() {

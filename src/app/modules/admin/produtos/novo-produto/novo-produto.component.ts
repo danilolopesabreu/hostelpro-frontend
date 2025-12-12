@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ProdutoEstabelecimento } from '@shared/components/produto/produto-estabelecimento.model';
 import { ProdutoEstabelecimentoService } from '@shared/components/produto/produto-estabelecimento.service';
@@ -19,6 +19,10 @@ import { CommonModule } from '@angular/common';
 import { MatSortModule } from '@angular/material/sort';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { CategoriaProdutoService } from '@shared/components/categoria-produto/categoria-produto.service';
+import { LocalStorageService } from '@shared';
+import { Usuario } from '../../usuario/usuario.model';
+import { CategoriaProduto } from '@shared/components/categoria-produto/categoria-produto.model';
 
 export interface DialogData {
   estabelecimentoId: number;
@@ -49,16 +53,38 @@ export interface DialogData {
   templateUrl: './novo-produto.component.html',
   styleUrl: './novo-produto.component.scss',
 })
-export class NovoProdutoComponent {
+export class NovoProdutoComponent implements OnInit {
 
   novoProdutoEstabelecimento: ProdutoEstabelecimento = new ProdutoEstabelecimento();
+
+  usuarioCadastrado?: Usuario;
+
+  categorias?: CategoriaProduto[];
 
   constructor(
     public dialogRef: MatDialogRef<NovoProdutoComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private produtoEstabelecimentoService: ProdutoEstabelecimentoService,
+    private categoriaProdutoService: CategoriaProdutoService,
+    private localStorageService: LocalStorageService
   ) {
     this.novoProdutoEstabelecimento.estabelecimentoId = data.estabelecimentoId;
+  }
+
+  ngOnInit(): void {
+
+    this.usuarioCadastrado = this.localStorageService.get("usuarioCadastrado");
+
+    this.categoriaProdutoService.listarCategoriasFolhas(this.usuarioCadastrado?.estabelecimentoId as number).subscribe({
+      next: categorias => {
+        console.log(categorias);
+        this.categorias = categorias;
+      },
+      error: err => {
+        console.error('Erro ao consultar categorias prodtuto', err);
+      }
+    });
+
   }
 
   // Preço com máscara (string), já que o campo do objeto precisa ser number
@@ -71,16 +97,43 @@ export class NovoProdutoComponent {
     precision: 2
   };
 
-  onSelectFile(event: any) {
-    const file = event.target.files[0];
-    if (!file) { return; }
+  onSelectFile(event: Event, produtoEstabelecimento: ProdutoEstabelecimento) {
+    const target = event.target as HTMLInputElement;
+    if (!target.files || !target.files[0]) return;
+
+    const file = target.files[0];
+    const supportedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/bmp', 'image/gif'];
+
+    if (!supportedTypes.includes(file.type)) {
+      console.warn('Tipo de imagem não suportado para resize:', file.type);
+      return;
+    }
 
     const reader = new FileReader();
-    reader.onload = (e: any) => {
-      this.novoProdutoEstabelecimento.imagem = e.target.result;
-    };
-
     reader.readAsDataURL(file);
+
+    reader.onload = (e) => {
+      if (!e.target) return;
+
+      const img = new Image();
+      img.src = e.target.result as string;
+
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const size = 240; // largura e altura desejadas
+        canvas.width = size;
+        canvas.height = size;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Redimensiona a imagem dentro do canvas
+        ctx.drawImage(img, 0, 0, size, size);
+
+        // Converte de volta para base64
+        produtoEstabelecimento.imagem = canvas.toDataURL(file.type);
+      };
+    };
   }
 
   salvarProduto() {
@@ -96,6 +149,15 @@ export class NovoProdutoComponent {
 
     // aqui você pode enviar ao backend
     // this.service.salvarProduto(this.novoProdutoEstabelecimento).subscribe(...)
+  }
+
+  cancelar() {
+    console.log('Edição cancelada');
+    this.onNoClick();
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close(this.novoProdutoEstabelecimento);
   }
 
 }

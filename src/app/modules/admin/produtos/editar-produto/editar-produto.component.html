@@ -2,7 +2,7 @@
   <div class="modalHeader">
     <div class="avatarDetails">
       <div class="modalTitle">
-        titulo aqui
+        Editar Produto
       </div>
     </div>
 
@@ -12,8 +12,9 @@
     </button>
   </div>
 
+  <!-- Conteúdo com rolagem -->
+  <div class="dialogContentScrollable">
 <mat-card class="edit-product-card">
-  <mat-card-title>Editar Produto</mat-card-title>
   <mat-card-content>
     
     <!-- Imagem -->
@@ -24,6 +25,16 @@
       </label>
       <input id="fileInput" type="file" (change)="onSelectFile($event, produtoEstabelecimento)" />
     </div>
+
+    <!-- Categoria -->
+    <mat-form-field appearance="outline" class="full-width" >
+        <mat-label>Categoria</mat-label>
+        <mat-select [(ngModel)]="produtoEstabelecimento.categoriaId">
+            <mat-option *ngFor="let categoria of categorias" [value]="categoria.id">
+                {{ categoria.nome }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
 
     <!-- Nome -->
     <mat-form-field appearance="outline" class="full-width">
@@ -45,9 +56,10 @@
 
   </mat-card-content>
 
+</mat-card>
+</div>
   <mat-card-actions class="actions">
-    <button mat-raised-button color="primary" (click)="salvarProduto()">Salvar</button>
+    <button mat-raised-button color="primary" (click)="salvarProduto()">Salvar Alterações</button>
     <button mat-stroked-button color="warn" (click)="cancelar()">Cancelar</button>
   </mat-card-actions>
-</mat-card>
 </div>
