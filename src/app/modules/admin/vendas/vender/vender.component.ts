@@ -37,7 +37,7 @@ import { ItensAgrupadosService } from '@shared/components/itens-agrupados/itens-
 import { ItensAgrupados } from '@shared/modelos/itens-agrupados.model';
 import { EditarProdutoComponent } from '../../produtos/editar-produto/editar-produto.component';
 import { WhatsappButtonComponent } from '@shared/components/whatsapp-button/whatsapp-button.component';
-
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'app-vender',
@@ -58,8 +58,10 @@ import { WhatsappButtonComponent } from '@shared/components/whatsapp-button/what
     MatButtonModule,
     ReactiveFormsModule,
     MatAutocompleteModule,
-    WhatsappButtonComponent
+    WhatsappButtonComponent,
+    NgxMaskDirective,
   ],
+  providers: [provideNgxMask()],
   templateUrl: './vender.component.html',
   styleUrl: './vender.component.scss',
 })
@@ -160,6 +162,7 @@ export class VenderComponent {
       if (!estabelecimento.itensAgrupados || estabelecimento.itensAgrupados?.length == 0) {
         this.router.navigate(['/estabelecimento/cadastro']);
       } else {
+        this.localStorageService.set("estabelecimento", estabelecimento);
         this.estabelecimentoCadastrado = estabelecimento;
         this.agrupador = estabelecimento.tipoEstabelecimento?.agrupador;
       }
@@ -341,6 +344,7 @@ export class VenderComponent {
   montarMensagemWhatsapp(cartItemsConfirmado: ProdutoEstabelecimento[]){
     let nomeEstabelecimento = "*"+this.estabelecimentoCadastrado?.nome+"*\n";
     let pedidoRealizado = "*Informações do Pedido Realizado*\n";
+    let dataHora = "Data: "+this.formatarDataHora(new Date())+"\n";
     let nomeCliente = "Cliente: *"+this.clienteNome+"*\n";
     let agrupador = this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.rotulo+": ";
     
@@ -352,14 +356,31 @@ export class VenderComponent {
 
     let totalPedido = "Total: *"+this.formatarValorMonetario(this.getTotalConfirmado())+"*\n";
 
-    let itensCarrinhoMensagem = "";
+    let itensCarrinhoMensagem = "*Itens:*\n";
 
     cartItemsConfirmado.forEach(item => {
       itensCarrinhoMensagem += item.nome+" x("+item.quantidadeCarrinho+") "+this.formatarValorMonetario(item.preco * item.quantidadeCarrinho)+"\n";
     });
 
-    this.mensagemWhatsapp = nomeEstabelecimento+pedidoRealizado+nomeCliente+agrupador+totalPedido+itensCarrinhoMensagem;
+    this.mensagemWhatsapp = nomeEstabelecimento+pedidoRealizado+dataHora+nomeCliente+agrupador+totalPedido+itensCarrinhoMensagem;
 
+  }
+
+  formatarDataHora(
+    data: Date | string | number,
+    locale: string = 'pt-BR'
+  ): string {
+    if (!data) return '';
+
+    const date = new Date(data);
+
+    return new Intl.DateTimeFormat(locale, {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
   }
 
   formatarValorMonetario(valor:number):string{

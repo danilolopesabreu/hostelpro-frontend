@@ -88,11 +88,14 @@
                   <mat-form-field appearance="outline" class="campo-preco">
                     <input
                       matInput
-                      type="number"
-                      step="0.01"
-                      min="0"
+                      type="text"
+                      mask="separator.2"
+                      thousandSeparator="."
+                      decimalMarker=","
+                      reverse="true"
                       [(ngModel)]="produto.novoPreco"
-                      placeholder="R$"
+                      inputmode="numeric"
+                      autocomplete="off"
                     />
                   </mat-form-field>
                   <button mat-icon-button color="primary" (click)="confirmEdit(produto)">

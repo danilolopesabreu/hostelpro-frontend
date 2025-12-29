@@ -23,11 +23,16 @@ import { ItemPedido } from '@shared/components/pedido/itemPedido.model';
 import { PedidoService } from '@shared/components/pedido/pedido.service';
 import { LoadingService } from '@shared/components/loading/loading.service';
 import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
+import { WhatsappButtonComponent } from '@shared/components/whatsapp-button/whatsapp-button.component';
+import { Usuario } from 'app/modules/admin/usuario/usuario.model';
+import { LocalStorageService } from '@shared';
+import { Estabelecimento } from 'app/modules/admin/estabelecimento/estabelecimento.model';
 
 export interface DialogData {
   id: number;
   action: string;
   pedido: Pedido;
+  usuarioCadastrado: Usuario;
 }
 
 @Component({
@@ -50,7 +55,7 @@ export interface DialogData {
     FormsModule,
     MatCardContent,
     MatCardTitle,
-    MatCard, MatCardModule, MatTableModule, FeatherIconsComponent
+    MatCard, MatCardModule, MatTableModule, FeatherIconsComponent,WhatsappButtonComponent
   ],
   templateUrl: './editar-pedido.component.html',
   styleUrl: './editar-pedido.component.scss',
@@ -70,11 +75,16 @@ export class EditarPedidoComponent implements OnInit {
   totalPedidoPago:number = 0;
   totalPedidoAPagar:number = 0;
 
+  mensagemWhatsapp:string = '';
+
+  estabelecimentoCadastrado?: Estabelecimento;
+
   constructor(
     public dialogRef: MatDialogRef<EditarPedidoComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private pedidoService:PedidoService,
-    private loading: LoadingService) {
+    private loading: LoadingService,
+    private localStorageService: LocalStorageService) {
   }
  
   updateDisplayedColumns() {
@@ -117,6 +127,8 @@ export class EditarPedidoComponent implements OnInit {
     this.dialogTitle = 'Código do Pedido #' + this.data.pedido.id;
     this.pedido = this.data.pedido;
 
+    this.estabelecimentoCadastrado = this.localStorageService.get("estabelecimento");
+
     this.data.pedido.itens.sort((a, b) =>
       a.produtoEstabelecimento.nome.localeCompare(b.produtoEstabelecimento.nome)
     );
@@ -132,6 +144,8 @@ export class EditarPedidoComponent implements OnInit {
 
     this.totalPedidoAPagar = this.calcularTotalAPagar();
     this.totalPedidoPago = this.calcularTotalPago();
+
+    this.montarMensagemWhatsapp();
   }
 
   toggleSelecionarTodos() {
@@ -280,6 +294,7 @@ export class EditarPedidoComponent implements OnInit {
       next: dados => {
         console.log(dados.pedido);
         this.removerItemPedidoDeletadoLista(item);  
+        this.montarMensagemWhatsapp();
       }
     });
 
@@ -301,6 +316,58 @@ export class EditarPedidoComponent implements OnInit {
 
   onNoClick(): void {
     this.dialogRef.close(this.pedido);
+  }
+
+  montarMensagemWhatsapp(){
+
+    let nomeEstabelecimento = "*"+this.estabelecimentoCadastrado?.nome+"*\n";
+    let pedidoRealizado = "*Informações do Pedido Realizado*\n";
+    let dataHora = "Data: "+this.formatarDataHora(this.pedido.dataCriacao as Date)+"\n";
+    let nomeCliente = "Cliente: *"+this.pedido.nomeCliente+"*\n";
+    let agrupador = this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.rotulo+": ";
+    
+    if(this.estabelecimentoCadastrado?.tipoEstabelecimento?.agrupador?.nome === 'pedido'){
+      agrupador += "*"+this.pedido.numeroDoPedido+"*\n";
+    } else {
+      agrupador += "*"+this.obterIdentificadorItemAgrupado()+"*\n";
+    }
+
+    let totalPedido = "Total: *"+this.formatarValorMonetario(this.calcularTotalPedido())+"*\n";
+
+    let itensCarrinhoMensagem = "*Itens:*\n";
+
+    this.pedido.itens.forEach(item => {
+      itensCarrinhoMensagem += item.produtoEstabelecimento.nome+" x("+item.quantidade+") "+this.formatarValorMonetario(item.precoUnitario * item.quantidade)+"\n";
+    });
+
+    this.mensagemWhatsapp = nomeEstabelecimento+pedidoRealizado+dataHora+nomeCliente+agrupador+totalPedido+itensCarrinhoMensagem;
+
+  }
+
+  formatarValorMonetario(valor:number):string{
+    let valorFormatado = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(valor);
+
+    return valorFormatado;
+  }
+
+  formatarDataHora(
+    data: Date | string | number,
+    locale: string = 'pt-BR'
+  ): string {
+    if (!data) return '';
+
+    const date = new Date(data);
+
+    return new Intl.DateTimeFormat(locale, {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
   }
 
 }

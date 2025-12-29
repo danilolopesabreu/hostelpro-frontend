@@ -35,6 +35,15 @@
       }
     },
     {
+      "route": "categoria",
+      "name": "categorias",
+      "type": "link",
+      "icon": "category",
+      "permissions": {
+        "only": "ADMIN"
+      }
+    },
+    {
       "route": "emp_dashboard",
       "name": "emp_dashboard",
       "type": "link",

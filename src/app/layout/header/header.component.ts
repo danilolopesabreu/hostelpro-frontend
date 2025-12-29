@@ -26,8 +26,6 @@ import { FeatherModule } from 'angular-feather';
         MatButtonModule,
         MatIconModule,
         BrandingComponent,
-        TranslateComponent,
-        NotificationComponent,
         UserComponent,
         FeatherModule,
     ]

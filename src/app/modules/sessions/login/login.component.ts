@@ -24,7 +24,7 @@ import { CommonModule } from '@angular/common';
 import { UsuarioService } from 'app/modules/admin/usuario/usuario.service';
 import { User } from '@core/models/interface';
 import { Usuario } from 'app/modules/admin/usuario/usuario.model';
-import { BehaviorSubject, Observable, iif, merge, of } from 'rxjs';
+import { BehaviorSubject, Observable, iif, map, merge, of, switchMap, take, tap } from 'rxjs';
 import { LoaderSpinnerComponent } from '@layout/loader-spinner/loader-spinner.component';
 
 @Component({
@@ -40,7 +40,6 @@ import { LoaderSpinnerComponent } from '@layout/loader-spinner/loader-spinner.co
     MatButtonModule,
     MatIconModule,
     FormsModule,
-    RouterLink,
     ReactiveFormsModule,
     MatProgressSpinnerModule,
     TranslateModule,
@@ -78,64 +77,77 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.auth.isAuthenticated$.subscribe({
-      next: (isAutenticado) => {
-        console.log(isAutenticado)
-        if(!isAutenticado){
+    this.auth.isAuthenticated$.pipe(
+      take(1),
+
+      tap(isAutenticado => {
+        if (!isAutenticado) {
           this.auth.loginWithRedirect();
-        } else {
-          //redirecionar
-          this.auth.user$.subscribe({
-            next: (usuarioLogado) => {
-                if(usuarioLogado){
-
-                  if(!usuarioLogado.email_verified){
-                    const retorno = window.location.origin + '/#/confirmar-email';
-                    this.auth.logout({
-                      logoutParams: { returnTo: retorno }
-                    });
-                    return;
-                  }
-
-                  this.usuarioService.consultarPorEmail(usuarioLogado?.email!).subscribe({
-                    next: (usuarioCadastrado) => {
-                      
-                      this.store.set("usuarioLogado",usuarioLogado);
-                     
-                      if (usuarioCadastrado) {
-
-                        this.store.set('currentUser', this.getUserFromUserAuthAndUserCadastrado(usuarioLogado, usuarioCadastrado));
-                        this.store.set('roleNames', JSON.stringify([usuarioCadastrado.papel?.nome]));
-                        console.log('Usuário encontrado:', usuarioCadastrado);
-                        
-                        this.store.set("usuarioCadastrado",usuarioCadastrado);
-
-                        this.localAuthService.assignUser(new BehaviorSubject<User>(this.store.get('currentUser')));
-                        this.localAuthService.menu();
-                        this.router.navigate(['/vendas']);
-                      } else {
-                        console.log('Usuário não cadastrado');
-                        //this.store.clear();
-                        this.router.navigate(['/estabelecimento/cadastro']);
-                      }
-                    },
-                    error: (err) => {
-                      console.error('Erro na requisição', err);
-                    }
-                  });
-              } else {
-                this.router.navigate(['/auth/login']);     
-              }
-              
-            }
-          });
-
-          
+          throw new Error('NOT_AUTHENTICATED');
         }
+      }),
+
+      switchMap(() => this.auth.user$),
+      take(1),
+
+      tap(usuarioLogado => {
+        if (!usuarioLogado) {
+          this.router.navigate(['/auth/login']);
+          throw new Error('NO_USER');
+        }
+
+        if (!usuarioLogado.email_verified) {
+          const retorno = `${window.location.origin}/#/confirmar-email`;
+          this.auth.logout({ logoutParams: { returnTo: retorno } });
+          throw new Error('EMAIL_NOT_VERIFIED');
+        }
+
+        this.store.set('usuarioLogado', usuarioLogado);
+      }),
+
+      switchMap(usuarioLogado =>
+        this.usuarioService.consultarPorEmail(usuarioLogado?.email!).pipe(
+          map(usuarioCadastrado => ({ usuarioLogado, usuarioCadastrado }))
+        )
+      )
+
+    ).subscribe({
+      next: ({ usuarioLogado, usuarioCadastrado }) => {
+
+        if (!usuarioCadastrado) {
+          this.router.navigate(['/estabelecimento/cadastro']);
+          return;
+        }
+
+        const currentUser =
+          this.getUserFromUserAuthAndUserCadastrado(usuarioLogado as UserAuth0, usuarioCadastrado);
+
+        this.store.set('currentUser', currentUser);
+        this.store.set('roleNames', JSON.stringify([usuarioCadastrado.papel?.nome]));
+        this.store.set('usuarioCadastrado', usuarioCadastrado);
+
+        this.localAuthService.assignUser(
+          new BehaviorSubject<User>(currentUser)
+        );
+
+        this.localAuthService.menu();
+        this.router.navigate(['/vendas']);
       },
-      error: (err) => console.error('Erro', err)
+
+      error: (err) => {
+        if (
+          err.message === 'NOT_AUTHENTICATED' ||
+          err.message === 'NO_USER' ||
+          err.message === 'EMAIL_NOT_VERIFIED'
+        ) {
+          return; 
+        }
+
+        console.error('Erro inesperado no fluxo de autenticação', err);
+      }
     });
   }
+
 
   private getUserFromUserAuthAndUserCadastrado(user:UserAuth0, usuario:Usuario): User {
     return {

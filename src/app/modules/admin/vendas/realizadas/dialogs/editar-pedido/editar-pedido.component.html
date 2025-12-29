@@ -231,7 +231,7 @@
     <!-- ========== BOTÕES (somem se ocultarBotoes = true) ========== -->
     <div class="row my-3" *ngIf="!ocultarBotoes">
       <div class="col-sm-12">
-        <div class="example-button-row">
+        <div class="d-flex align-items-center gap-2">
           <button mat-raised-button color="primary" [disabled]="!isAlgumSelecionados()" (click)="confirmarPagamento()">
             Confirmar Pagamento
           </button>
@@ -240,6 +240,9 @@
             *ngIf="pedido.status !== 'pendente'">
             Cancelar Pedido
           </button>
+
+          <app-whatsapp-button [mensagem]="mensagemWhatsapp"></app-whatsapp-button>
+
         </div>
       </div>
     </div>

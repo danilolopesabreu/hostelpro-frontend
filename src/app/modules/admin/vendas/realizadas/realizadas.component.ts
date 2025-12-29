@@ -187,7 +187,7 @@ export class RealizadasComponent implements OnInit, OnDestroy{
     const dialogRef = this.dialog.open(EditarPedidoComponent, {
       width: '95vw',
       maxWidth: '100vw',
-      data: { pedido: data, action },
+      data: { pedido: data, action, usuarioCadastrado: this.usuarioCadastrado },
       autoFocus: false,
     });
 
